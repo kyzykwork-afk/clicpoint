@@ -618,6 +618,29 @@
     </div>
 </div>
 
+<!-- Модальне вікно: Переміщення проекту -->
+<div class="modal" id="moveProjectModal" onclick="if(event.target === this) document.getElementById('moveProjectModal').style.display='none'">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color: var(--primary);">➡️ Перемістити проект</h3>
+        <p style="font-size:14px; color:#64748b;">Оберіть нову тему для: <b id="move-project-name" style="color:#1e293b;"></b></p>
+        
+        <div class="form-group">
+            <label>Нова тема (папка):</label>
+            <select id="move-theme-select" style="width: 100%;"></select>
+        </div>
+        
+        <input type="hidden" id="move-file-id">
+        <input type="hidden" id="move-old-folder-id">
+        
+        <div id="move-status" style="margin-top:10px; font-weight:bold; font-size:14px;"></div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+            <button onclick="document.getElementById('moveProjectModal').style.display='none'" style="background: #e2e8f0; color: #475569;">Скасувати</button>
+            <button class="success" onclick="submitMoveProject()" id="btn-confirm-move">Перемістити</button>
+        </div>
+    </div>
+</div>
+
 <!-- Оверлей попереднього перегляду -->
 <div id="preview-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; flex-direction: column;">
     <div style="padding: 15px 20px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
@@ -716,6 +739,7 @@
     let tokenClient;
     let accessToken = null;
     let pendingSaveToDrive = false;
+    let currentThemes = []; // Зберігає поточний список тем для вікна переміщення
 
     function initGoogleAuth() {
         if (window.google && google.accounts && google.accounts.oauth2) {
@@ -960,6 +984,8 @@
             const themesQuery = `mimeType='application/vnd.google-apps.folder' and '${rootFolder.id}' in parents and trashed=false`;
             const themesData = await driveFetch(`${GOOGLE_DRIVE_API}?q=${encodeURIComponent(themesQuery)}&fields=files(id,name)`);
             
+            currentThemes = themesData.files; // Зберігаємо для вікна переміщення
+
             if(themesData.files.length === 0) { loader.style.display = 'none'; content.style.display = 'block'; content.innerHTML = '<div style="text-align:center; color:#64748b;">Папка проектів порожня.</div>'; return; }
 
             let htmlStr = '';
@@ -993,10 +1019,12 @@
                                 <span id="name-${f.id}" style="display:flex; align-items:center; gap:5px;">📄 <span>${displayName}</span></span>
                                 <button onclick="startRename(event, '${f.id}', '${safeDisplayName}', false)" class="toolbar-btn" style="padding:2px 6px; font-size:11px;" title="Перейменувати проект">✏️</button>
                             </div>
-                            <div class="project-actions">
+                            <div class="project-actions" style="display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
                                 <button class="info" onclick="navigator.clipboard.writeText('${link}'); showStatus('Посилання скопійовано!', 'success')" title="Копіювати посилання для учнів">🔗 Лінк</button>
-                                <button class="warning" onclick="editDriveProject('${f.id}')" title="Завантажити в редактор">✏️ Редагувати</button>
-                                <button class="danger" onclick="deleteDriveProject('${f.id}')">🗑</button>
+                                <button class="warning" onclick="editDriveProject('${f.id}')" title="Завантажити в редактор">✏️ Ред</button>
+                                <button class="success" style="background:#10b981;" onclick="copyDriveProject('${f.id}', '${theme.id}', '${safeDisplayName}')" title="Створити копію">📄 Копія</button>
+                                <button class="info" style="background:#6366f1;" onclick="openMoveProjectModal('${f.id}', '${theme.id}', '${safeDisplayName}')" title="Перемістити в іншу тему">➡️ Перемістити</button>
+                                <button class="danger" onclick="deleteDriveProject('${f.id}')" title="Видалити">🗑</button>
                             </div>
                         </li>`;
                     });
@@ -1080,6 +1108,90 @@
             console.error(e);
             showStatus('Помилка при перейменуванні.', 'error');
             cancelRename(null, id, originalName, isFolder);
+        }
+    }
+
+    async function copyDriveProject(fileId, folderId, fileName) {
+        showStatus('Створення копії...', 'info');
+        try {
+            const newName = `Копія - ${fileName}.html`;
+            const body = { name: newName, parents: [folderId] };
+            const res = await fetch(`${GOOGLE_DRIVE_API}/${fileId}/copy`, {
+                method: 'POST',
+                headers: new Headers({
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify(body)
+            });
+            if(!res.ok) throw new Error("Copy failed");
+            const copyData = await res.json();
+            
+            // Надаємо доступ для створеної копії
+            const permBody = { role: 'reader', type: 'anyone' };
+            await fetch(`${GOOGLE_DRIVE_API}/${copyData.id}/permissions`, {
+                method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' }, body: JSON.stringify(permBody)
+            });
+
+            showStatus('Успішно скопійовано!', 'success');
+            openProjectManager(); // Оновлюємо список
+        } catch (e) {
+            console.error(e);
+            showStatus('Помилка копіювання.', 'error');
+        }
+    }
+
+    function openMoveProjectModal(fileId, oldFolderId, fileName) {
+        document.getElementById('moveProjectModal').style.display = 'flex';
+        document.getElementById('move-project-name').innerText = fileName;
+        document.getElementById('move-file-id').value = fileId;
+        document.getElementById('move-old-folder-id').value = oldFolderId;
+        document.getElementById('move-status').innerText = '';
+        
+        const select = document.getElementById('move-theme-select');
+        select.innerHTML = '';
+        
+        currentThemes.forEach(t => {
+            if(t.id !== oldFolderId) {
+                select.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+            }
+        });
+        
+        if (select.options.length === 0) {
+            select.innerHTML = '<option value="">(Немає інших тем)</option>';
+            document.getElementById('btn-confirm-move').disabled = true;
+        } else {
+            document.getElementById('btn-confirm-move').disabled = false;
+        }
+    }
+
+    async function submitMoveProject() {
+        const fileId = document.getElementById('move-file-id').value;
+        const oldFolderId = document.getElementById('move-old-folder-id').value;
+        const newFolderId = document.getElementById('move-theme-select').value;
+        const statusEl = document.getElementById('move-status');
+
+        if (!newFolderId) return;
+
+        statusEl.innerHTML = '<span style="color:blue;">⏳ Переміщення...</span>';
+        document.getElementById('btn-confirm-move').disabled = true;
+
+        try {
+            const res = await fetch(`${GOOGLE_DRIVE_API}/${fileId}?addParents=${newFolderId}&removeParents=${oldFolderId}`, {
+                method: 'PATCH',
+                headers: new Headers({ 'Authorization': `Bearer ${accessToken}` })
+            });
+            if(!res.ok) throw new Error("Move failed");
+            
+            statusEl.innerHTML = '<span style="color:green;">✅ Успішно переміщено!</span>';
+            setTimeout(() => {
+                document.getElementById('moveProjectModal').style.display = 'none';
+                openProjectManager(); // Оновлюємо список
+            }, 1000);
+        } catch (e) {
+            console.error(e);
+            statusEl.innerHTML = '<span style="color:red;">❌ Помилка переміщення.</span>';
+            document.getElementById('btn-confirm-move').disabled = false;
         }
     }
 
