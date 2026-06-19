@@ -874,7 +874,7 @@
 
     async function openSaveModal() {
         const fullHTML = getFullHTMLContent();
-        if(!fullHTML) return showStatus('Спочатку згенеруйте код (кнопка ✨)!', 'error');
+        if(!fullHTML) return showStatus('Спочатку додайте маркери або зони!', 'error');
         
         if (!accessToken) {
             showStatus('Потрібна авторизація Google. Виконуємо вхід...', 'warning');
@@ -1433,7 +1433,7 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
     }
 
     function getFullHTMLContent() {
-        const htmlContent = document.getElementById('output-code').value; if(!htmlContent) return null;
+        const htmlContent = getSnippetHTML(); if(!htmlContent) return null;
         return `<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Interactive Image</title>\n</head>\n<body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">\n    ${htmlContent}\n</body>\n</html>`;
     }
 
@@ -1445,7 +1445,7 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
 
     function closePreview() { document.getElementById('preview-overlay').style.display = 'none'; document.getElementById('preview-frame').srcdoc = ''; }
     function copyCode() { const code = document.getElementById('output-code'); code.select(); document.execCommand('copy'); showStatus('Скопійовано!', 'success'); }
-    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus('Спочатку згенеруйте код!', 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus('Збережено як HTML файл!', 'success'); }
+    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus('Спочатку додайте маркери або зони!', 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus('Збережено як HTML файл!', 'success'); }
 
     window.addEventListener('beforeunload', function (e) { if (currentImgUrl !== '' || markers.length > 0) { const confirmationMessage = 'Збережіть файл або експортуйте у зручному форматі, щоб не втратити роботу!'; e.returnValue = confirmationMessage; return confirmationMessage; } });
 </script>
