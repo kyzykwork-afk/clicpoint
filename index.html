@@ -349,6 +349,7 @@
             <div class="panel-divider"></div>
             <!-- Кнопка авторизації Google -->
             <button id="btn-google-auth" class="info" onclick="handleGoogleAuth()">☁️ Увійти з Google</button>
+            <button class="purple" id="btn-my-projects-top" onclick="openProjectManager()" style="display:none; margin-left: 10px;">📁 Мої проекти</button>
         </div>
 
         <div id="status-msg"></div>
@@ -730,6 +731,11 @@
                         authBtn.classList.add('danger');
                         document.getElementById('btn-save-drive').style.display = 'inline-block';
                         document.getElementById('btn-my-projects').style.display = 'block';
+                        
+                        if (document.getElementById('editor-layout').style.display !== 'flex') {
+                            if (document.getElementById('btn-my-projects-top')) document.getElementById('btn-my-projects-top').style.display = 'inline-block';
+                        }
+                        
                         showStatus('Успішно авторизовано в Google Drive!', 'success');
                         
                         if(pendingSaveToDrive) {
@@ -754,6 +760,7 @@
                 authBtn.classList.add('info');
                 document.getElementById('btn-save-drive').style.display = 'none';
                 document.getElementById('btn-my-projects').style.display = 'none';
+                if (document.getElementById('btn-my-projects-top')) document.getElementById('btn-my-projects-top').style.display = 'none';
                 showStatus('Вийшли з облікового запису Google.', 'info');
             });
         } else {
@@ -1102,6 +1109,7 @@
             document.getElementById('preview-panel').style.display = 'flex'; 
             document.getElementById('bottom-actions').style.display = 'flex'; 
             document.getElementById('output-area').style.display = 'none';
+            if (document.getElementById('btn-my-projects-top')) document.getElementById('btn-my-projects-top').style.display = 'none';
             if (historyIndex === -1) saveState(); renderMarkersPreview();
         };
         img.onerror = () => showStatus('Помилка завантаження зображення.', 'error'); img.src = url;
