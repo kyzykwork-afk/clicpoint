@@ -288,6 +288,29 @@
         .info-footer p { margin: 0 0 8px 0; }
         .info-footer p:last-child { margin: 0; text-align: center; margin-top: 20px; font-size: 13px; color: #64748b; border-top: 1px solid #bae6fd; padding-top: 15px; }
         .info-footer strong { color: #1e293b; }
+
+        /* Стилі для об'єднаної кнопки Назад/Вперед */
+        .undo-redo-group {
+            display: flex;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .undo-redo-group button {
+            flex: 1;
+            padding: 8px 0;
+            font-size: 18px;
+            border-radius: 0;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        .undo-redo-group button:hover {
+            opacity: 0.9;
+        }
+        .undo-redo-group button:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -320,12 +343,8 @@
             
             <div class="panel-divider"></div>
             
-            <button class="info" onclick="exportProject()">💾 Експорт</button>
             <input type="file" id="importFile" accept=".json, .html" style="display:none" onchange="importProject(event)">
             <button class="info" onclick="document.getElementById('importFile').click()">📂 Імпорт</button>
-            
-            <!-- Кнопка: Мої проекти -->
-            <button class="purple" id="btn-my-projects" onclick="openProjectManager()" style="display:none; margin-left:10px;">📁 Мої проекти</button>
             
             <div class="panel-divider"></div>
             <!-- Кнопка авторизації Google -->
@@ -334,10 +353,23 @@
 
         <div id="status-msg"></div>
 
+        <!-- Кнопка Попередній перегляд (перенесена над вікном редактора) -->
+        <div id="preview-panel" style="display: none; justify-content: flex-end; margin-bottom: 15px;">
+            <button class="info" onclick="openPreview()" id="btn-preview" style="background: #8b5cf6; font-size: 16px; padding: 10px 24px; display: flex; align-items: center; gap: 8px;">
+                👁 Попередній перегляд
+            </button>
+        </div>
+
+        <!-- Обгортка: панель інструментів зліва, редактор справа -->
         <div class="editor-layout" id="editor-layout">
             <div class="control-panel" id="tools-panel">
-                <button class="info" onclick="undo()" id="btn-undo" title="Крок назад (Ctrl+Z)" disabled>↩ Назад</button>
-                <button class="info" onclick="redo()" id="btn-redo" title="Крок вперед (Ctrl+Y)" disabled>↪ Вперед</button>
+                <div class="undo-redo-group">
+                    <button class="info" onclick="undo()" id="btn-undo" title="Крок назад (Ctrl+Z)" disabled>↩</button>
+                    <button class="info" onclick="redo()" id="btn-redo" title="Крок вперед (Ctrl+Y)" disabled>↪</button>
+                </div>
+                
+                <!-- Кнопка: Мої проекти (перенесена в бічну панель) -->
+                <button class="purple" id="btn-my-projects" onclick="openProjectManager()" style="display:none; width: 100%;">📁 Мої проекти</button>
                 
                 <div style="height: 2px; background: #bae6fd; margin: 5px 0; border-radius: 2px;"></div>
                 
@@ -363,17 +395,17 @@
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 15px;">
-            <button class="success" onclick="generateCode()" id="btn-generate" style="display: none; font-size: 18px; padding: 12px 30px;">✨ Згенерувати код для сайту</button>
-            <button class="info" onclick="openPreview()" id="btn-preview" style="display: none; font-size: 18px; padding: 12px 30px; background: #8b5cf6;">👁 Попередній перегляд</button>
+        <!-- Кнопки під вікном редактора (в один ряд) -->
+        <div id="bottom-actions" style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+            <button class="success" onclick="generateCode()" id="btn-generate" style="font-size: 16px; padding: 12px 24px;">✨ Згенерувати код для сайту</button>
+            <button onclick="saveAsHTML()" style="background: #16a34a; font-size: 16px; padding: 12px 24px;">💾 Зберегти як .html</button>
+            <button id="btn-save-drive" onclick="openSaveModal()" style="background: #3b82f6; display: none; font-size: 16px; padding: 12px 24px;">☁️ Зберегти на Google Диск</button>
+            <button class="info" onclick="exportProject()" style="font-size: 16px; padding: 12px 24px;">💾 Експорт .json</button>
         </div>
 
         <div id="output-area">
             <h3 style="margin-top: 0;">Ваш готовий код:</h3>
             <button onclick="copyCode()" style="margin-bottom: 10px; background: #475569;">📋 Скопіювати код</button>
-            <button onclick="saveAsHTML()" style="margin-bottom: 10px; background: #16a34a; margin-left: 10px;">💾 Зберегти як .html</button>
-            <!-- ОНОВЛЕНА КНОПКА (Тепер викликає openSaveModal) -->
-            <button id="btn-save-drive" onclick="openSaveModal()" style="margin-bottom: 10px; background: #3b82f6; margin-left: 10px; display: none;">☁️ Зберегти на Диск (LMS)</button>
             <textarea id="output-code" readonly></textarea>
         </div>
 
@@ -697,7 +729,7 @@
                         authBtn.classList.remove('info', 'warning');
                         authBtn.classList.add('danger');
                         document.getElementById('btn-save-drive').style.display = 'inline-block';
-                        document.getElementById('btn-my-projects').style.display = 'inline-block';
+                        document.getElementById('btn-my-projects').style.display = 'block';
                         showStatus('Успішно авторизовано в Google Drive!', 'success');
                         
                         if(pendingSaveToDrive) {
@@ -1066,7 +1098,10 @@
             const polyLayer = document.getElementById('polygon-layer'); polyLayer.setAttribute('viewBox', `0 0 ${imgNatWidth} ${imgNatHeight}`); polyLayer.setAttribute('preserveAspectRatio', 'none');
             if(watermarkDataUrl) { const logoEl = document.getElementById('workspace-logo'); logoEl.src = watermarkDataUrl; logoEl.style.display = 'block'; }
             showStatus('Готово! Клікайте для точок або малюйте зони.', 'success');
-            document.getElementById('editor-layout').style.display = 'flex'; document.getElementById('btn-generate').style.display = 'inline-block'; document.getElementById('btn-preview').style.display = 'inline-block'; document.getElementById('output-area').style.display = 'none';
+            document.getElementById('editor-layout').style.display = 'flex'; 
+            document.getElementById('preview-panel').style.display = 'flex'; 
+            document.getElementById('bottom-actions').style.display = 'flex'; 
+            document.getElementById('output-area').style.display = 'none';
             if (historyIndex === -1) saveState(); renderMarkersPreview();
         };
         img.onerror = () => showStatus('Помилка завантаження зображення.', 'error'); img.src = url;
