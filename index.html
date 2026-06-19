@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClicPoint v10.5 - Конструктор Інтерактивних Зображень (Mobile Optimized)</title>
+    <title>ClicPoint v10.4 - Конструктор Інтерактивних Зображень (Mobile Optimized)</title>
     
     <!-- Підключення Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -138,8 +138,8 @@
         .status-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
         .status-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-        .status-warning { background: #fefce8; color: #854d0e; border: 1px solid #fef08a; }
 
+        /* --- Новий лейаут для редактора --- */
         .editor-layout {
             display: none;
             flex-direction: column;
@@ -147,67 +147,152 @@
             margin-bottom: 20px;
         }
         @media (min-width: 768px) {
-            .editor-layout { flex-direction: row; align-items: flex-start; }
-            #tools-panel { width: 240px; flex-shrink: 0; }
+            .editor-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            #tools-panel {
+                width: 240px;
+                flex-shrink: 0;
+            }
         }
 
         #tools-panel {
-            flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; margin-bottom: 0; box-sizing: border-box;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            gap: 12px;
+            margin-bottom: 0;
+            box-sizing: border-box;
         }
 
         #workspace-wrapper { 
-            position: relative; flex: 1; min-width: 0; width: 100%; border: 2px dashed #cbd5e1; border-radius: 8px;
-            background: #e2e8f0; overflow: hidden; user-select: none;
+            position: relative; 
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            border: 2px dashed #cbd5e1; 
+            border-radius: 8px;
+            background: #e2e8f0; 
+            overflow: hidden; 
+            user-select: none;
         }
         
-        #main-img { width: 100%; height: auto; display: block; margin: 0 auto; pointer-events: none; }
+        #main-img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            margin: 0 auto; 
+            pointer-events: none; 
+        }
 
-        /* Шари */
-        #arrow-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
-        #click-layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; cursor: crosshair; z-index: 10; }
-        #polygon-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 11; }
-        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 15; }
+        /* Шари відображення (Z-Index) */
+        #arrow-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        #click-layer { 
+            position: absolute; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            cursor: crosshair; 
+            z-index: 10;
+        }
 
+        #polygon-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        /* Стиль для нашого вшитого логотипу */
         #workspace-logo {
-            display: none; position: absolute; bottom: 15px; right: 15px; max-width: 150px; max-height: 60px; z-index: 20; opacity: 0.8;
+            display: none; position: absolute; bottom: 15px; right: 15px;
+            max-width: 150px; max-height: 60px; z-index: 20; opacity: 0.8;
             pointer-events: none; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6));
         }
         
         .marker-preview { 
-            position: absolute; width: 28px; height: 28px; border-radius: 50%; transform: translate(-50%, -50%); 
-            border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.4); cursor: grab; display: flex;
-            align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px; pointer-events: auto;
+            position: absolute; 
+            width: 28px; 
+            height: 28px; 
+            border-radius: 50%; 
+            transform: translate(-50%, -50%); 
+            border: 2px solid #fff; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4); 
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: auto;
         }
         .marker-preview:active { cursor: grabbing; }
 
         .target-preview {
-            position: absolute; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; transform: translate(-50%, -50%); 
-            border: 2px solid #fff; cursor: grab; pointer-events: auto;
+            position: absolute; width: 14px; height: 14px; background: #ef4444; 
+            border-radius: 50%; transform: translate(-50%, -50%); 
+            border: 2px solid #fff; cursor: grab;
+            pointer-events: auto;
         }
 
         .polygon-preview { pointer-events: auto; cursor: pointer; transition: fill-opacity 0.2s; }
         .polygon-preview:hover { fill-opacity: 0.6; }
 
         .poly-handle {
-            position: absolute; width: 12px; height: 12px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); 
-            cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.5); pointer-events: auto;
+            position: absolute; width: 12px; height: 12px; background: #fff; 
+            border-radius: 50%; transform: translate(-50%, -50%); 
+            cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            pointer-events: auto;
         }
-        .poly-move-handle {
-            position: absolute; width: 24px; height: 24px; background: rgba(255, 255, 255, 0.9); border-radius: 4px; transform: translate(-50%, -50%);
-            cursor: move; box-shadow: 0 2px 4px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: #334155; border: 1px solid #cbd5e1; pointer-events: auto;
-        }
+        .poly-handle:active { cursor: grabbing; }
 
-        .label-preview {
-            position: absolute; transform: translate(-50%, calc(-100% - 4px)); cursor: grab; pointer-events: auto;
-            white-space: pre-wrap; z-index: 12; padding: 5px; border: 1px dashed transparent; transition: scale 0.2s ease, filter 0.2s ease;
+        .poly-move-handle {
+            position: absolute; width: 24px; height: 24px; background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px; transform: translate(-50%, -50%);
+            cursor: move; box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: #334155; border: 1px solid #cbd5e1;
+            pointer-events: auto;
         }
-        .label-preview:hover { border: 1px dashed #cbd5e1; scale: 1.05; filter: brightness(1.05); }
+        .poly-move-handle:active { cursor: grabbing; background: #e2e8f0; }
+
+        /* Стиль для текстового напису в редакторі */
+        .label-preview {
+            position: absolute;
+            transform: translate(-50%, calc(-100% - 4px)); 
+            cursor: grab;
+            pointer-events: auto;
+            white-space: pre-wrap;
+            z-index: 12;
+            padding: 5px;
+            border: 1px dashed transparent;
+            transition: scale 0.2s ease, filter 0.2s ease;
+        }
+        .label-preview:hover { 
+            border: 1px dashed #cbd5e1; 
+            scale: 1.05;
+            filter: brightness(1.05);
+        }
+        .label-preview:active { cursor: grabbing; }
 
         .modal { 
             display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; 
             background: rgba(15, 23, 42, 0.85); align-items: center; justify-content: center; 
         }
+
         .modal-content { 
             background: #fff; padding: 24px; border-radius: 12px; width: 90%; max-width: 550px; 
             max-height: 90vh; overflow-y: auto; position: relative;
@@ -215,8 +300,10 @@
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color:#475569;}
+        
         .flex-row { display: flex; gap: 15px; }
         .flex-row > div { flex: 1; }
+
         .range-group { display: flex; flex-direction: column; gap: 5px; }
         .range-group input[type="range"] { width: 100%; }
 
@@ -226,17 +313,26 @@
         }
         .toolbar-btn:hover { background: #e2e8f0; }
 
-        .format-btn { background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .format-btn {
+            background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;
+        }
         .format-btn.active { background: #3b82f6; color: white; }
 
+        /* Кнопки швидкого вибору кольору */
         .color-preset {
             display: inline-block; width: 16px; height: 16px; border-radius: 4px; cursor: pointer;
             border: 1px solid rgba(0,0,0,0.2); transition: transform 0.1s;
         }
         .color-preset:hover { transform: scale(1.2); }
 
-        @keyframes editorDashFlow { to { stroke-dashoffset: -10; } }
-        .editor-arrow-anim { stroke-dasharray: 6 4; animation: editorDashFlow 0.5s linear infinite; }
+        /* Анімація для стрілок у редакторі */
+        @keyframes editorDashFlow {
+            to { stroke-dashoffset: -10; }
+        }
+        .editor-arrow-anim {
+            stroke-dasharray: 6 4;
+            animation: editorDashFlow 0.5s linear infinite;
+        }
 
         #output-area { display: none; margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; }
         #output-code { 
@@ -245,8 +341,9 @@
         }
 
         .draw-instruction {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; 
-            padding: 8px 16px; border-radius: 20px; font-size: 14px; z-index: 20; display: none; pointer-events: none;
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 20px;
+            font-size: 14px; z-index: 20; display: none; pointer-events: none;
         }
 
         /* Стилі для Менеджера проектів */
@@ -258,12 +355,21 @@
         .project-name { font-weight: 500; color: #3b82f6; }
         .project-actions button { padding: 6px 12px; font-size: 12px; margin-left: 5px; }
 
+        /* Стилі для інформаційного блоку (Дисклеймер) */
         .info-footer {
-            margin-top: 35px; padding: 20px 25px; background-color: var(--control-bg); border: 1px solid var(--control-border);
-            border-radius: 12px; color: #475569; font-size: 14px; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+            margin-top: 35px;
+            padding: 20px 25px;
+            background-color: var(--control-bg);
+            border: 1px solid var(--control-border);
+            border-radius: 12px;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
         }
         .info-footer p { margin: 0 0 8px 0; }
         .info-footer p:last-child { margin: 0; text-align: center; margin-top: 20px; font-size: 13px; color: #64748b; border-top: 1px solid #bae6fd; padding-top: 15px; }
+        .info-footer strong { color: #1e293b; }
     </style>
 </head>
 <body>
@@ -282,6 +388,7 @@
 <div id="app-builder-ui">
     <div class="header">
         <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <!-- Картинка логотипу перед назвою додатка -->
             <img id="header-logo" src="" alt="Логотип" style="max-height: 40px; border-radius: 6px; display: none;" onerror="this.style.display='none'">
             <span>⚙️ ClicPoint - Конструктор Інтерактивних Зображень</span>
         </h1>
@@ -300,25 +407,32 @@
             <input type="file" id="importFile" accept=".json, .html" style="display:none" onchange="importProject(event)">
             <button class="info" onclick="document.getElementById('importFile').click()">📂 Імпорт</button>
             
-            <!-- Нова кнопка: Мої проекти -->
+            <!-- Кнопка: Мої проекти -->
             <button class="purple" id="btn-my-projects" onclick="openProjectManager()" style="display:none; margin-left:10px;">📁 Мої проекти</button>
             
             <div class="panel-divider"></div>
+            <!-- Кнопка авторизації Google -->
             <button id="btn-google-auth" class="info" onclick="handleGoogleAuth()">☁️ Увійти з Google</button>
         </div>
 
         <div id="status-msg"></div>
 
+        <!-- Обгортка: панель інструментів зліва, редактор справа -->
         <div class="editor-layout" id="editor-layout">
             <div class="control-panel" id="tools-panel">
                 <button class="info" onclick="undo()" id="btn-undo" title="Крок назад (Ctrl+Z)" disabled>↩ Назад</button>
                 <button class="info" onclick="redo()" id="btn-redo" title="Крок вперед (Ctrl+Y)" disabled>↪ Вперед</button>
+                
                 <div style="height: 2px; background: #bae6fd; margin: 5px 0; border-radius: 2px;"></div>
+                
                 <button class="warning" onclick="startPolygonDraw()" id="btn-draw-poly">⬟ Зона (Полігон)</button>
-                <button class="success" onclick="finishPolygonDraw()" id="btn-finish-poly" style="display:none;">✅ Завершити</button>
+                <button class="success" onclick="finishPolygonDraw()" id="btn-finish-poly" style="display:none;">✅ Завершити зону</button>
                 <button onclick="cancelPolygonDraw()" id="btn-cancel-poly" style="display:none; background:#94a3b8;">Скасувати</button>
+                
                 <button class="info" onclick="startTextMode()" id="btn-draw-text" style="background: #8b5cf6;">🔤 Додати напис</button>
+
                 <div style="height: 2px; background: #bae6fd; margin: 5px 0; border-radius: 2px;"></div>
+
                 <button class="danger" onclick="clearAll()" id="btn-clear" title="Видалити всі мітки та зони">🗑 Очистити все</button>
             </div>
 
@@ -349,22 +463,20 @@
 
         <div class="info-footer">
             <p><strong>🤖 Про проєкт:</strong> ClicPoint — це продукт ітеративного промпт-інжинірингу та спільної розробки людини та штучного інтелекту.</p>
-            <p><strong>🔒 Дисклеймер:</strong> Усі операції з обробки виконуються на стороні клієнта (Client-Side). Ми не збираємо та не зберігаємо ваші файли на сторонніх серверах (лише ваш особистий Google Drive).</p>
+            <p><strong>🔒 Дисклеймер:</strong> Усі операції з обробки та генерації коду виконуються на стороні клієнта (Client-Side). Ми не збираємо та не зберігаємо ваші файли. Будь ласка, переконайтеся, що ви маєте права на використання завантажених зображень.</p>
             <p><em>Розробка та тестування: Кизик Дмитро © 2026.</em></p>
         </div>
+
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- МОДАЛЬНІ ВІКНА ТА ЛОГІКА -->
-<!-- ========================================== -->
-
-<!-- Модальне вікно маркера (збережено всю існуючу логіку) -->
+<!-- Модальне вікно маркера -->
 <div class="modal" id="markerModal" onclick="if(event.target === this) closeModal()">
     <div class="modal-content">
         <h3 id="modal-title-text" style="margin-top:0; color: var(--primary);">📍 Налаштування</h3>
         <div id="modal-error" style="color: var(--danger); font-size: 13px; margin-bottom: 10px; display: none;"></div>
 
+        <!-- ОСНОВНА ГРУПА ДЛЯ МАРКЕРІВ/ПОЛІГОНІВ -->
         <div id="m-title-group" class="form-group">
             <label>Назва (Заголовок):</label>
             <input type="text" id="m-title" placeholder="Наприклад: Двигун трактора">
@@ -385,20 +497,22 @@
                 </select>
             </div>
             <div>
-                <label style="display: flex; justify-content: space-between; align-items: center;">Колір:
+                <label style="display: flex; justify-content: space-between; align-items: center;">
+                    Колір:
                     <span style="display:flex; gap:4px;">
-                        <span class="color-preset" style="background:#000000;" onclick="document.getElementById('m-color').value='#000000'"></span>
-                        <span class="color-preset" style="background:#ffffff;" onclick="document.getElementById('m-color').value='#ffffff'"></span>
-                        <span class="color-preset" style="background:#dc2626;" onclick="document.getElementById('m-color').value='#dc2626'"></span>
-                        <span class="color-preset" style="background:#16a34a;" onclick="document.getElementById('m-color').value='#16a34a'"></span>
-                        <span class="color-preset" style="background:#2563eb;" onclick="document.getElementById('m-color').value='#2563eb'"></span>
-                        <span class="color-preset" style="background:#eab308;" onclick="document.getElementById('m-color').value='#eab308'"></span>
+                        <span class="color-preset" style="background:#000000;" onclick="document.getElementById('m-color').value='#000000'" title="Чорний"></span>
+                        <span class="color-preset" style="background:#ffffff;" onclick="document.getElementById('m-color').value='#ffffff'" title="Білий"></span>
+                        <span class="color-preset" style="background:#dc2626;" onclick="document.getElementById('m-color').value='#dc2626'" title="Червоний"></span>
+                        <span class="color-preset" style="background:#16a34a;" onclick="document.getElementById('m-color').value='#16a34a'" title="Зелений"></span>
+                        <span class="color-preset" style="background:#2563eb;" onclick="document.getElementById('m-color').value='#2563eb'" title="Синій"></span>
+                        <span class="color-preset" style="background:#eab308;" onclick="document.getElementById('m-color').value='#eab308'" title="Жовтий"></span>
                     </span>
                 </label>
                 <input type="color" id="m-color" value="#2563eb" style="width:100%; height:36px; padding:0; border-radius:6px; cursor:pointer;">
             </div>
         </div>
 
+        <!-- Налаштування прозорості (ТІЛЬКИ ДЛЯ ЗОН) -->
         <div class="form-group flex-row" id="polygon-opacity-group" style="display:none; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
             <div class="range-group">
                 <label>Прозорість (спокій): <span id="op-norm-val">40%</span></label>
@@ -422,47 +536,132 @@
             </select>
         </div>
 
+        <!-- Динамічні поля контенту -->
         <div class="form-group" id="group-text">
             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 6px;">
                 <label style="margin-bottom:0;">Опис:</label>
                 <div style="display:flex; gap:4px;">
-                    <button class="toolbar-btn" onclick="insertTag('**', '**')"><b>Ж</b></button>
-                    <button class="toolbar-btn" onclick="insertTag('*', '*')"><i>К</i></button>
-                    <button class="toolbar-btn" onclick="insertTag('\n- ', '')">Список</button>
+                    <button class="toolbar-btn" onclick="insertTag('**', '**')" title="Жирний"><b>Ж</b></button>
+                    <button class="toolbar-btn" onclick="insertTag('*', '*')" title="Курсив"><i>К</i></button>
+                    <button class="toolbar-btn" onclick="insertTag('\n- ', '')" title="Маркований список">Список</button>
                 </div>
             </div>
-            <textarea id="m-text" rows="4" placeholder="Введіть навчальний текст..."></textarea>
+            <textarea id="m-text" rows="4" placeholder="Введіть навчальний text..."></textarea>
         </div>
-        <div class="form-group" id="group-video" style="display:none;"><label>Посилання на YouTube:</label><input type="text" id="m-video" placeholder="https://www.youtube.com/watch?v=..."></div>
-        <div class="form-group" id="group-audio" style="display:none;"><label>Посилання на аудіо або Google Диск:</label><input type="text" id="m-audio" placeholder="https://site.com/audio.mp3"></div>
-        <div class="form-group" id="group-link" style="display:none;"><label>URL посилання:</label><input type="text" id="m-link" placeholder="https://..."></div>
-        <div class="form-group" id="group-transition" style="display:none;"><label>Посилання на наступну сцену:</label><input type="text" id="m-transition" placeholder="https://..."></div>
+        <div class="form-group" id="group-video" style="display:none;">
+            <label>Посилання на YouTube:</label>
+            <input type="text" id="m-video" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        <div class="form-group" id="group-audio" style="display:none;">
+            <label>Посилання на аудіофайл (.mp3, .wav) або на файл Google Диску:</label>
+            <input type="text" id="m-audio" placeholder="https://site.com/audio.mp3">
+        </div>
+        <div class="form-group" id="group-link" style="display:none;">
+            <label>URL посилання:</label>
+            <input type="text" id="m-link" placeholder="https://...">
+        </div>
+        <div class="form-group" id="group-transition" style="display:none;">
+            <label>Посилання на наступну сцену (URL):</label>
+            <input type="text" id="m-transition" placeholder="https://...">
+            <p style="font-size:12px; color:#64748b; margin:4px 0 0;">Клік по маркеру одразу відкриє це посилання.</p>
+        </div>
         
         <div id="group-quiz" style="display:none; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-            <div class="form-group"><label>Запитання:</label><input type="text" id="q-text" placeholder="Яка функція цієї деталі?"></div>
-            <div class="form-group"><label>Варіанти відповідей (відмітьте правильний кружечок):</label><div id="quiz-options-container"></div><button type="button" onclick="addQuizOption()" style="padding:6px 12px; font-size:12px; background:#3b82f6; color:#fff; border:none; border-radius:4px; margin-top:8px;">+ Додати варіант</button></div>
+            <div class="form-group">
+                <label>Запитання:</label>
+                <input type="text" id="q-text" placeholder="Яка функція цієї деталі?">
+            </div>
+            <div class="form-group">
+                <label>Варіанти відповідей (відмітьте правильний кружечок):</label>
+                <div id="quiz-options-container"></div>
+                <button type="button" onclick="addQuizOption()" style="padding:6px 12px; font-size:12px; background:#3b82f6; color:#fff; border:none; border-radius:4px; margin-top:8px;">+ Додати варіант</button>
+            </div>
             <div class="form-group flex-row" style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                <div><label>Повідомлення (вірно):</label><input type="text" id="q-msg-correct" value="✅ Правильна відповідь!"></div>
-                <div><label>Повідомлення (помилка):</label><input type="text" id="q-msg-incorrect" value="❌ Неправильно."></div>
+                <div>
+                    <label>Повідомлення (вірно):</label>
+                    <input type="text" id="q-msg-correct" value="✅ Правильна відповідь!">
+                </div>
+                <div>
+                    <label>Повідомлення (помилка):</label>
+                    <input type="text" id="q-msg-incorrect" value="❌ Неправильно, спробуйте ще.">
+                </div>
             </div>
         </div>
         
+        <!-- ГРУПА НАЛАШТУВАНЬ ДЛЯ ТЕКСТОВИХ НАПИСІВ (LABEL) -->
         <div id="group-label-settings" style="display:none; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-            <div class="form-group"><label>Текст напису:</label><textarea id="l-text" rows="3"></textarea></div>
+            <div class="form-group">
+                <label>Текст напису:</label>
+                <textarea id="l-text" rows="3" placeholder="Введіть заголовок чи текст..."></textarea>
+            </div>
             <div class="form-group flex-row">
-                <div class="range-group" style="flex:2;"><label>Розмір шрифту: <span id="l-size-val">24px</span></label><input type="range" id="l-size" min="10" max="100" value="24" oninput="document.getElementById('l-size-val').innerText=this.value+'px'"></div>
-                <div style="flex:1;"><label>Колір тексту:</label><input type="color" id="l-color" value="#1e293b" style="width:100%; height:36px; padding:0; border-radius:6px; cursor:pointer;"></div>
-            </div>
-            <div class="form-group flex-row" style="align-items: flex-end;">
-                <div style="flex:1;"><label>Стиль (Заголовок):</label><select id="l-style" style="width:100%;" onchange="document.getElementById('custom-panel-settings').style.display = this.value === 'custom-panel' ? 'block' : 'none'"><option value="normal">Звичайний</option><option value="shadow">З тінню</option><option value="panel">Світла плашка</option><option value="panel-dark">Темна плашка</option><option value="custom-panel">🎨 Свій колір</option></select></div>
-                <div style="flex:1;"><label>Точка виходу стрілки:</label><select id="l-anchor" style="width:100%;"><option value="auto">Авто</option><option value="bottom">Знизу</option><option value="top">Зверху</option><option value="left">Зліва</option><option value="right">Справа</option><option value="center">З центру</option></select></div>
-            </div>
-            <div id="custom-panel-settings" style="display:none; margin-top:15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
-                <div class="flex-row">
-                    <div style="flex:1;"><label>Колір фону:</label><input type="color" id="l-bg-color" value="#ffffff" style="width:100%; height:36px; padding:0; border-radius:6px; cursor:pointer;"></div>
-                    <div class="range-group" style="flex:2;"><label>Прозорість фону: <span id="l-bg-op-val">85%</span></label><input type="range" id="l-bg-op" min="0" max="100" value="85" oninput="document.getElementById('l-bg-op-val').innerText=this.value+'%'"></div>
+                <div class="range-group" style="flex:2;">
+                    <label>Розмір шрифту: <span id="l-size-val">24px</span></label>
+                    <input type="range" id="l-size" min="10" max="100" value="24" oninput="document.getElementById('l-size-val').innerText=this.value+'px'">
+                </div>
+                <div style="flex:1;">
+                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                        Колір тексту:
+                        <span style="display:flex; gap:4px;">
+                            <span class="color-preset" style="background:#000000;" onclick="document.getElementById('l-color').value='#000000'" title="Чорний"></span>
+                            <span class="color-preset" style="background:#ffffff;" onclick="document.getElementById('l-color').value='#ffffff'" title="Білий"></span>
+                            <span class="color-preset" style="background:#dc2626;" onclick="document.getElementById('l-color').value='#dc2626'" title="Червоний"></span>
+                            <span class="color-preset" style="background:#16a34a;" onclick="document.getElementById('l-color').value='#16a34a'" title="Зелений"></span>
+                            <span class="color-preset" style="background:#2563eb;" onclick="document.getElementById('l-color').value='#2563eb'" title="Синій"></span>
+                            <span class="color-preset" style="background:#f97316;" onclick="document.getElementById('l-color').value='#f97316'" title="Помаранчевий"></span>
+                        </span>
+                    </label>
+                    <input type="color" id="l-color" value="#1e293b" style="width:100%; height:36px; padding:0; border-radius:6px; cursor:pointer;">
                 </div>
             </div>
+            <div class="form-group flex-row" style="align-items: flex-end;">
+                <div style="flex:1;">
+                    <label>Стиль (Заголовок):</label>
+                    <select id="l-style" style="width:100%;" onchange="document.getElementById('custom-panel-settings').style.display = this.value === 'custom-panel' ? 'block' : 'none'">
+                        <option value="normal">Звичайний текст</option>
+                        <option value="shadow">З тінню (Контрастний)</option>
+                        <option value="panel">На світлій плашці</option>
+                        <option value="panel-dark">На темній плашці</option>
+                        <option value="custom-panel">🎨 Користувацька плашка</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label>Точка виходу стрілки:</label>
+                    <select id="l-anchor" style="width:100%;">
+                        <option value="auto">🤖 Авто (Розумна)</option>
+                        <option value="bottom">⬇️ Знизу</option>
+                        <option value="top">⬆️ Зверху</option>
+                        <option value="left">⬅️ Зліва</option>
+                        <option value="right">➡️ Справа</option>
+                        <option value="center">⏺ З центру</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Блок: Налаштування користувацької плашки -->
+            <div id="custom-panel-settings" style="display:none; margin-top:15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+                <div class="flex-row">
+                    <div style="flex:1;">
+                        <label style="display: flex; justify-content: space-between; align-items: center;">
+                            Колір фону:
+                            <span style="display:flex; gap:4px;">
+                                <span class="color-preset" style="background:#000000;" onclick="document.getElementById('l-bg-color').value='#000000'" title="Чорний"></span>
+                                <span class="color-preset" style="background:#ffffff;" onclick="document.getElementById('l-bg-color').value='#ffffff'" title="Білий"></span>
+                                <span class="color-preset" style="background:#dc2626;" onclick="document.getElementById('l-bg-color').value='#dc2626'" title="Червоний"></span>
+                                <span class="color-preset" style="background:#16a34a;" onclick="document.getElementById('l-bg-color').value='#16a34a'" title="Зелений"></span>
+                                <span class="color-preset" style="background:#2563eb;" onclick="document.getElementById('l-bg-color').value='#2563eb'" title="Синій"></span>
+                                <span class="color-preset" style="background:#f97316;" onclick="document.getElementById('l-bg-color').value='#f97316'" title="Помаранчевий"></span>
+                            </span>
+                        </label>
+                        <input type="color" id="l-bg-color" value="#ffffff" style="width:100%; height:36px; padding:0; border-radius:6px; cursor:pointer;">
+                    </div>
+                    <div class="range-group" style="flex:2;">
+                        <label>Прозорість фону: <span id="l-bg-op-val">85%</span></label>
+                        <input type="range" id="l-bg-op" min="0" max="100" value="85" oninput="document.getElementById('l-bg-op-val').innerText=this.value+'%'">
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group" style="margin-bottom:0; padding-top:10px;">
                 <label>Форматування:</label>
                 <div style="display:flex; gap:10px;">
@@ -473,13 +672,28 @@
             </div>
         </div>
 
+        <!-- Блок стрілки (для точок та написів) -->
         <div class="form-group" id="group-arrow" style="border-top: 1px solid #e2e8f0; padding-top: 15px; margin-top: 15px;">
             <label>Стрілки-вказівники:</label>
             <div id="arrows-list" style="margin-bottom: 10px; display:flex; flex-direction:column; gap:5px;"></div>
             <button type="button" id="btn-add-arrow" onclick="startSelectingTarget()" style="background: #3b82f6; width: 100%; padding: 8px;">🎯 Вказати стрілкою на деталь</button>
+            
+            <!-- Налаштування анімації та напрямку -->
             <div class="form-group flex-row" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
-                <div><label>Анімація стрілки:</label><select id="a-animated" style="width:100%;"><option value="false">Вимкнено</option><option value="true">Увімкнено</option></select></div>
-                <div><label>Напрямок:</label><select id="a-direction" style="width:100%;"><option value="to">До цілі ➡️</option><option value="from">Від цілі ⬅️</option></select></div>
+                <div>
+                    <label>Анімація стрілки:</label>
+                    <select id="a-animated" style="width:100%;">
+                        <option value="false">Вимкнено (Суцільна)</option>
+                        <option value="true">Увімкнено (Пунктир, біжить)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Напрямок:</label>
+                    <select id="a-direction" style="width:100%;">
+                        <option value="to">До цілі ➡️</option>
+                        <option value="from">Від цілі ⬅️</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -552,15 +766,14 @@
 <!-- Оверлей попереднього перегляду -->
 <div id="preview-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.95); z-index: 100000; flex-direction: column;">
     <div style="padding: 15px 20px; background: #0f172a; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
-        <span style="color: #cbd5e1; font-weight: bold; font-size: 16px;">👁 Попередній перегляд</span>
-        <button onclick="closePreview()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold;">✖ Закрити</button>
+        <span style="color: #cbd5e1; font-weight: bold; font-size: 16px;">👁 Попередній перегляд (Режим учня)</span>
+        <button onclick="closePreview()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: opacity 0.2s;">✖ Закрити перегляд</button>
     </div>
     <div style="flex: 1; padding: 20px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
         <iframe id="preview-frame" style="width: 100%; max-width: 1200px; height: 100%; border: none; background: #f8fafc; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></iframe>
     </div>
 </div>
 
-<!-- СКРИПТИ -->
 <script>
     // ==========================================
     // ЛОГІКА РЕЖИМУ УЧНЯ (VIEWER MODE)
@@ -569,12 +782,10 @@
     const viewFileId = urlParams.get('view');
 
     if (viewFileId) {
-        // Ховаємо інтерфейс конструктора
         document.getElementById('app-builder-ui').style.display = 'none';
         const viewer = document.getElementById('viewer-container');
         viewer.style.display = 'block';
 
-        // Надійний метод отримання публічного файлу через CORS Proxy
         const targetUrl = `https://docs.google.com/uc?export=download&id=${viewFileId}`;
         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
@@ -584,75 +795,45 @@
                 return res.text();
             })
             .then(htmlContent => {
+                // Перевірка, чи Google не повернув сторінку авторизації (означає, що файл приватний)
+                if (htmlContent.includes('ServiceLogin') || htmlContent.includes('<title>Google Drive - Access Denied</title>') || htmlContent.includes('accounts.google.com')) {
+                    throw new Error('PRIVATE_FILE');
+                }
+                
                 document.getElementById('viewer-loader').style.display = 'none';
                 const iframe = document.getElementById('viewer-iframe');
-                // Використовуємо srcdoc для безпечного рендерингу HTML
                 iframe.srcdoc = htmlContent;
             })
             .catch(err => {
                 console.error("Помилка завантаження Viewer Mode:", err);
-                document.getElementById('viewer-loader').innerHTML = `
-                    <h3 style="color: #dc2626;">❌ Помилка завантаження.</h3>
-                    <p style="color: #475569;">Можливо, посилання недійсне, або файл був видалений.</p>
-                `;
+                const loader = document.getElementById('viewer-loader');
+                
+                if (err.message === 'PRIVATE_FILE') {
+                    loader.innerHTML = `
+                        <h3 style="color: #dc2626;">🔒 Помилка доступу</h3>
+                        <p style="color: #475569;">Цей файл є приватним.<br><br><b>Рішення:</b> Викладачу потрібно зберегти його через кнопку <b>"Зберегти на Диск (LMS)"</b>, щоб система автоматично відкрила доступ для учнів.</p>
+                    `;
+                } else {
+                    loader.innerHTML = `
+                        <h3 style="color: #dc2626;">❌ Помилка завантаження.</h3>
+                        <p style="color: #475569;">Можливо, посилання недійсне, або файл був видалений.</p>
+                    `;
+                }
             });
     }
 
-    // Якщо ми у режимі Viewer, зупиняємо виконання залишкового коду конструктора
     if (viewFileId) {
         throw new Error("Viewer Mode Initialized. Builder scripts halted.");
     }
 
-    // ==========================================
-    // ЗМІННІ СТАНУ ТА GOOGLE DRIVE API
-    // ==========================================
+    // --- АВТОРИЗАЦІЯ GOOGLE ТА ІНІЦІАЛІЗАЦІЯ ---
     let tokenClient;
     let accessToken = null;
-    const ROOT_FOLDER_NAME = "ClicPoint Projects";
-    const GOOGLE_DRIVE_API = 'https://www.googleapis.com/drive/v3/files';
-    const GOOGLE_UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3/files';
+    let pendingSaveToDrive = false;
 
-    // Вбудований логотип
-    let watermarkDataUrl = '';
-    
-    // Стан редактора
-    let currentImgUrl = '';
-    let markers = [];
-    let editingIndex = null;
-    let imgNatWidth = 1000;
-    let imgNatHeight = 1000;
-    let tempCoords = { x: 0, y: 0, shape: '' }; 
-    let preventNextClick = false; 
-    let isSelectingTarget = false; 
-    let isDrawingPolygon = false;
-    let isAddingText = false;
-    let tempPolygonPoints = [];
-    let tempQuizOptions = ['', '', ''];
-    let tempQuizCorrect = 0;
-
-    // Стан історії
-    let stateHistory = [];
-    let historyIndex = -1;
-
-    // Drag логіка
-    let activeDragIndex = null;
-    let activeDragElement = null;
-    let activeDragType = null;
-    let activeDragPtIndex = null;
-    let activeDragTIndex = null;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let initialPolyPoints = []; 
-
-    const iconMap = { 'number': '', 'info': 'ℹ️', 'video': '▶️', 'warning': '⚠️', 'link': '🔗', 'star': '⭐', 'audio': '🎵', 'quiz': '❓' };
-
-    // ==========================================
-    // ІНІЦІАЛІЗАЦІЯ
-    // ==========================================
     function initGoogleAuth() {
         if (window.google && google.accounts && google.accounts.oauth2) {
             tokenClient = google.accounts.oauth2.initTokenClient({
-                // ВАШ CLIENT ID збережено
                 client_id: '795187281705-posp8gjh6mf2dfhamhk96j6qocacpqop.apps.googleusercontent.com',
                 scope: 'https://www.googleapis.com/auth/drive.file',
                 callback: (tokenResponse) => {
@@ -666,17 +847,24 @@
                         document.getElementById('btn-save-drive').style.display = 'inline-block';
                         document.getElementById('btn-my-projects').style.display = 'inline-block';
                         
-                        showStatus('Успішно авторизовано!', 'success');
+                        showStatus('Успішно авторизовано в Google Drive!', 'success');
+                        
+                        if(pendingSaveToDrive) {
+                            pendingSaveToDrive = false;
+                            openSaveModal(); 
+                        }
                     }
                 },
             });
         } else {
+            // Якщо скрипти Google ще не завантажилися, спробувати пізніше
             setTimeout(initGoogleAuth, 500);
         }
     }
 
     function handleGoogleAuth() {
         if (accessToken) {
+            // Вихід
             google.accounts.oauth2.revoke(accessToken, () => {
                 accessToken = null;
                 const authBtn = document.getElementById('btn-google-auth');
@@ -688,18 +876,96 @@
                 showStatus('Вийшли з облікового запису Google.', 'info');
             });
         } else {
-            if (tokenClient) tokenClient.requestAccessToken({prompt: 'consent'});
-            else showStatus('Клієнт Google ще завантажується...', 'warning');
+            // Вхід
+            if (tokenClient) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                showStatus('Клієнт Google ще завантажується...', 'warning');
+            }
         }
     }
 
-    // Завантаження логотипу
+    // Пряме стабільне посилання через CDN сервіс Google Drive
+    const RAW_BASE64_LOGO = `https://lh3.googleusercontent.com/d/1vB9QiuqrahasK7pSzKnx-P-3HrhAPNVk`;
+    
+    // Автоматична обробка та підготовка логотипа
+    let watermarkDataUrl = '';
+    const cleanedCode = RAW_BASE64_LOGO.replace(/\s+/g, ''); 
+    
+    if (cleanedCode && !cleanedCode.includes('ВСТАВТЕ_ВАШ_КОД_ТУТ')) {
+        if (cleanedCode.startsWith('data:image') || cleanedCode.startsWith('http') || cleanedCode.endsWith('.png') || cleanedCode.endsWith('.jpg')) {
+            watermarkDataUrl = cleanedCode;
+        } else {
+            watermarkDataUrl = 'data:image/png;base64,' + cleanedCode;
+        }
+    }
+
+    let currentImgUrl = '';
+    let markers = [];
+    let editingIndex = null;
+    let imgNatWidth = 1000;
+    let imgNatHeight = 1000;
+    let tempCoords = { x: 0, y: 0, shape: '' }; 
+    
+    // Стани редактора
+    let preventNextClick = false; 
+    let isSelectingTarget = false; 
+    let isDrawingPolygon = false;
+    let isAddingText = false;
+    let tempPolygonPoints = [];
+
+    // Стан динамічних опцій квізу
+    let tempQuizOptions = ['', '', ''];
+    let tempQuizCorrect = 0;
+
+    // ЛОГІКА ПЕРЕТЯГУВАННЯ
+    let activeDragIndex = null;
+    let activeDragElement = null;
+    let activeDragType = null;
+    let activeDragPtIndex = null;
+    let activeDragTIndex = null;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialPolyPoints = []; 
+
+    // Стан Історії (Undo/Redo)
+    let stateHistory = [];
+    let historyIndex = -1;
+
+    const iconMap = {
+        'number': '', 'info': 'ℹ️', 'video': '▶️', 'warning': '⚠️', 
+        'link': '🔗', 'star': '⭐', 'audio': '🎵', 'quiz': '❓'
+    };
+
     async function initLogo() {
+        const driveTextFileUrl = 'https://docs.google.com/uc?export=download&id=140XGrGojBCURyw16TwPdErmd5I4yEKcA';
         const fallbackImageUrl = 'https://lh3.googleusercontent.com/d/1vB9QiuqrahasK7pSzKnx-P-3HrhAPNVk';
+        
+        try {
+            const response = await fetch(driveTextFileUrl);
+            if (!response.ok) throw new Error('Помилка запиту до текстового файлу');
+            let text = await response.text();
+            text = text.trim();
+            if (text.length > 500) {
+                if (!text.startsWith('data:image')) {
+                    watermarkDataUrl = 'data:image/png;base64,' + text;
+                } else {
+                    watermarkDataUrl = text;
+                }
+                console.log('Логотип успішно вбудовано з текстового файлу Google Drive у Base64');
+                updateUILogos();
+                return;
+            }
+        } catch (err) {
+            console.warn('Не вдалося завантажити текстовий файл через CORS, переходимо до Спроби 2 (програмне перетворення зображення у Base64):', err);
+        }
+
         try {
             watermarkDataUrl = await convertImageToBase64(fallbackImageUrl);
+            console.log('Логотип успішно конвертовано у Base64 за допомогою Canvas');
             updateUILogos();
         } catch (err) {
+            console.error('Помилка конвертації обох варіантів логотипу:', err);
             watermarkDataUrl = fallbackImageUrl;
             updateUILogos();
         }
@@ -711,32 +977,58 @@
             img.crossOrigin = 'Anonymous';
             img.onload = function() {
                 const canvas = document.createElement('canvas');
-                canvas.width = img.width; canvas.height = img.height;
+                canvas.width = img.width;
+                canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
-                try { resolve(canvas.toDataURL('image/png')); } catch(e) { reject(e); }
+                try {
+                    const dataURL = canvas.toDataURL('image/png');
+                    resolve(dataURL);
+                } catch(e) {
+                    reject(e);
+                }
             };
-            img.onerror = reject;
+            img.onerror = function(err) {
+                reject(err);
+            };
             img.src = url;
         });
     }
 
     function updateUILogos() {
         const headerLogo = document.getElementById('header-logo');
-        if (headerLogo && watermarkDataUrl) { headerLogo.src = watermarkDataUrl; headerLogo.style.display = 'inline-block'; }
+        if (headerLogo && watermarkDataUrl) {
+            headerLogo.src = watermarkDataUrl;
+            headerLogo.style.display = 'inline-block';
+        }
         const workspaceLogo = document.getElementById('workspace-logo');
-        if (workspaceLogo && watermarkDataUrl) { workspaceLogo.src = watermarkDataUrl; if (currentImgUrl) workspaceLogo.style.display = 'block'; }
+        if (workspaceLogo && watermarkDataUrl) {
+            workspaceLogo.src = watermarkDataUrl;
+            if (currentImgUrl) {
+                workspaceLogo.style.display = 'block';
+            }
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // Запускаємо ініціалізацію негайно або при завантаженні DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            initLogo();
+            initGoogleAuth(); // Ініціалізація Google Identity Services
+        });
+    } else {
         initLogo();
         initGoogleAuth();
-    });
-
+    }
+    
     // ==========================================
     // ЛОГІКА GOOGLE DRIVE (МЕНЕДЖЕР ПРОЕКТІВ)
     // ==========================================
     
+    const ROOT_FOLDER_NAME = "ClicPoint Projects";
+    const GOOGLE_DRIVE_API = 'https://www.googleapis.com/drive/v3/files';
+    const GOOGLE_UPLOAD_API = 'https://www.googleapis.com/upload/drive/v3/files';
+
     async function driveFetch(url, options = {}) {
         if (!accessToken) throw new Error("Немає доступу. Авторизуйтесь.");
         const headers = new Headers(options.headers || {});
@@ -772,7 +1064,15 @@
     async function openSaveModal() {
         const fullHTML = getFullHTMLContent();
         if(!fullHTML) return showStatus('Спочатку згенеруйте код (кнопка ✨)!', 'error');
-        if(!accessToken) return showStatus('Потрібна авторизація Google!', 'error');
+        
+        if (!accessToken) {
+            showStatus('Потрібна авторизація Google. Виконуємо вхід...', 'warning');
+            pendingSaveToDrive = true;
+            if (tokenClient) {
+                tokenClient.requestAccessToken({prompt: ''});
+            }
+            return;
+        }
 
         document.getElementById('saveProjectModal').style.display = 'flex';
         document.getElementById('save-status').innerText = '';
@@ -953,6 +1253,282 @@
     // ==========================================
     // ЛОГІКА РЕДАКТОРА
     // ==========================================
+
+    document.addEventListener('keydown', function(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+
+        if (event.key === 'Escape') {
+            const previewOverlay = document.getElementById('preview-overlay');
+            if (previewOverlay && previewOverlay.style.display === 'flex') {
+                closePreview();
+                return;
+            }
+            if (isSelectingTarget) {
+                isSelectingTarget = false;
+                document.getElementById('click-layer').style.cursor = 'crosshair';
+                showStatus('Створення стрілки скасовано.', 'info');
+                openEditModal(editingIndex);
+            } else if (isDrawingPolygon || isAddingText) {
+                cancelPolygonDraw();
+                isAddingText = false;
+                showStatus('Дію скасовано.', 'info');
+            } else {
+                closeModal();
+                document.getElementById('saveProjectModal').style.display = 'none';
+                document.getElementById('projectManagerModal').style.display = 'none';
+            }
+        }
+        if (event.ctrlKey && event.key.toLowerCase() === 'z') {
+            event.preventDefault();
+            if (event.shiftKey) redo(); else undo();
+        }
+        if (event.ctrlKey && event.key.toLowerCase() === 'y') {
+            event.preventDefault(); redo();
+        }
+    });
+
+    function insertTag(startTag, endTag) {
+        const textarea = document.getElementById('m-text');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selectedText = text.substring(start, end);
+        const newText = text.substring(0, start) + startTag + selectedText + endTag + text.substring(end);
+        textarea.value = newText;
+        textarea.focus();
+        textarea.selectionStart = start + startTag.length;
+        textarea.selectionEnd = end + startTag.length;
+    }
+
+    function renderQuizOptions() {
+        const container = document.getElementById('quiz-options-container');
+        let html = '';
+        tempQuizOptions.forEach((opt, i) => {
+            html += `
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <input type="radio" name="q-radio-correct" value="${i}" ${tempQuizCorrect === i ? 'checked' : ''} onchange="tempQuizCorrect = ${i}">
+                <input type="text" value="${opt.replace(/"/g, '&quot;')}" oninput="tempQuizOptions[${i}]=this.value" placeholder="Варіант ${i+1}" style="flex:1;">
+                ${tempQuizOptions.length > 2 ? `<button type="button" onclick="removeQuizOption(${i})" style="padding:4px 8px; background:#ef4444; color:white; border:none; border-radius:4px; cursor:pointer;" title="Видалити">✖</button>` : ''}
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+    
+    function addQuizOption() {
+        if(tempQuizOptions.length >= 5) { showStatus('Максимум 5 варіантів!', 'warning'); return; }
+        tempQuizOptions.push('');
+        renderQuizOptions();
+    }
+    
+    function removeQuizOption(index) {
+        tempQuizOptions.splice(index, 1);
+        if(tempQuizCorrect >= tempQuizOptions.length) tempQuizCorrect = Math.max(0, tempQuizOptions.length - 1);
+        renderQuizOptions();
+    }
+
+    function renderArrowsList() {
+        const container = document.getElementById('arrows-list');
+        container.innerHTML = '';
+        if(editingIndex !== null && markers[editingIndex] && markers[editingIndex].targets) {
+            markers[editingIndex].targets.forEach((t, i) => {
+                container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1;">
+                    <span style="font-size:13px; font-weight:bold; color:#475569;">Стрілка ${i+1}</span>
+                    <button type="button" onclick="removeArrow(${i})" style="background:#f43f5e; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">✖ Видалити</button>
+                </div>`;
+            });
+        }
+    }
+
+    function removeArrow(index) {
+        if (editingIndex !== null && markers[editingIndex].targets) {
+            markers[editingIndex].targets.splice(index, 1);
+            renderArrowsList();
+            renderMarkersPreview();
+        }
+    }
+
+    function startSelectingTarget() {
+        if (editingIndex === null) return;
+        isSelectingTarget = true;
+        document.getElementById('markerModal').style.display = 'none';
+        document.getElementById('click-layer').style.cursor = 'cell';
+        showStatus('Клікніть на зображенні, щоб додати цільову точку стрілки!', 'info');
+    }
+
+    function saveState() {
+        if (historyIndex < stateHistory.length - 1) {
+            stateHistory = stateHistory.slice(0, historyIndex + 1);
+        }
+        stateHistory.push(JSON.stringify(markers));
+        historyIndex++;
+        updateUndoRedoButtons();
+    }
+
+    function updateUndoRedoButtons() {
+        const btnUndo = document.getElementById('btn-undo');
+        const btnRedo = document.getElementById('btn-redo');
+        if (btnUndo) btnUndo.disabled = !(historyIndex > 0 || (isDrawingPolygon && tempPolygonPoints.length > 0));
+        if (btnRedo) btnRedo.disabled = !(historyIndex < stateHistory.length - 1 && !isDrawingPolygon);
+    }
+
+    function undo() {
+        if (isDrawingPolygon && tempPolygonPoints.length > 0) {
+            tempPolygonPoints.pop();
+            renderTempPolygon();
+            updateUndoRedoButtons();
+            return;
+        }
+        if (historyIndex > 0) {
+            historyIndex--;
+            markers = JSON.parse(stateHistory[historyIndex]);
+            renderMarkersPreview();
+            if(document.getElementById('output-area').style.display === 'block') generateCode();
+            updateUndoRedoButtons();
+        }
+    }
+
+    function redo() {
+        if (isDrawingPolygon) return;
+        if (historyIndex < stateHistory.length - 1) {
+            historyIndex++;
+            markers = JSON.parse(stateHistory[historyIndex]);
+            renderMarkersPreview();
+            if(document.getElementById('output-area').style.display === 'block') generateCode();
+            updateUndoRedoButtons();
+        }
+    }
+
+    function clearAll() {
+        if(markers.length === 0) return;
+        if(confirm("Ви впевнені, що хочете видалити всі мітки, зони та написи?")) {
+            markers = [];
+            saveState();
+            renderMarkersPreview();
+            if(document.getElementById('output-area').style.display === 'block') generateCode();
+        }
+    }
+
+    function showStatus(msg, type) {
+        const d = document.getElementById('status-msg');
+        if (d) {
+            d.textContent = msg; 
+            d.className = 'status-' + type; 
+            d.style.display = 'block';
+            setTimeout(() => d.style.display = 'none', 5000);
+        }
+    }
+
+    function processImageUrl(url) {
+        const idMatch = url.match(/[-\w]{25,35}/);
+        if (idMatch && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${idMatch[0]}=w1000`;
+        return url;
+    }
+
+    function loadImage() {
+        const rawUrl = document.getElementById('imgUrl').value.trim();
+        const fileInput = document.getElementById('imgFile');
+
+        if (fileInput.files && fileInput.files.length > 0) {
+            loadLocalImage({ target: fileInput });
+            return;
+        }
+
+        if(!rawUrl) return showStatus('Вставте посилання або оберіть файл!', 'error');
+        setupWorkspace(processImageUrl(rawUrl));
+    }
+
+    function loadLocalImage(event) {
+        const file = event.target.files ? event.target.files[0] : null;
+        if(!file) return;
+        
+        showStatus('Оптимізація та стиснення зображення...', 'info');
+        
+        const reader = new FileReader();
+        reader.onload = function(e) { 
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1920;
+                const MAX_HEIGHT = 1080;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                setupWorkspace(compressedDataUrl); 
+                event.target.value = ''; 
+            };
+            img.onerror = function() {
+                showStatus('Помилка обробки зображення!', 'error');
+                event.target.value = '';
+            }
+            img.src = e.target.result;
+        };
+        reader.onerror = function() {
+            showStatus('Помилка при читанні файлу!', 'error');
+            event.target.value = '';
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function setupWorkspace(url) {
+        showStatus('Завантаження...', 'info');
+        currentImgUrl = url;
+        const img = document.getElementById('main-img');
+        
+        img.onload = () => {
+            imgNatWidth = img.naturalWidth || 1000;
+            imgNatHeight = img.naturalHeight || 1000;
+            
+            const polyLayer = document.getElementById('polygon-layer');
+            polyLayer.setAttribute('viewBox', `0 0 ${imgNatWidth} ${imgNatHeight}`);
+            polyLayer.setAttribute('preserveAspectRatio', 'none');
+
+            if(watermarkDataUrl) {
+                const logoEl = document.getElementById('workspace-logo');
+                logoEl.src = watermarkDataUrl;
+                logoEl.style.display = 'block';
+            }
+
+            showStatus('Готово! Клікайте для точок або малюйте зони.', 'success');
+            document.getElementById('editor-layout').style.display = 'flex';
+            document.getElementById('btn-generate').style.display = 'inline-block';
+            document.getElementById('btn-preview').style.display = 'inline-block';
+            document.getElementById('output-area').style.display = 'none';
+            if (historyIndex === -1) saveState();
+            renderMarkersPreview();
+        };
+        img.onerror = () => showStatus('Помилка завантаження зображення.', 'error');
+        img.src = url;
+    }
+
+    function exportProject() {
+        if(!currentImgUrl) return showStatus('Немає відкритого проекту.', 'error');
+        const project = { image: currentImgUrl, markers: markers, logo: watermarkDataUrl };
+        const blob = new Blob([JSON.stringify(project)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = "interactive_project.json"; a.click();
+        URL.revokeObjectURL(url);
+        showStatus('Проект експортовано!', 'success');
+    }
+
     function importProject(event, directContent = null) {
         let file, contentPromise;
         if (directContent) {
@@ -962,17 +1538,25 @@
             file = event.target.files[0];
             if(!file) return;
             contentPromise = new Promise((resolve) => {
-                const reader = new FileReader(); reader.onload = e => resolve(e.target.result); reader.readAsText(file);
+                const reader = new FileReader(); 
+                reader.onload = e => resolve(e.target.result); 
+                reader.readAsText(file);
             });
         }
 
         contentPromise.then(content => {
             let project = null;
+
             if (file.name.toLowerCase().endsWith('.html')) {
                 const dataMatch = content.match(/<ClicPointProjectData>\s*([\s\S]*?)\s*<\/ClicPointProjectData>/);
                 if (dataMatch && dataMatch[1]) {
-                    try { project = JSON.parse(dataMatch[1].trim()); } catch (err) {}
+                    try {
+                        project = JSON.parse(dataMatch[1].trim());
+                    } catch (err) {
+                        console.error('Помилка читання ClicPointProjectData:', err);
+                    }
                 }
+                
                 if (!project) {
                     try {
                         const imgMatch = content.match(/<img[^>]+src=["']([^"']+)["'][^>]*alt=["']Interactive["']/i) || content.match(/<img src=["']([^"']+)["'][^>]*alt=["']Interactive["']/i);
@@ -986,23 +1570,60 @@
                                 } else {
                                     if (restored.title) restored.title = restored.title.replace(/&quot;/g, '"');
                                     if (restored.content) {
-                                        restored.content = restored.content.replace(/&quot;/g, '"').replace(/<b>(.*?)<\/b>/g, '**$1**').replace(/<i>(.*?)<\/i>/g, '*$1*').replace(/<br>/g, '\n');
+                                        restored.content = restored.content
+                                            .replace(/&quot;/g, '"')
+                                            .replace(/<b>(.*?)<\/b>/g, '**$1**')
+                                            .replace(/<i>(.*?)<\/i>/g, '*$1*')
+                                            .replace(/<br>/g, '\n');
                                     }
                                 }
                                 return restored;
                             });
                             project = { image: imgMatch[1], markers: parsedMarkers };
                         }
-                    } catch (err) { console.error(err); }
+                    } catch (err) {
+                        console.error('Помилка резервного читання HTML:', err);
+                    }
+                }
+                
+                if (!project) {
+                    showStatus('Не вдалося знайти дані проекту в HTML файлі.', 'error');
+                    if(event && event.target) event.target.value = '';
+                    return;
                 }
             } else {
-                try { project = JSON.parse(content); } catch(err) { showStatus('Невірний формат.', 'error'); return; }
+                try {
+                    project = JSON.parse(content);
+                } catch(err) { 
+                    showStatus('Невірний формат файлу.', 'error'); 
+                    if(event && event.target) event.target.value = '';
+                    return;
+                }
             }
 
             if(project && project.image && project.markers) {
-                markers = project.markers; stateHistory = []; historyIndex = -1;
-                markers.forEach(m => { if (m.hasTarget && !m.targets) m.targets = [{tx: m.tx, ty: m.ty}]; });
-                if (project.logo) watermarkDataUrl = project.logo; updateUILogos(); setupWorkspace(project.image);
+                markers = project.markers;
+                stateHistory = []; historyIndex = -1;
+                
+                markers.forEach(m => {
+                    if (m.hasTarget && !m.targets) m.targets = [{tx: m.tx, ty: m.ty}];
+                });
+
+                if (project.logo) {
+                    watermarkDataUrl = project.logo;
+                    const headerLogo = document.getElementById('header-logo');
+                    if (headerLogo) {
+                        headerLogo.src = watermarkDataUrl;
+                        headerLogo.style.display = 'inline-block';
+                    }
+                } else if(watermarkDataUrl) {
+                    const headerLogo = document.getElementById('header-logo');
+                    if (headerLogo) {
+                        headerLogo.src = watermarkDataUrl;
+                        headerLogo.style.display = 'inline-block';
+                    }
+                }
+                setupWorkspace(project.image);
             } else {
                 showStatus('Невірний формат файлу або дані пошкоджено.', 'error');
             }
@@ -1010,371 +1631,963 @@
         });
     }
 
-    document.addEventListener('keydown', function(event) {
-        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
-        if (event.key === 'Escape') {
-            const previewOverlay = document.getElementById('preview-overlay');
-            if (previewOverlay && previewOverlay.style.display === 'flex') { closePreview(); return; }
-            if (isSelectingTarget) { isSelectingTarget = false; document.getElementById('click-layer').style.cursor = 'crosshair'; showStatus('Скасовано.', 'info'); openEditModal(editingIndex); }
-            else if (isDrawingPolygon || isAddingText) { cancelPolygonDraw(); isAddingText = false; showStatus('Скасовано.', 'info'); }
-            else { closeModal(); document.getElementById('saveProjectModal').style.display='none'; document.getElementById('projectManagerModal').style.display='none'; }
-        }
-        if (event.ctrlKey && event.key.toLowerCase() === 'z') { event.preventDefault(); if (event.shiftKey) redo(); else undo(); }
-        if (event.ctrlKey && event.key.toLowerCase() === 'y') { event.preventDefault(); redo(); }
-    });
-
-    function insertTag(startTag, endTag) {
-        const textarea = document.getElementById('m-text'); const start = textarea.selectionStart; const end = textarea.selectionEnd;
-        const text = textarea.value; const selectedText = text.substring(start, end);
-        textarea.value = text.substring(0, start) + startTag + selectedText + endTag + text.substring(end);
-        textarea.focus(); textarea.selectionStart = start + startTag.length; textarea.selectionEnd = end + startTag.length;
+    function startTextMode() {
+        isAddingText = true;
+        isDrawingPolygon = false;
+        document.getElementById('click-layer').style.cursor = 'text';
+        document.getElementById('poly-instruction').innerText = 'Клікніть де завгодно, щоб додати напис.';
+        document.getElementById('poly-instruction').style.display = 'block';
     }
 
-    function renderQuizOptions() {
-        const container = document.getElementById('quiz-options-container'); let html = '';
-        tempQuizOptions.forEach((opt, i) => {
-            html += `<div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                <input type="radio" name="q-radio-correct" value="${i}" ${tempQuizCorrect === i ? 'checked' : ''} onchange="tempQuizCorrect = ${i}">
-                <input type="text" value="${opt.replace(/"/g, '&quot;')}" oninput="tempQuizOptions[${i}]=this.value" placeholder="Варіант ${i+1}" style="flex:1;">
-                ${tempQuizOptions.length > 2 ? `<button type="button" onclick="removeQuizOption(${i})" style="padding:4px 8px; background:#ef4444; color:white; border:none; border-radius:4px; cursor:pointer;" title="Видалити">✖</button>` : ''}
-            </div>`;
-        });
-        container.innerHTML = html;
-    }
-    function addQuizOption() { if(tempQuizOptions.length >= 5) return showStatus('Максимум 5!', 'warning'); tempQuizOptions.push(''); renderQuizOptions(); }
-    function removeQuizOption(index) { tempQuizOptions.splice(index, 1); if(tempQuizCorrect >= tempQuizOptions.length) tempQuizCorrect = Math.max(0, tempQuizOptions.length - 1); renderQuizOptions(); }
-
-    function renderArrowsList() {
-        const container = document.getElementById('arrows-list'); container.innerHTML = '';
-        if(editingIndex !== null && markers[editingIndex] && markers[editingIndex].targets) {
-            markers[editingIndex].targets.forEach((t, i) => {
-                container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1;">
-                    <span style="font-size:13px; font-weight:bold; color:#475569;">Стрілка ${i+1}</span>
-                    <button type="button" onclick="removeArrow(${i})" style="background:#f43f5e; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">✖ Видалити</button>
-                </div>`;
-            });
-        }
-    }
-    function removeArrow(index) { if (editingIndex !== null && markers[editingIndex].targets) { markers[editingIndex].targets.splice(index, 1); renderArrowsList(); renderMarkersPreview(); } }
-    function startSelectingTarget() { if (editingIndex === null) return; isSelectingTarget = true; document.getElementById('markerModal').style.display = 'none'; document.getElementById('click-layer').style.cursor = 'cell'; showStatus('Клікніть на зображенні для стрілки!', 'info'); }
-
-    function saveState() { if (historyIndex < stateHistory.length - 1) stateHistory = stateHistory.slice(0, historyIndex + 1); stateHistory.push(JSON.stringify(markers)); historyIndex++; updateUndoRedoButtons(); }
-    function updateUndoRedoButtons() {
-        const btnUndo = document.getElementById('btn-undo'); const btnRedo = document.getElementById('btn-redo');
-        if (btnUndo) btnUndo.disabled = !(historyIndex > 0 || (isDrawingPolygon && tempPolygonPoints.length > 0));
-        if (btnRedo) btnRedo.disabled = !(historyIndex < stateHistory.length - 1 && !isDrawingPolygon);
-    }
-    function undo() {
-        if (isDrawingPolygon && tempPolygonPoints.length > 0) { tempPolygonPoints.pop(); renderTempPolygon(); updateUndoRedoButtons(); return; }
-        if (historyIndex > 0) { historyIndex--; markers = JSON.parse(stateHistory[historyIndex]); renderMarkersPreview(); if(document.getElementById('output-area').style.display === 'block') generateCode(); updateUndoRedoButtons(); }
-    }
-    function redo() {
-        if (isDrawingPolygon) return;
-        if (historyIndex < stateHistory.length - 1) { historyIndex++; markers = JSON.parse(stateHistory[historyIndex]); renderMarkersPreview(); if(document.getElementById('output-area').style.display === 'block') generateCode(); updateUndoRedoButtons(); }
-    }
-    function clearAll() { if(markers.length === 0) return; if(confirm("Видалити всі мітки, зони та написи?")) { markers = []; saveState(); renderMarkersPreview(); if(document.getElementById('output-area').style.display === 'block') generateCode(); } }
-    function showStatus(msg, type) { const d = document.getElementById('status-msg'); if (d) { d.textContent = msg; d.className = 'status-' + type; d.style.display = 'block'; setTimeout(() => d.style.display = 'none', 5000); } }
-
-    function processImageUrl(url) {
-        const idMatch = url.match(/[-\w]{25,35}/);
-        if (idMatch && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${idMatch[0]}=w1000`; return url;
+    function startPolygonDraw() {
+        isDrawingPolygon = true;
+        isAddingText = false;
+        tempPolygonPoints = [];
+        document.getElementById('btn-draw-poly').style.display = 'none';
+        document.getElementById('btn-finish-poly').style.display = 'inline-block';
+        document.getElementById('btn-cancel-poly').style.display = 'inline-block';
+        document.getElementById('poly-instruction').innerText = 'Клікайте по контуру об\'єкта.';
+        document.getElementById('poly-instruction').style.display = 'block';
+        document.getElementById('click-layer').style.cursor = 'crosshair';
+        renderMarkersPreview(); 
+        updateUndoRedoButtons();
     }
 
-    function loadImage() {
-        const rawUrl = document.getElementById('imgUrl').value.trim(); const fileInput = document.getElementById('imgFile');
-        if (fileInput.files && fileInput.files.length > 0) { loadLocalImage({ target: fileInput }); return; }
-        if(!rawUrl) return showStatus('Вставте посилання або оберіть файл!', 'error'); setupWorkspace(processImageUrl(rawUrl));
-    }
-
-    function loadLocalImage(event) {
-        const file = event.target.files ? event.target.files[0] : null; if(!file) return; showStatus('Оптимізація...', 'info');
-        const reader = new FileReader();
-        reader.onload = function(e) { 
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas'); let width = img.width; let height = img.height;
-                if (width > height) { if (width > 1920) { height *= 1920 / width; width = 1920; } } else { if (height > 1080) { width *= 1080 / height; height = 1080; } }
-                canvas.width = width; canvas.height = height; canvas.getContext('2d').drawImage(img, 0, 0, width, height); setupWorkspace(canvas.toDataURL('image/jpeg', 0.85)); event.target.value = ''; 
-            };
-            img.onerror = () => { showStatus('Помилка обробки!', 'error'); event.target.value = ''; }; img.src = e.target.result;
-        };
-        reader.onerror = () => { showStatus('Помилка читання!', 'error'); event.target.value = ''; }; reader.readAsDataURL(file);
-    }
-
-    function setupWorkspace(url) {
-        showStatus('Завантаження...', 'info'); currentImgUrl = url; const img = document.getElementById('main-img');
-        img.onload = () => {
-            imgNatWidth = img.naturalWidth || 1000; imgNatHeight = img.naturalHeight || 1000;
-            const polyLayer = document.getElementById('polygon-layer'); polyLayer.setAttribute('viewBox', `0 0 ${imgNatWidth} ${imgNatHeight}`); polyLayer.setAttribute('preserveAspectRatio', 'none');
-            updateUILogos(); showStatus('Готово! Клікайте для точок або малюйте зони.', 'success'); document.getElementById('editor-layout').style.display = 'flex'; document.getElementById('btn-generate').style.display = 'inline-block'; document.getElementById('btn-preview').style.display = 'inline-block'; document.getElementById('output-area').style.display = 'none'; if (historyIndex === -1) saveState(); renderMarkersPreview();
-        };
-        img.onerror = () => showStatus('Помилка завантаження зображення.', 'error'); img.src = url;
-    }
-
-    function exportProject() {
-        if(!currentImgUrl) return showStatus('Немає відкритого проекту.', 'error');
-        const blob = new Blob([JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUrl })], {type: "application/json"}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_project.json"; a.click(); URL.revokeObjectURL(url); showStatus('Проект експортовано!', 'success');
-    }
-
-    function startTextMode() { isAddingText = true; isDrawingPolygon = false; document.getElementById('click-layer').style.cursor = 'text'; document.getElementById('poly-instruction').innerText = 'Клікніть де завгодно, щоб додати напис.'; document.getElementById('poly-instruction').style.display = 'block'; }
-    function startPolygonDraw() { isDrawingPolygon = true; isAddingText = false; tempPolygonPoints = []; document.getElementById('btn-draw-poly').style.display = 'none'; document.getElementById('btn-finish-poly').style.display = 'inline-block'; document.getElementById('btn-cancel-poly').style.display = 'inline-block'; document.getElementById('poly-instruction').innerText = 'Клікайте по контуру об\'єкта.'; document.getElementById('poly-instruction').style.display = 'block'; document.getElementById('click-layer').style.cursor = 'crosshair'; renderMarkersPreview(); updateUndoRedoButtons(); }
     function finishPolygonDraw() {
-        if(tempPolygonPoints.length < 3) { showStatus('Мінімум 3 точки!', 'error'); return cancelPolygonDraw(); }
-        editingIndex = null; clearModal(); tempCoords = { shape: 'polygon' }; document.getElementById('modal-title-text').innerText = '📍 Налаштування Зони'; document.getElementById('m-title-group').style.display = 'block'; document.getElementById('appearance-group').style.display = 'flex'; document.getElementById('m-icon').disabled = true; document.getElementById('polygon-opacity-group').style.display = 'flex'; document.getElementById('m-type-group').style.display = 'block'; document.getElementById('group-arrow').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'none'; document.getElementById('markerModal').style.display = 'flex'; resetDrawUI();
+        if(tempPolygonPoints.length < 3) {
+            showStatus('Зона повинна мати мінімум 3 точки!', 'error');
+            return cancelPolygonDraw();
+        }
+        editingIndex = null;
+        clearModal();
+        tempCoords = { shape: 'polygon' };
+        
+        document.getElementById('modal-title-text').innerText = '📍 Налаштування Зони';
+        document.getElementById('m-title-group').style.display = 'block';
+        document.getElementById('appearance-group').style.display = 'flex'; 
+        document.getElementById('m-icon').disabled = true; 
+        document.getElementById('polygon-opacity-group').style.display = 'flex';
+        document.getElementById('m-type-group').style.display = 'block';
+        document.getElementById('group-arrow').style.display = 'none'; 
+        document.getElementById('group-label-settings').style.display = 'none';
+        
+        document.getElementById('markerModal').style.display = 'flex';
+        resetDrawUI();
     }
-    function cancelPolygonDraw() { tempPolygonPoints = []; isAddingText = false; resetDrawUI(); renderTempPolygon(); renderMarkersPreview(); updateUndoRedoButtons(); }
-    function resetDrawUI() { isDrawingPolygon = false; isAddingText = false; document.getElementById('btn-draw-poly').style.display = 'inline-block'; document.getElementById('btn-finish-poly').style.display = 'none'; document.getElementById('btn-cancel-poly').style.display = 'none'; document.getElementById('poly-instruction').style.display = 'none'; document.getElementById('click-layer').style.cursor = 'crosshair'; }
+
+    function cancelPolygonDraw() {
+        tempPolygonPoints = [];
+        isAddingText = false;
+        resetDrawUI();
+        renderTempPolygon();
+        renderMarkersPreview();
+        updateUndoRedoButtons();
+    }
+
+    function resetDrawUI() {
+        isDrawingPolygon = false;
+        isAddingText = false;
+        document.getElementById('btn-draw-poly').style.display = 'inline-block';
+        document.getElementById('btn-finish-poly').style.display = 'none';
+        document.getElementById('btn-cancel-poly').style.display = 'none';
+        document.getElementById('poly-instruction').style.display = 'none';
+        document.getElementById('click-layer').style.cursor = 'crosshair';
+    }
 
     function handleImageClick(e) {
         if (preventNextClick || e.target.id !== 'click-layer') return;
-        const rect = document.getElementById('click-layer').getBoundingClientRect();
-        let xPercent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)); let yPercent = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-
-        if (isSelectingTarget) { if(!markers[editingIndex].targets) markers[editingIndex].targets = []; markers[editingIndex].targets.push({tx: parseFloat(xPercent.toFixed(2)), ty: parseFloat(yPercent.toFixed(2))}); isSelectingTarget = false; document.getElementById('click-layer').style.cursor = 'crosshair'; renderMarkersPreview(); openEditModal(editingIndex); return; }
-        if (isDrawingPolygon) { tempPolygonPoints.push({ x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)) }); renderTempPolygon(); updateUndoRedoButtons(); return; }
         
-        editingIndex = null; clearModal();
+        const layer = document.getElementById('click-layer');
+        const rect = layer.getBoundingClientRect();
+        
+        let xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        let yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        xPercent = Math.max(0, Math.min(100, xPercent));
+        yPercent = Math.max(0, Math.min(100, yPercent));
+
+        if (isSelectingTarget) {
+            if(!markers[editingIndex].targets) markers[editingIndex].targets = [];
+            markers[editingIndex].targets.push({tx: parseFloat(xPercent.toFixed(2)), ty: parseFloat(yPercent.toFixed(2))});
+            isSelectingTarget = false;
+            document.getElementById('click-layer').style.cursor = 'crosshair';
+            renderMarkersPreview();
+            openEditModal(editingIndex);
+            return;
+        }
+
+        if (isDrawingPolygon) {
+            tempPolygonPoints.push({ x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)) });
+            renderTempPolygon();
+            updateUndoRedoButtons();
+            return;
+        }
+
         if (isAddingText) {
-            tempCoords = { x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)), shape: 'label' }; resetDrawUI();
-            document.getElementById('modal-title-text').innerText = '🔤 Налаштування напису'; document.getElementById('m-title-group').style.display = 'none'; document.getElementById('appearance-group').style.display = 'none'; document.getElementById('polygon-opacity-group').style.display = 'none'; document.getElementById('m-type-group').style.display = 'none'; document.getElementById('group-text').style.display = 'none'; document.getElementById('group-video').style.display = 'none'; document.getElementById('group-audio').style.display = 'none'; document.getElementById('group-link').style.display = 'none'; document.getElementById('group-transition').style.display = 'none'; document.getElementById('group-quiz').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'block'; document.getElementById('group-arrow').style.display = 'block'; document.getElementById('markerModal').style.display = 'flex'; return;
+            tempCoords = { x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)), shape: 'label' };
+            editingIndex = null;
+            resetDrawUI();
+            clearModal();
+            
+            document.getElementById('modal-title-text').innerText = '🔤 Налаштування напису';
+            document.getElementById('m-title-group').style.display = 'none';
+            document.getElementById('appearance-group').style.display = 'none';
+            document.getElementById('polygon-opacity-group').style.display = 'none';
+            document.getElementById('m-type-group').style.display = 'none';
+            
+            document.getElementById('group-text').style.display = 'none';
+            document.getElementById('group-video').style.display = 'none';
+            document.getElementById('group-audio').style.display = 'none';
+            document.getElementById('group-link').style.display = 'none';
+            document.getElementById('group-transition').style.display = 'none';
+            document.getElementById('group-quiz').style.display = 'none';
+            
+            document.getElementById('group-label-settings').style.display = 'block';
+            document.getElementById('group-arrow').style.display = 'block'; 
+            document.getElementById('markerModal').style.display = 'flex';
+            return;
         }
 
         tempCoords = { x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)), shape: 'point' };
-        document.getElementById('modal-title-text').innerText = '📍 Додати точку'; document.getElementById('m-title-group').style.display = 'block'; document.getElementById('appearance-group').style.display = 'flex'; document.getElementById('m-icon').disabled = false; document.getElementById('m-type-group').style.display = 'block'; document.getElementById('group-arrow').style.display = 'block'; document.getElementById('polygon-opacity-group').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'none'; document.getElementById('markerModal').style.display = 'flex';
+        editingIndex = null;
+        clearModal();
+        
+        document.getElementById('modal-title-text').innerText = '📍 Додати точку';
+        document.getElementById('m-title-group').style.display = 'block';
+        document.getElementById('appearance-group').style.display = 'flex';
+        document.getElementById('m-icon').disabled = false;
+        document.getElementById('m-type-group').style.display = 'block';
+        document.getElementById('group-arrow').style.display = 'block';
+        document.getElementById('polygon-opacity-group').style.display = 'none';
+        document.getElementById('group-label-settings').style.display = 'none';
+        
+        document.getElementById('markerModal').style.display = 'flex';
     }
 
     function renderTempPolygon() {
-        let polyLayer = document.getElementById('polygon-layer'); let tempGroup = document.getElementById('temp-poly-group');
-        if (tempPolygonPoints.length === 0) { if (tempGroup) tempGroup.remove(); return; }
-        if(!tempGroup) { tempGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g'); tempGroup.id = 'temp-poly-group'; polyLayer.appendChild(tempGroup); }
-        tempGroup.innerHTML = '';
-        if (tempPolygonPoints.length > 1) { const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline'); polyline.setAttribute('points', tempPolygonPoints.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ')); polyline.setAttribute('fill', 'none'); polyline.setAttribute('stroke', '#eab308'); polyline.setAttribute('stroke-width', '2'); polyline.setAttribute('stroke-dasharray', '5,5'); polyline.setAttribute('vector-effect', 'non-scaling-stroke'); tempGroup.appendChild(polyline); }
-        tempPolygonPoints.forEach((p, i) => { const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); circle.setAttribute('cx', (p.x * imgNatWidth / 100).toFixed(1)); circle.setAttribute('cy', (p.y * imgNatHeight / 100).toFixed(1)); circle.setAttribute('r', '4'); circle.setAttribute('fill', i === 0 ? '#16a34a' : '#3b82f6'); circle.setAttribute('stroke', '#fff'); circle.setAttribute('stroke-width', '1.5'); circle.setAttribute('vector-effect', 'non-scaling-stroke'); tempGroup.appendChild(circle); });
-    }
-
-    function startDrag(e) { e.stopPropagation(); activeDragElement = e.currentTarget; activeDragIndex = activeDragElement.dataset.index; activeDragType = activeDragElement.dataset.type; activeDragPtIndex = activeDragElement.dataset.ptIndex; activeDragTIndex = activeDragElement.dataset.tIndex; dragStartX = e.clientX; dragStartY = e.clientY; if (activeDragType === 'poly-move') initialPolyPoints = JSON.parse(JSON.stringify(markers[activeDragIndex].points)); document.addEventListener('mousemove', doDrag); document.addEventListener('mouseup', stopDrag); }
-    function doDrag(e) {
-        if (!activeDragElement) return; const rect = document.getElementById('click-layer').getBoundingClientRect();
-        if (activeDragType === 'poly-move') {
-            let dx = ((e.clientX - dragStartX) / rect.width) * 100; let dy = ((e.clientY - dragStartY) / rect.height) * 100;
-            markers[activeDragIndex].points = initialPolyPoints.map(p => ({ x: parseFloat((Number(p.x) + dx).toFixed(2)), y: parseFloat((Number(p.y) + dy).toFixed(2)) }));
-            const poly = document.getElementById(`poly-${activeDragIndex}`); if (poly) poly.setAttribute('points', markers[activeDragIndex].points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' '));
-            let sumX = 0, sumY = 0; markers[activeDragIndex].points.forEach(p => { sumX += Number(p.x); sumY += Number(p.y); });
-            activeDragElement.style.left = (sumX / markers[activeDragIndex].points.length) + '%'; activeDragElement.style.top = (sumY / markers[activeDragIndex].points.length) + '%';
-            document.querySelectorAll(`.poly-handle[data-index="${activeDragIndex}"]`).forEach(h => { const ptIdx = parseInt(h.dataset.ptIndex); if (markers[activeDragIndex].points[ptIdx]) { h.style.left = markers[activeDragIndex].points[ptIdx].x + '%'; h.style.top = markers[activeDragIndex].points[ptIdx].y + '%'; } });
+        let polyLayer = document.getElementById('polygon-layer');
+        let tempGroup = document.getElementById('temp-poly-group');
+        
+        if (tempPolygonPoints.length === 0) {
+            if (tempGroup) tempGroup.remove();
             return;
         }
-        let xp = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)); let yp = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-        activeDragElement.style.left = xp.toFixed(2) + '%'; activeDragElement.style.top = yp.toFixed(2) + '%';
-        if (activeDragType === 'poly-point') {
-            markers[activeDragIndex].points[activeDragPtIndex].x = parseFloat(xp.toFixed(2)); markers[activeDragIndex].points[activeDragPtIndex].y = parseFloat(yp.toFixed(2));
+
+        if(!tempGroup) {
+            tempGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            tempGroup.id = 'temp-poly-group';
+            polyLayer.appendChild(tempGroup);
+        }
+        
+        tempGroup.innerHTML = '';
+        
+        if (tempPolygonPoints.length > 1) {
+            const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+            const pointsStr = tempPolygonPoints.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ');
+            polyline.setAttribute('points', pointsStr);
+            polyline.setAttribute('fill', 'none'); 
+            polyline.setAttribute('stroke', '#eab308');
+            polyline.setAttribute('stroke-width', '2');
+            polyline.setAttribute('stroke-dasharray', '5,5');
+            polyline.setAttribute('vector-effect', 'non-scaling-stroke');
+            tempGroup.appendChild(polyline);
+        }
+
+        tempPolygonPoints.forEach((p, i) => {
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', (p.x * imgNatWidth / 100).toFixed(1));
+            circle.setAttribute('cy', (p.y * imgNatHeight / 100).toFixed(1));
+            circle.setAttribute('r', '4');
+            circle.setAttribute('fill', i === 0 ? '#16a34a' : '#3b82f6'); 
+            circle.setAttribute('stroke', '#fff');
+            circle.setAttribute('stroke-width', '1.5');
+            circle.setAttribute('vector-effect', 'non-scaling-stroke');
+            tempGroup.appendChild(circle);
+        });
+    }
+
+    function startDrag(e) {
+        e.stopPropagation();
+        activeDragElement = e.currentTarget;
+        activeDragIndex = activeDragElement.dataset.index;
+        activeDragType = activeDragElement.dataset.type;
+        activeDragPtIndex = activeDragElement.dataset.ptIndex;
+        activeDragTIndex = activeDragElement.dataset.tIndex;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+
+        if (activeDragType === 'poly-move') {
+            initialPolyPoints = JSON.parse(JSON.stringify(markers[activeDragIndex].points));
+        }
+
+        document.addEventListener('mousemove', doDrag);
+        document.addEventListener('mouseup', stopDrag);
+    }
+
+    function doDrag(e) {
+        if (!activeDragElement) return;
+        
+        const layer = document.getElementById('click-layer');
+        const rect = layer.getBoundingClientRect();
+        
+        if (activeDragType === 'poly-move') {
+            let dxPercent = ((e.clientX - dragStartX) / rect.width) * 100;
+            let dyPercent = ((e.clientY - dragStartY) / rect.height) * 100;
+
+            let minX = 100, maxX = 0, minY = 100, maxY = 0;
+            initialPolyPoints.forEach(p => {
+                if (p.x < minX) minX = p.x;
+                if (p.x > maxX) maxX = p.x;
+                if (p.y < minY) minY = p.y;
+                if (p.y > maxY) maxY = p.y;
+            });
+
+            if (minX + dxPercent < 0) dxPercent = -minX;
+            if (maxX + dxPercent > 100) dxPercent = 100 - maxX;
+            if (minY + dyPercent < 0) dyPercent = -minY;
+            if (maxY + dyPercent > 100) dyPercent = 100 - maxY;
+
+            markers[activeDragIndex].points = initialPolyPoints.map(p => ({
+                x: parseFloat((Number(p.x) + dxPercent).toFixed(2)),
+                y: parseFloat((Number(p.y) + dyPercent).toFixed(2))
+            }));
+
             const poly = document.getElementById(`poly-${activeDragIndex}`);
-            if (poly) { poly.setAttribute('points', markers[activeDragIndex].points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ')); let sumX=0,sumY=0; markers[activeDragIndex].points.forEach(p=>{sumX+=Number(p.x);sumY+=Number(p.y);}); const moveH = document.querySelector(`.poly-move-handle[data-index="${activeDragIndex}"]`); if(moveH){moveH.style.left=(sumX/markers[activeDragIndex].points.length)+'%';moveH.style.top=(sumY/markers[activeDragIndex].points.length)+'%';} }
+            if (poly) {
+                const ptsStr = markers[activeDragIndex].points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ');
+                poly.setAttribute('points', ptsStr);
+            }
+
+            let sumX = 0, sumY = 0;
+            markers[activeDragIndex].points.forEach(p => { sumX += Number(p.x); sumY += Number(p.y); });
+            activeDragElement.style.left = (sumX / markers[activeDragIndex].points.length) + '%';
+            activeDragElement.style.top = (sumY / markers[activeDragIndex].points.length) + '%';
+
+            const handles = document.querySelectorAll(`.poly-handle[data-index="${activeDragIndex}"]`);
+            handles.forEach(handle => {
+                const ptIdx = parseInt(handle.dataset.ptIndex);
+                if (markers[activeDragIndex].points[ptIdx]) {
+                    handle.style.left = markers[activeDragIndex].points[ptIdx].x + '%';
+                    handle.style.top = markers[activeDragIndex].points[ptIdx].y + '%';
+                }
+            });
+            return;
+        }
+
+        let xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        let yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        xPercent = Math.max(0, Math.min(100, xPercent));
+        yPercent = Math.max(0, Math.min(100, yPercent));
+
+        activeDragElement.style.left = xPercent.toFixed(2) + '%';
+        activeDragElement.style.top = yPercent.toFixed(2) + '%';
+
+        if (activeDragType === 'poly-point') {
+            markers[activeDragIndex].points[activeDragPtIndex].x = parseFloat(xPercent.toFixed(2));
+            markers[activeDragIndex].points[activeDragPtIndex].y = parseFloat(yPercent.toFixed(2));
+            
+            const poly = document.getElementById(`poly-${activeDragIndex}`);
+            if (poly) {
+                const pts = markers[activeDragIndex].points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ');
+                poly.setAttribute('points', pts);
+                
+                let sumX = 0, sumY = 0;
+                markers[activeDragIndex].points.forEach(p => { sumX += Number(p.x); sumY += Number(p.y); });
+                const moveHandle = document.querySelector(`.poly-move-handle[data-index="${activeDragIndex}"]`);
+                if (moveHandle) {
+                    moveHandle.style.left = (sumX / markers[activeDragIndex].points.length) + '%';
+                    moveHandle.style.top = (sumY / markers[activeDragIndex].points.length) + '%';
+                }
+            }
         } else if (activeDragType === 'label') {
-            markers[activeDragIndex].x = parseFloat(xp.toFixed(2)); markers[activeDragIndex].y = parseFloat(yp.toFixed(2)); activeDragElement.style.transform = getLabelTransform(markers[activeDragIndex]);
-            if(markers[activeDragIndex].targets) markers[activeDragIndex].targets.forEach((t,i)=>{ const l=document.getElementById(`arrow-line-${activeDragIndex}-${i}`); if(l) { if(markers[activeDragIndex].arrowDirection==='from'){l.setAttribute('x2',activeDragElement.style.left);l.setAttribute('y2',activeDragElement.style.top);}else{l.setAttribute('x1',activeDragElement.style.left);l.setAttribute('y1',activeDragElement.style.top);} } });
+            markers[activeDragIndex].x = parseFloat(xPercent.toFixed(2));
+            markers[activeDragIndex].y = parseFloat(yPercent.toFixed(2));
+            
+            const m = markers[activeDragIndex];
+            activeDragElement.style.transform = getLabelTransform(m);
+
+            if (m.targets) {
+                m.targets.forEach((t, i) => {
+                    const line = document.getElementById(`arrow-line-${activeDragIndex}-${i}`);
+                    if (line) {
+                        if (m.arrowDirection === 'from') {
+                            line.setAttribute('x2', activeDragElement.style.left);
+                            line.setAttribute('y2', activeDragElement.style.top);
+                        } else {
+                            line.setAttribute('x1', activeDragElement.style.left);
+                            line.setAttribute('y1', activeDragElement.style.top);
+                        }
+                    }
+                });
+            }
         } else if (activeDragType === 'target') {
-            markers[activeDragIndex].targets[activeDragTIndex].tx = parseFloat(xp.toFixed(2)); markers[activeDragIndex].targets[activeDragTIndex].ty = parseFloat(yp.toFixed(2));
-            const l=document.getElementById(`arrow-line-${activeDragIndex}-${activeDragTIndex}`); if(l) { if(markers[activeDragIndex].arrowDirection==='from'){l.setAttribute('x1',activeDragElement.style.left);l.setAttribute('y1',activeDragElement.style.top);}else{l.setAttribute('x2',activeDragElement.style.left);l.setAttribute('y2',activeDragElement.style.top);} }
-            if(markers[activeDragIndex].shape === 'label') { const lbl = document.querySelector(`.label-preview[data-index="${activeDragIndex}"]`); if(lbl) lbl.style.transform = getLabelTransform(markers[activeDragIndex]); }
+            markers[activeDragIndex].targets[activeDragTIndex].tx = parseFloat(xPercent.toFixed(2));
+            markers[activeDragIndex].targets[activeDragTIndex].ty = parseFloat(yPercent.toFixed(2));
+            const line = document.getElementById(`arrow-line-${activeDragIndex}-${activeDragTIndex}`);
+            if (line) {
+                if (markers[activeDragIndex].arrowDirection === 'from') {
+                    line.setAttribute('x1', activeDragElement.style.left);
+                    line.setAttribute('y1', activeDragElement.style.top);
+                } else {
+                    line.setAttribute('x2', activeDragElement.style.left);
+                    line.setAttribute('y2', activeDragElement.style.top);
+                }
+            }
+
+            if (markers[activeDragIndex].shape === 'label') {
+                const m = markers[activeDragIndex];
+                const lbl = document.querySelector(`.label-preview[data-index="${activeDragIndex}"]`);
+                if (lbl) {
+                    lbl.style.transform = getLabelTransform(m);
+                }
+            }
+
         } else if (activeDragType === 'marker') {
-            markers[activeDragIndex].x = parseFloat(xp.toFixed(2)); markers[activeDragIndex].y = parseFloat(yp.toFixed(2));
-            if(markers[activeDragIndex].targets) markers[activeDragIndex].targets.forEach((t,i)=>{ const l=document.getElementById(`arrow-line-${activeDragIndex}-${i}`); if(l){ if(markers[activeDragIndex].arrowDirection==='from'){l.setAttribute('x2',activeDragElement.style.left);l.setAttribute('y2',activeDragElement.style.top);}else{l.setAttribute('x1',activeDragElement.style.left);l.setAttribute('y1',activeDragElement.style.top);} } });
+            markers[activeDragIndex].x = parseFloat(xPercent.toFixed(2));
+            markers[activeDragIndex].y = parseFloat(yPercent.toFixed(2));
+            
+            if (markers[activeDragIndex].targets) {
+                markers[activeDragIndex].targets.forEach((t, i) => {
+                    const line = document.getElementById(`arrow-line-${activeDragIndex}-${i}`);
+                    if (line) {
+                        if (markers[activeDragIndex].arrowDirection === 'from') {
+                            line.setAttribute('x2', activeDragElement.style.left);
+                            line.setAttribute('y2', activeDragElement.style.top);
+                        } else {
+                            line.setAttribute('x1', activeDragElement.style.left);
+                            line.setAttribute('y1', activeDragElement.style.top);
+                        }
+                    }
+                });
+            }
         }
     }
+
     function stopDrag(e) {
-        if (!activeDragElement) return; const dx = Math.abs(e.clientX - dragStartX); const dy = Math.abs(e.clientY - dragStartY);
-        if (dx < 3 && dy < 3) { if (activeDragType === 'marker' || activeDragType === 'poly-move' || activeDragType === 'label') openEditModal(activeDragIndex); } 
-        else { saveState(); renderMarkersPreview(); if (document.getElementById('output-area').style.display === 'block') generateCode(); }
-        preventNextClick = true; setTimeout(() => preventNextClick = false, 150);
-        activeDragElement = null; activeDragIndex = null; activeDragType = null; activeDragPtIndex = null; activeDragTIndex = null; initialPolyPoints = [];
-        document.removeEventListener('mousemove', doDrag); document.removeEventListener('mouseup', stopDrag);
+        if (!activeDragElement) return;
+
+        const dx = Math.abs(e.clientX - dragStartX);
+        const dy = Math.abs(e.clientY - dragStartY);
+
+        if (dx < 3 && dy < 3) {
+            if (activeDragType === 'marker' || activeDragType === 'poly-move' || activeDragType === 'label') {
+                openEditModal(activeDragIndex);
+            }
+        } else {
+            saveState();
+            renderMarkersPreview(); 
+            if (document.getElementById('output-area').style.display === 'block') generateCode();
+        }
+
+        preventNextClick = true;
+        setTimeout(() => preventNextClick = false, 150);
+
+        activeDragElement = null; activeDragIndex = null;
+        activeDragType = null; activeDragPtIndex = null; activeDragTIndex = null;
+        initialPolyPoints = [];
+        document.removeEventListener('mousemove', doDrag);
+        document.removeEventListener('mouseup', stopDrag);
     }
 
     function getLabelTransform(m) {
-        let tStr = ''; let anchor = m.labelAnchor || 'auto';
-        if (anchor === 'auto') { let isUp = false; if (m.targets && m.targets.length > 0) isUp = ((m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length) < m.y); tStr = isUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))'; }
-        else if (anchor === 'top') { tStr = 'translate(-50%, 4px)'; } else if (anchor === 'bottom') { tStr = 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'left') { tStr = 'translate(4px, -50%)'; } else if (anchor === 'right') { tStr = 'translate(calc(-100% - 4px), -50%)'; } else if (anchor === 'center') { tStr = 'translate(-50%, -50%)'; }
-        return tStr;
+        let transformStr = '';
+        let anchor = m.labelAnchor || 'auto';
+        if (anchor === 'auto') {
+            let isPointingUp = false;
+            if (m.targets && m.targets.length > 0) {
+                let avgTy = m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length;
+                isPointingUp = (avgTy < m.y);
+            }
+            transformStr = isPointingUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))';
+        } else if (anchor === 'top') { 
+            transformStr = 'translate(-50%, 4px)'; 
+        } else if (anchor === 'bottom') { 
+            transformStr = 'translate(-50%, calc(-100% - 4px))'; 
+        } else if (anchor === 'left') { 
+            transformStr = 'translate(4px, -50%)'; 
+        } else if (anchor === 'right') { 
+            transformStr = 'translate(calc(-100% - 4px), -50%)'; 
+        } else if (anchor === 'center') { 
+            transformStr = 'translate(-50%, -50%)'; 
+        }
+        return transformStr;
     }
 
     function renderMarkersPreview() {
-        const uiLayer = document.getElementById('ui-layer'); const arrowLayer = document.getElementById('arrow-layer'); const polyLayer = document.getElementById('polygon-layer');
-        uiLayer.innerHTML = ''; polyLayer.innerHTML = ''; arrowLayer.innerHTML = ''; let numCounter = 1; 
-        markers.forEach((m, idx) => {
+        const uiLayer = document.getElementById('ui-layer');
+        const arrowLayer = document.getElementById('arrow-layer');
+        const polyLayer = document.getElementById('polygon-layer');
+        
+        uiLayer.innerHTML = '';
+        polyLayer.innerHTML = '';
+        arrowLayer.innerHTML = ''; 
+        
+        let numberCounter = 1; 
+        
+        markers.forEach((m, index) => {
             if (m.shape === 'label') {
-                const lbl = document.createElement('div'); lbl.className = 'label-preview'; lbl.style.left = m.x + '%'; lbl.style.top = m.y + '%';
-                lbl.style.transform = getLabelTransform(m); lbl.style.color = m.labelColor || '#1e293b'; lbl.style.fontSize = (m.labelSize || 24) + 'px'; lbl.style.fontWeight = m.isBold ? 'bold' : 'normal'; lbl.style.fontStyle = m.isItalic ? 'italic' : 'normal'; lbl.style.textDecoration = m.isUnderline ? 'underline' : 'none';
-                if (m.labelStyle === 'shadow') { lbl.style.textShadow = '0px 2px 4px rgba(0,0,0,0.8), 0px 0px 2px rgba(0,0,0,0.5)'; lbl.style.background = 'transparent'; lbl.style.padding = '5px'; lbl.style.boxShadow = 'none'; lbl.style.borderRadius = '0'; }
-                else if (m.labelStyle === 'panel') { lbl.style.background = 'rgba(255, 255, 255, 0.85)'; lbl.style.padding = '8px 16px'; lbl.style.borderRadius = '8px'; lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'; lbl.style.textShadow = 'none'; }
-                else if (m.labelStyle === 'panel-dark') { lbl.style.background = 'rgba(15, 23, 42, 0.85)'; lbl.style.padding = '8px 16px'; lbl.style.borderRadius = '8px'; lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)'; lbl.style.textShadow = 'none'; }
-                else if (m.labelStyle === 'custom-panel') { const hex = m.labelBgColor || '#ffffff'; const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); lbl.style.background = `rgba(${r}, ${g}, ${b}, ${op})`; lbl.style.padding = '8px 16px'; lbl.style.borderRadius = '8px'; lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'; lbl.style.textShadow = 'none'; }
-                else { lbl.style.textShadow = 'none'; lbl.style.background = 'transparent'; lbl.style.padding = '5px'; lbl.style.boxShadow = 'none'; lbl.style.borderRadius = '0'; }
-                lbl.innerText = m.labelText || 'Новий напис'; lbl.dataset.index = idx; lbl.dataset.type = 'label';
-                lbl.addEventListener('mousedown', startDrag); lbl.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(idx); }); uiLayer.appendChild(lbl);
+                const lbl = document.createElement('div');
+                lbl.className = 'label-preview';
+                lbl.style.left = m.x + '%';
+                lbl.style.top = m.y + '%';
+
+                lbl.style.transform = getLabelTransform(m);
+                lbl.style.color = m.labelColor || '#1e293b';
+                lbl.style.fontSize = (m.labelSize || 24) + 'px';
+                lbl.style.fontWeight = m.isBold ? 'bold' : 'normal';
+                lbl.style.fontStyle = m.isItalic ? 'italic' : 'normal';
+                lbl.style.textDecoration = m.isUnderline ? 'underline' : 'none';
+                
+                if (m.labelStyle === 'shadow') {
+                    lbl.style.textShadow = '0px 2px 4px rgba(0,0,0,0.8), 0px 0px 2px rgba(0,0,0,0.5)';
+                    lbl.style.background = 'transparent';
+                    lbl.style.padding = '5px';
+                    lbl.style.boxShadow = 'none';
+                    lbl.style.borderRadius = '0';
+                } else if (m.labelStyle === 'panel') {
+                    lbl.style.background = 'rgba(255, 255, 255, 0.85)';
+                    lbl.style.padding = '8px 16px';
+                    lbl.style.borderRadius = '8px';
+                    lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                    lbl.style.textShadow = 'none';
+                } else if (m.labelStyle === 'panel-dark') {
+                    lbl.style.background = 'rgba(15, 23, 42, 0.85)';
+                    lbl.style.padding = '8px 16px';
+                    lbl.style.borderRadius = '8px';
+                    lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
+                    lbl.style.textShadow = 'none';
+                } else if (m.labelStyle === 'custom-panel') {
+                    const hex = m.labelBgColor || '#ffffff';
+                    const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100;
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    
+                    lbl.style.background = `rgba(${r}, ${g}, ${b}, ${op})`;
+                    lbl.style.padding = '8px 16px';
+                    lbl.style.borderRadius = '8px';
+                    lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+                    lbl.style.textShadow = 'none';
+                } else {
+                    lbl.style.textShadow = 'none';
+                    lbl.style.background = 'transparent';
+                    lbl.style.padding = '5px';
+                    lbl.style.boxShadow = 'none';
+                    lbl.style.borderRadius = '0';
+                }
+
+                lbl.innerText = m.labelText || 'Новий напис';
+                lbl.dataset.index = index;
+                lbl.dataset.type = 'label';
+                
+                lbl.addEventListener('mousedown', startDrag);
+                lbl.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(index); });
+                uiLayer.appendChild(lbl);
             } else if(m.shape === 'polygon') {
-                const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon'); poly.id = `poly-${idx}`;
-                poly.setAttribute('points', m.points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' '));
-                poly.setAttribute('fill', m.color || '#2563eb'); poly.setAttribute('fill-opacity', m.opNormal !== undefined ? m.opNormal / 100 : 0.4);
-                poly.setAttribute('stroke', m.color || '#2563eb'); poly.setAttribute('stroke-width', '2'); poly.setAttribute('vector-effect', 'non-scaling-stroke'); poly.setAttribute('class', 'polygon-preview');
-                poly.dataset.index = idx; poly.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(idx); }); polyLayer.appendChild(poly);
-                let sumX=0,sumY=0; m.points.forEach(p=>{sumX+=Number(p.x);sumY+=Number(p.y);});
-                const moveH = document.createElement('div'); moveH.className = 'poly-move-handle'; moveH.style.left = (sumX/m.points.length)+'%'; moveH.style.top = (sumY/m.points.length)+'%'; moveH.innerHTML = '✢'; moveH.dataset.index = idx; moveH.dataset.type = 'poly-move'; moveH.title = "Перемістити зону"; moveH.addEventListener('mousedown', startDrag); moveH.addEventListener('click', e=>e.stopPropagation()); uiLayer.appendChild(moveH);
-                m.points.forEach((p, ptIdx) => { const h = document.createElement('div'); h.className = 'poly-handle'; h.style.left = p.x+'%'; h.style.top = p.y+'%'; h.style.border = `2px solid ${m.color || '#2563eb'}`; h.dataset.index = idx; h.dataset.ptIndex = ptIdx; h.dataset.type = 'poly-point'; h.addEventListener('mousedown', startDrag); h.addEventListener('click', e=>e.stopPropagation()); uiLayer.appendChild(h); });
+                const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                poly.id = `poly-${index}`;
+                const pts = m.points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ');
+                poly.setAttribute('points', pts);
+                
+                const opNorm = m.opNormal !== undefined ? m.opNormal / 100 : 0.4;
+                poly.setAttribute('fill', m.color || '#2563eb'); 
+                poly.setAttribute('fill-opacity', opNorm);
+                poly.setAttribute('stroke', m.color || '#2563eb');
+                poly.setAttribute('stroke-width', '2');
+                poly.setAttribute('vector-effect', 'non-scaling-stroke');
+                poly.setAttribute('class', 'polygon-preview');
+                poly.dataset.index = index;
+                poly.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(index); });
+                polyLayer.appendChild(poly);
+
+                let sumX = 0, sumY = 0;
+                m.points.forEach(p => { sumX += Number(p.x); sumY += Number(p.y); });
+                const centerX = sumX / m.points.length;
+                const centerY = sumY / m.points.length;
+
+                const moveHandle = document.createElement('div');
+                moveHandle.className = 'poly-move-handle';
+                moveHandle.style.left = centerX + '%';
+                moveHandle.style.top = centerY + '%';
+                moveHandle.innerHTML = '✢'; 
+                moveHandle.dataset.index = index;
+                moveHandle.dataset.type = 'poly-move';
+                moveHandle.title = "Перетягніть, щоб перемістити всю зону";
+                moveHandle.addEventListener('mousedown', startDrag);
+                moveHandle.addEventListener('click', (e) => e.stopPropagation());
+                uiLayer.appendChild(moveHandle);
+
+                m.points.forEach((p, ptIndex) => {
+                    const handle = document.createElement('div');
+                    handle.className = 'poly-handle';
+                    handle.style.left = p.x + '%';
+                    handle.style.top = p.y + '%';
+                    handle.style.border = `2px solid ${m.color || '#2563eb'}`;
+                    handle.dataset.index = index;
+                    handle.dataset.ptIndex = ptIndex;
+                    handle.dataset.type = 'poly-point';
+                    handle.title = "Потягніть, щоб змінити форму зони";
+                    handle.addEventListener('mousedown', startDrag);
+                    handle.addEventListener('click', (e) => e.stopPropagation());
+                    uiLayer.appendChild(handle); 
+                });
             } else {
-                const dot = document.createElement('div'); dot.className = 'marker-preview'; dot.style.left = m.x+'%'; dot.style.top = m.y+'%'; dot.style.backgroundColor = m.color || '#2563eb'; dot.dataset.index = idx; dot.dataset.type = 'marker';
-                dot.innerHTML = `<span style="pointer-events:none;">${m.icon && m.icon !== 'number' ? iconMap[m.icon] : numCounter++}</span>`;
-                dot.addEventListener('mousedown', startDrag); dot.addEventListener('click', e => { e.stopPropagation(); openEditModal(idx); }); uiLayer.appendChild(dot); 
+                const dot = document.createElement('div');
+                dot.className = 'marker-preview';
+                dot.style.left = m.x + '%'; dot.style.top = m.y + '%';
+                dot.style.backgroundColor = m.color || '#2563eb';
+                dot.dataset.index = index;
+                dot.dataset.type = 'marker';
+                
+                let iconContent = '';
+                if (m.icon && m.icon !== 'number') {
+                    iconContent = iconMap[m.icon];
+                } else {
+                    iconContent = numberCounter++; 
+                }
+                dot.innerHTML = `<span style="pointer-events:none;">${iconContent}</span>`;
+                
+                dot.addEventListener('mousedown', startDrag);
+                dot.addEventListener('click', (e) => e.stopPropagation());
+                uiLayer.appendChild(dot); 
             }
 
             if (m.shape !== 'polygon' && m.targets && m.targets.length > 0) {
-                const mc = m.shape === 'label' ? (m.labelColor || '#1e293b') : (m.color || '#eab308');
-                const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-                marker.id = `arrowhead-${idx}`; marker.setAttribute('markerWidth', '12'); marker.setAttribute('markerHeight', '7'); marker.setAttribute('refX', '18'); marker.setAttribute('refY', '3.5'); marker.setAttribute('orient', 'auto');
-                const p = document.createElementNS('http://www.w3.org/2000/svg', 'polygon'); p.setAttribute('points', '0 1.5, 10 3.5, 0 5.5'); p.setAttribute('fill', mc); marker.appendChild(p); defs.appendChild(marker); arrowLayer.appendChild(defs);
-                m.targets.forEach((t, tIdx) => {
-                    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line'); l.id = `arrow-line-${idx}-${tIdx}`;
-                    if ((m.arrowDirection || 'to') === 'from') { l.setAttribute('x1', t.tx+'%'); l.setAttribute('y1', t.ty+'%'); l.setAttribute('x2', m.x+'%'); l.setAttribute('y2', m.y+'%'); } 
-                    else { l.setAttribute('x1', m.x+'%'); l.setAttribute('y1', m.y+'%'); l.setAttribute('x2', t.tx+'%'); l.setAttribute('y2', t.ty+'%'); }
-                    l.setAttribute('stroke', mc); l.setAttribute('stroke-width', m.arrowAnimated ? '2' : '3'); l.setAttribute('marker-end', `url(#arrowhead-${idx})`);
-                    if (m.arrowAnimated) l.classList.add('editor-arrow-anim'); arrowLayer.appendChild(l);
-                    const th = document.createElement('div'); th.className = 'target-preview'; th.style.left = t.tx+'%'; th.style.top = t.ty+'%'; th.dataset.index = idx; th.dataset.type = 'target'; th.dataset.tIndex = tIdx; th.addEventListener('mousedown', startDrag); th.addEventListener('click', e=>e.stopPropagation()); uiLayer.appendChild(th); 
+                const markerColor = m.shape === 'label' ? (m.labelColor || '#1e293b') : (m.color || '#eab308');
+                const isAnimated = m.arrowAnimated;
+                const dir = m.arrowDirection || 'to';
+                const strokeWidth = isAnimated ? '2' : '3';
+                
+                const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                marker.id = `arrowhead-${index}`;
+                marker.setAttribute('markerWidth', '12');
+                marker.setAttribute('markerHeight', '7');
+                marker.setAttribute('refX', '18');
+                marker.setAttribute('refY', '3.5');
+                marker.setAttribute('orient', 'auto');
+                const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                polygon.setAttribute('points', '0 1.5, 10 3.5, 0 5.5');
+                polygon.setAttribute('fill', markerColor);
+                marker.appendChild(polygon);
+                defs.appendChild(marker);
+                arrowLayer.appendChild(defs);
+
+                m.targets.forEach((t, tIndex) => {
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.id = `arrow-line-${index}-${tIndex}`;
+                    
+                    if (dir === 'from') {
+                        line.setAttribute('x1', t.tx + '%'); line.setAttribute('y1', t.ty + '%');
+                        line.setAttribute('x2', m.x + '%'); line.setAttribute('y2', m.y + '%');
+                    } else {
+                        line.setAttribute('x1', m.x + '%'); line.setAttribute('y1', m.y + '%');
+                        line.setAttribute('x2', t.tx + '%'); line.setAttribute('y2', t.ty + '%');
+                    }
+                    
+                    line.setAttribute('stroke', markerColor); 
+                    line.setAttribute('stroke-width', strokeWidth);
+                    line.setAttribute('marker-end', `url(#arrowhead-${index})`);
+                    
+                    if (isAnimated) {
+                        line.classList.add('editor-arrow-anim');
+                    }
+                    
+                    arrowLayer.appendChild(line);
+
+                    const targetHandle = document.createElement('div');
+                    targetHandle.className = 'target-preview';
+                    targetHandle.style.left = t.tx + '%';
+                    targetHandle.style.top = t.ty + '%';
+                    targetHandle.dataset.index = index;
+                    targetHandle.dataset.type = 'target';
+                    targetHandle.dataset.tIndex = tIndex;
+                    targetHandle.title = "Перетягніть кінець стрілки";
+                    targetHandle.addEventListener('mousedown', startDrag);
+                    targetHandle.addEventListener('click', (e) => e.stopPropagation());
+                    uiLayer.appendChild(targetHandle); 
                 });
             }
         });
     }
 
-    function closeModal() { document.getElementById('markerModal').style.display = 'none'; editingIndex = null; isSelectingTarget = false; document.getElementById('click-layer').style.cursor = 'crosshair'; }
+    function closeModal() {
+        document.getElementById('markerModal').style.display = 'none';
+        editingIndex = null;
+        isSelectingTarget = false;
+        document.getElementById('click-layer').style.cursor = 'crosshair';
+    }
+
     function clearModal() {
         document.getElementById('modal-error').style.display = 'none';
-        document.getElementById('m-title').value = ''; document.getElementById('m-icon').value = 'number'; document.getElementById('m-color').value = '#2563eb';
-        document.getElementById('m-type').value = 'text'; document.getElementById('m-text').value = ''; document.getElementById('m-video').value = ''; document.getElementById('m-audio').value = ''; document.getElementById('m-link').value = ''; document.getElementById('m-transition').value = '';
-        document.getElementById('l-text').value = ''; document.getElementById('l-size').value = '24'; document.getElementById('l-size-val').innerText = '24px'; document.getElementById('l-color').value = '#1e293b'; document.getElementById('l-style').value = 'normal'; document.getElementById('l-anchor').value = 'auto'; document.getElementById('l-bg-color').value = '#ffffff'; document.getElementById('l-bg-op').value = '85'; document.getElementById('l-bg-op-val').innerText = '85%'; document.getElementById('custom-panel-settings').style.display = 'none';
-        document.getElementById('btn-bold').classList.remove('active'); document.getElementById('btn-italic').classList.remove('active'); document.getElementById('btn-underline').classList.remove('active');
-        document.getElementById('m-op-normal').value = '40'; document.getElementById('op-norm-val').innerText = '40%'; document.getElementById('m-op-hover').value = '80'; document.getElementById('op-hov-val').innerText = '80%';
-        document.getElementById('a-animated').value = 'false'; document.getElementById('a-direction').value = 'to';
-        tempQuizOptions = ['', '', '']; tempQuizCorrect = 0; document.getElementById('btn-delete-marker').style.display = 'none';
+        document.getElementById('m-title').value = '';
+        document.getElementById('m-icon').value = 'number';
+        document.getElementById('m-color').value = '#2563eb';
+        document.getElementById('m-type').value = 'text';
+        document.getElementById('m-text').value = '';
+        document.getElementById('m-video').value = '';
+        document.getElementById('m-audio').value = '';
+        document.getElementById('m-link').value = '';
+        document.getElementById('m-transition').value = '';
+        
+        // Написи
+        document.getElementById('l-text').value = '';
+        document.getElementById('l-size').value = '24';
+        document.getElementById('l-size-val').innerText = '24px';
+        document.getElementById('l-color').value = '#1e293b';
+        document.getElementById('l-style').value = 'normal';
+        document.getElementById('l-anchor').value = 'auto';
+        document.getElementById('l-bg-color').value = '#ffffff';
+        document.getElementById('l-bg-op').value = '85';
+        document.getElementById('l-bg-op-val').innerText = '85%';
+        document.getElementById('custom-panel-settings').style.display = 'none';
+        
+        document.getElementById('btn-bold').classList.remove('active');
+        document.getElementById('btn-italic').classList.remove('active');
+        document.getElementById('btn-underline').classList.remove('active');
+        
+        // Зони
+        document.getElementById('m-op-normal').value = '40';
+        document.getElementById('op-norm-val').innerText = '40%';
+        document.getElementById('m-op-hover').value = '80';
+        document.getElementById('op-hov-val').innerText = '80%';
+        
+        // Стрілки
+        document.getElementById('a-animated').value = 'false';
+        document.getElementById('a-direction').value = 'to';
+        
+        tempQuizOptions = ['', '', ''];
+        tempQuizCorrect = 0;
+        
+        document.getElementById('btn-delete-marker').style.display = 'none';
+        
         toggleInputs(false);
     }
 
     function toggleInputs(isUserChange) {
-        const t = document.getElementById('m-type').value;
-        ['text', 'video', 'audio', 'link', 'transition', 'quiz'].forEach(v => { document.getElementById(`group-${v}`).style.display = t === v ? 'block' : 'none'; });
-        if (t === 'quiz') { if (isUserChange) { tempQuizOptions = ['', '', '']; tempQuizCorrect = 0; } renderQuizOptions(); }
+        const type = document.getElementById('m-type').value;
+        document.getElementById('group-text').style.display = type === 'text' ? 'block' : 'none';
+        document.getElementById('group-video').style.display = type === 'video' ? 'block' : 'none';
+        document.getElementById('group-audio').style.display = type === 'audio' ? 'block' : 'none';
+        document.getElementById('group-link').style.display = type === 'link' ? 'block' : 'none';
+        document.getElementById('group-transition').style.display = type === 'transition' ? 'block' : 'none';
+        document.getElementById('group-quiz').style.display = type === 'quiz' ? 'block' : 'none';
+        
+        if (type === 'quiz') {
+            if (isUserChange) {
+                tempQuizOptions = ['', '', ''];
+                tempQuizCorrect = 0;
+            }
+            renderQuizOptions();
+        }
     }
 
     function openEditModal(index) {
-        editingIndex = index; clearModal();
-        const m = markers[index]; document.getElementById('btn-delete-marker').style.display = 'inline-block';
+        editingIndex = index;
+        clearModal();
+        
+        const m = markers[index];
+        document.getElementById('btn-delete-marker').style.display = 'inline-block';
+        
         if (m.shape === 'label') {
             document.getElementById('modal-title-text').innerText = '🔤 Налаштування напису';
-            document.getElementById('m-title-group').style.display = 'none'; document.getElementById('appearance-group').style.display = 'none'; document.getElementById('polygon-opacity-group').style.display = 'none'; document.getElementById('m-type-group').style.display = 'none';
-            ['text', 'video', 'audio', 'link', 'transition', 'quiz'].forEach(v => document.getElementById(`group-${v}`).style.display = 'none');
-            document.getElementById('group-label-settings').style.display = 'block'; document.getElementById('group-arrow').style.display = 'block';
+            document.getElementById('m-title-group').style.display = 'none';
+            document.getElementById('appearance-group').style.display = 'none';
+            document.getElementById('polygon-opacity-group').style.display = 'none';
+            document.getElementById('m-type-group').style.display = 'none';
+            document.getElementById('group-text').style.display = 'none';
+            document.getElementById('group-video').style.display = 'none';
+            document.getElementById('group-audio').style.display = 'none';
+            document.getElementById('group-link').style.display = 'none';
+            document.getElementById('group-transition').style.display = 'none';
+            document.getElementById('group-quiz').style.display = 'none';
             
-            document.getElementById('l-text').value = m.labelText || ''; document.getElementById('l-size').value = m.labelSize || 24; document.getElementById('l-size-val').innerText = (m.labelSize || 24) + 'px';
-            document.getElementById('l-color').value = m.labelColor || '#1e293b'; document.getElementById('l-style').value = m.labelStyle || 'normal'; document.getElementById('l-anchor').value = m.labelAnchor || 'auto';
-            document.getElementById('l-bg-color').value = m.labelBgColor || '#ffffff'; document.getElementById('l-bg-op').value = m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85; document.getElementById('l-bg-op-val').innerText = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) + '%';
+            document.getElementById('group-label-settings').style.display = 'block';
+            document.getElementById('group-arrow').style.display = 'block';
+            
+            document.getElementById('l-text').value = m.labelText || '';
+            document.getElementById('l-size').value = m.labelSize || 24;
+            document.getElementById('l-size-val').innerText = (m.labelSize || 24) + 'px';
+            document.getElementById('l-color').value = m.labelColor || '#1e293b';
+            document.getElementById('l-style').value = m.labelStyle || 'normal';
+            document.getElementById('l-anchor').value = m.labelAnchor || 'auto';
+            document.getElementById('l-bg-color').value = m.labelBgColor || '#ffffff';
+            document.getElementById('l-bg-op').value = m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85;
+            document.getElementById('l-bg-op-val').innerText = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) + '%';
+            
             document.getElementById('custom-panel-settings').style.display = m.labelStyle === 'custom-panel' ? 'block' : 'none';
-            if (m.isBold) document.getElementById('btn-bold').classList.add('active'); if (m.isItalic) document.getElementById('btn-italic').classList.add('active'); if (m.isUnderline) document.getElementById('btn-underline').classList.add('active');
-        } else {
-            document.getElementById('modal-title-text').innerText = m.shape === 'polygon' ? '📍 Налаштування Зони' : '📍 Налаштування точки';
-            document.getElementById('m-title-group').style.display = 'block'; document.getElementById('appearance-group').style.display = 'flex';
-            document.getElementById('m-icon').disabled = m.shape === 'polygon';
-            document.getElementById('polygon-opacity-group').style.display = m.shape === 'polygon' ? 'flex' : 'none';
-            document.getElementById('m-type-group').style.display = 'block'; document.getElementById('group-arrow').style.display = m.shape === 'polygon' ? 'none' : 'block'; document.getElementById('group-label-settings').style.display = 'none';
             
-            document.getElementById('m-title').value = m.title || ''; document.getElementById('m-color').value = m.color || '#2563eb';
-            if (m.shape === 'polygon') {
-                document.getElementById('m-op-normal').value = m.opNormal !== undefined ? m.opNormal : 40; document.getElementById('op-norm-val').innerText = (m.opNormal !== undefined ? m.opNormal : 40) + '%';
-                document.getElementById('m-op-hover').value = m.opHover !== undefined ? m.opHover : 80; document.getElementById('op-hov-val').innerText = (m.opHover !== undefined ? m.opHover : 80) + '%';
-            } else { document.getElementById('m-icon').value = m.icon || 'number'; }
+            if (m.isBold) document.getElementById('btn-bold').classList.add('active');
+            if (m.isItalic) document.getElementById('btn-italic').classList.add('active');
+            if (m.isUnderline) document.getElementById('btn-underline').classList.add('active');
             
+        } else if (m.shape === 'polygon') {
+            document.getElementById('modal-title-text').innerText = '📍 Налаштування Зони';
+            document.getElementById('m-title-group').style.display = 'block';
+            document.getElementById('appearance-group').style.display = 'flex';
+            document.getElementById('m-icon').disabled = true;
+            document.getElementById('polygon-opacity-group').style.display = 'flex';
+            document.getElementById('m-type-group').style.display = 'block';
+            document.getElementById('group-arrow').style.display = 'none';
+            document.getElementById('group-label-settings').style.display = 'none';
+            
+            document.getElementById('m-title').value = m.title || '';
+            document.getElementById('m-color').value = m.color || '#2563eb';
+            document.getElementById('m-op-normal').value = m.opNormal !== undefined ? m.opNormal : 40;
+            document.getElementById('op-norm-val').innerText = (m.opNormal !== undefined ? m.opNormal : 40) + '%';
+            document.getElementById('m-op-hover').value = m.opHover !== undefined ? m.opHover : 80;
+            document.getElementById('op-hov-val').innerText = (m.opHover !== undefined ? m.opHover : 80) + '%';
             document.getElementById('m-type').value = m.type || 'text';
-            populateContentTypeFields(m); 
+            
+            populateContentTypeFields(m);
+        } else {
+            document.getElementById('modal-title-text').innerText = '📍 Налаштування точки';
+            document.getElementById('m-title-group').style.display = 'block';
+            document.getElementById('appearance-group').style.display = 'flex';
+            document.getElementById('m-icon').disabled = false;
+            document.getElementById('polygon-opacity-group').style.display = 'none';
+            document.getElementById('m-type-group').style.display = 'block';
+            document.getElementById('group-arrow').style.display = 'block';
+            document.getElementById('group-label-settings').style.display = 'none';
+            
+            document.getElementById('m-title').value = m.title || '';
+            document.getElementById('m-icon').value = m.icon || 'number';
+            document.getElementById('m-color').value = m.color || '#2563eb';
+            document.getElementById('m-type').value = m.type || 'text';
+            
+            populateContentTypeFields(m);
         }
-        document.getElementById('a-animated').value = m.arrowAnimated ? 'true' : 'false'; document.getElementById('a-direction').value = m.arrowDirection || 'to';
-        renderArrowsList(); document.getElementById('markerModal').style.display = 'flex';
+        
+        // Спільні стрілки
+        document.getElementById('a-animated').value = m.arrowAnimated ? 'true' : 'false';
+        document.getElementById('a-direction').value = m.arrowDirection || 'to';
+        
+        renderArrowsList();
+        document.getElementById('markerModal').style.display = 'flex';
     }
 
     function populateContentTypeFields(m) {
-        if (m.type === 'text') document.getElementById('m-text').value = m.content || '';
-        else if (m.type === 'video') document.getElementById('m-video').value = m.content || '';
-        else if (m.type === 'audio') document.getElementById('m-audio').value = m.content || '';
-        else if (m.type === 'link') document.getElementById('m-link').value = m.content || '';
-        else if (m.type === 'transition') document.getElementById('m-transition').value = m.content || '';
-        else if (m.type === 'quiz') {
-            if (m.quizData) { tempQuizOptions = [...m.quizData.options]; tempQuizCorrect = m.quizData.correctIndex; document.getElementById('q-text').value = m.quizData.q || ''; document.getElementById('q-msg-correct').value = m.quizData.msgCorrect || '✅ Правильна відповідь!'; document.getElementById('q-msg-incorrect').value = m.quizData.msgIncorrect || '❌ Неправильно.'; }
+        if (m.type === 'text') {
+            document.getElementById('m-text').value = m.content || '';
+        } else if (m.type === 'video') {
+            document.getElementById('m-video').value = m.content || '';
+        } else if (m.type === 'audio') {
+            document.getElementById('m-audio').value = m.content || '';
+        } else if (m.type === 'link') {
+            document.getElementById('m-link').value = m.content || '';
+        } else if (m.type === 'transition') {
+            document.getElementById('m-transition').value = m.content || '';
+        } else if (m.type === 'quiz') {
+            if (m.quizData) {
+                tempQuizOptions = [...m.quizData.options];
+                tempQuizCorrect = m.quizData.correctIndex;
+                document.getElementById('q-text').value = m.quizData.q || '';
+                document.getElementById('q-msg-correct').value = m.quizData.msgCorrect || '✅ Правильна відповідь!';
+                document.getElementById('q-msg-incorrect').value = m.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.';
+            }
         }
-        toggleInputs(false); 
+        toggleInputs(false);
     }
 
     function saveMarker() {
-        const errDiv = document.getElementById('modal-error'); errDiv.style.display = 'none';
-        let shape = editingIndex !== null ? markers[editingIndex].shape : tempCoords.shape;
+        const errDiv = document.getElementById('modal-error');
+        errDiv.style.display = 'none';
+        
+        let shape = '';
+        if (editingIndex !== null) {
+            shape = markers[editingIndex].shape;
+        } else {
+            shape = tempCoords.shape;
+        }
+        
         let mData = {};
         
         if (shape === 'label') {
-            const txt = document.getElementById('l-text').value.trim(); if (!txt) { errDiv.innerText = 'Введіть текст!'; errDiv.style.display = 'block'; return; }
+            const labelText = document.getElementById('l-text').value.trim();
+            if (!labelText) {
+                errDiv.innerText = 'Введіть текст напису!';
+                errDiv.style.display = 'block';
+                return;
+            }
+            
             mData = {
-                shape: 'label', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y,
-                labelText: txt, labelSize: parseInt(document.getElementById('l-size').value), labelColor: document.getElementById('l-color').value, labelStyle: document.getElementById('l-style').value, labelAnchor: document.getElementById('l-anchor').value, labelBgColor: document.getElementById('l-bg-color').value, labelBgOpacity: parseInt(document.getElementById('l-bg-op').value),
-                isBold: document.getElementById('btn-bold').classList.contains('active'), isItalic: document.getElementById('btn-italic').classList.contains('active'), isUnderline: document.getElementById('btn-underline').classList.contains('active')
+                shape: 'label',
+                x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x,
+                y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y,
+                labelText: labelText,
+                labelSize: parseInt(document.getElementById('l-size').value),
+                labelColor: document.getElementById('l-color').value,
+                labelStyle: document.getElementById('l-style').value,
+                labelAnchor: document.getElementById('l-anchor').value,
+                labelBgColor: document.getElementById('l-bg-color').value,
+                labelBgOpacity: parseInt(document.getElementById('l-bg-op').value),
+                isBold: document.getElementById('btn-bold').classList.contains('active'),
+                isItalic: document.getElementById('btn-italic').classList.contains('active'),
+                isUnderline: document.getElementById('btn-underline').classList.contains('active')
             };
         } else {
-            const title = document.getElementById('m-title').value.trim(); if (!title) { errDiv.innerText = 'Введіть заголовок!'; errDiv.style.display = 'block'; return; }
-            const type = document.getElementById('m-type').value; let content = ''; let qData = null;
+            const title = document.getElementById('m-title').value.trim();
+            if (!title) {
+                errDiv.innerText = 'Введіть заголовок!';
+                errDiv.style.display = 'block';
+                return;
+            }
             
-            if (type === 'text') { content = document.getElementById('m-text').value; }
-            else if (type === 'video') { content = document.getElementById('m-video').value.trim(); if (content.includes('youtube.com/watch?v=')) content = `https://www.youtube.com/embed/${content.split('v=')[1]?.split('&')[0]}`; else if (content.includes('youtu.be/')) content = `https://www.youtube.com/embed/${content.split('youtu.be/')[1]?.split('?')[0]}`; }
-            else if (type === 'audio') { content = document.getElementById('m-audio').value.trim(); }
-            else if (type === 'link') { content = document.getElementById('m-link').value.trim(); }
-            else if (type === 'transition') { content = document.getElementById('m-transition').value.trim(); }
-            else if (type === 'quiz') {
-                const qt = document.getElementById('q-text').value.trim(); if (!qt) { errDiv.innerText = 'Введіть запитання!'; errDiv.style.display = 'block'; return; }
-                qData = { q: qt, options: tempQuizOptions.filter(o => o.trim() !== ''), correctIndex: tempQuizCorrect, msgCorrect: document.getElementById('q-msg-correct').value, msgIncorrect: document.getElementById('q-msg-incorrect').value };
-                if (qData.options.length < 2) { errDiv.innerText = 'Мінімум 2 варіанти!'; errDiv.style.display = 'block'; return; }
+            const type = document.getElementById('m-type').value;
+            let content = '';
+            let quizData = null;
+            
+            if (type === 'text') {
+                content = document.getElementById('m-text').value;
+            } else if (type === 'video') {
+                content = document.getElementById('m-video').value.trim();
+                if (content.includes('youtube.com/watch?v=')) {
+                    const videoId = content.split('v=')[1]?.split('&')[0];
+                    if (videoId) content = `https://www.youtube.com/embed/${videoId}`;
+                } else if (content.includes('youtu.be/')) {
+                    const videoId = content.split('youtu.be/')[1]?.split('?')[0];
+                    if (videoId) content = `https://www.youtube.com/embed/${videoId}`;
+                }
+            } else if (type === 'audio') {
+                content = document.getElementById('m-audio').value.trim();
+            } else if (type === 'link') {
+                content = document.getElementById('m-link').value.trim();
+            } else if (type === 'transition') {
+                content = document.getElementById('m-transition').value.trim();
+            } else if (type === 'quiz') {
+                const qText = document.getElementById('q-text').value.trim();
+                if (!qText) {
+                    errDiv.innerText = 'Введіть запитання!';
+                    errDiv.style.display = 'block';
+                    return;
+                }
+                quizData = {
+                    q: qText,
+                    options: tempQuizOptions.filter(o => o.trim() !== ''),
+                    correctIndex: tempQuizCorrect,
+                    msgCorrect: document.getElementById('q-msg-correct').value,
+                    msgIncorrect: document.getElementById('q-msg-incorrect').value
+                };
+                if (quizData.options.length < 2) {
+                    errDiv.innerText = 'Введіть щонайменше 2 варіанти відповідей!';
+                    errDiv.style.display = 'block';
+                    return;
+                }
             }
             
             if (shape === 'polygon') {
-                mData = { shape: 'polygon', points: editingIndex !== null ? markers[editingIndex].points : [...tempPolygonPoints], title: title, color: document.getElementById('m-color').value, opNormal: parseInt(document.getElementById('m-op-normal').value), opHover: parseInt(document.getElementById('m-op-hover').value), type: type, content: content, quizData: qData };
+                mData = {
+                    shape: 'polygon',
+                    points: editingIndex !== null ? markers[editingIndex].points : [...tempPolygonPoints],
+                    title: title,
+                    color: document.getElementById('m-color').value,
+                    opNormal: parseInt(document.getElementById('m-op-normal').value),
+                    opHover: parseInt(document.getElementById('m-op-hover').value),
+                    type: type,
+                    content: content,
+                    quizData: quizData
+                };
             } else {
-                mData = { shape: 'point', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y, title: title, icon: document.getElementById('m-icon').value, color: document.getElementById('m-color').value, type: type, content: content, quizData: qData };
+                mData = {
+                    shape: 'point',
+                    x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x,
+                    y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y,
+                    title: title,
+                    icon: document.getElementById('m-icon').value,
+                    color: document.getElementById('m-color').value,
+                    type: type,
+                    content: content,
+                    quizData: quizData
+                };
             }
         }
         
-        if (shape !== 'polygon') { mData.targets = editingIndex !== null ? (markers[editingIndex].targets || []) : []; mData.arrowAnimated = document.getElementById('a-animated').value === 'true'; mData.arrowDirection = document.getElementById('a-direction').value; }
+        if (shape !== 'polygon') {
+            mData.targets = editingIndex !== null ? (markers[editingIndex].targets || []) : [];
+            mData.arrowAnimated = document.getElementById('a-animated').value === 'true';
+            mData.arrowDirection = document.getElementById('a-direction').value;
+        }
         
-        if (editingIndex !== null) markers[editingIndex] = mData; else { markers.push(mData); tempPolygonPoints = []; }
-        saveState(); closeModal(); renderMarkersPreview(); if (document.getElementById('output-area').style.display === 'block') generateCode();
+        if (editingIndex !== null) {
+            markers[editingIndex] = mData;
+        } else {
+            markers.push(mData);
+            tempPolygonPoints = [];
+        }
+        
+        saveState();
+        closeModal();
+        renderMarkersPreview();
+        if (document.getElementById('output-area').style.display === 'block') generateCode();
     }
 
-    function deleteMarker() { if (editingIndex !== null) { markers.splice(editingIndex, 1); saveState(); closeModal(); renderMarkersPreview(); if (document.getElementById('output-area').style.display === 'block') generateCode(); } }
+    function deleteMarker() {
+        if (editingIndex !== null) {
+            markers.splice(editingIndex, 1);
+            saveState();
+            closeModal();
+            renderMarkersPreview();
+            if (document.getElementById('output-area').style.display === 'block') generateCode();
+        }
+    }
 
     function getSnippetHTML() {
         if(markers.length === 0) return null;
+
         const safeMarkers = markers.map(m => {
-            if (m.shape === 'label') return { ...m, labelText: (m.labelText||'').replace(/"/g, '&quot;').replace(/\n/g, '<br>') };
-            return { ...m, title: m.title.replace(/"/g, '&quot;'), content: (m.content||'').replace(/"/g, '&quot;').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>') };
+            if (m.shape === 'label') {
+                return { ...m, labelText: (m.labelText||'').replace(/"/g, '&quot;').replace(/\n/g, '<br>') };
+            }
+            return {
+                ...m,
+                title: m.title.replace(/"/g, '&quot;'),
+                content: (m.content||'')
+                    .replace(/"/g, '&quot;')
+                    .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                    .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                    .replace(/\n/g, '<br>')
+            };
         });
 
-        let html = `<!-- ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ ClicPoint LMS -->
+        let html = `
+<!-- ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ (КЛІЄНТСЬКА АДАПТИВНА ВЕРСІЯ 10.4) -->
 <div id="gen-int-container" style="position: relative; width: 100%; max-width: 100%; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; border-radius: 8px; container-type: inline-size; box-sizing: border-box;">
-    <img src="${currentImgUrl}" style="width: 100%; height: auto; display: block;" alt="Interactive">`;
-        if (watermarkDataUrl) html += `\n    <img src="${watermarkDataUrl}" alt="Watermark" style="position: absolute; bottom: 2%; right: 2%; max-width: clamp(60px, 15cqw, 150px); max-height: clamp(25px, 6cqw, 60px); z-index: 20; opacity: 0.8; pointer-events: none; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6));" onerror="this.style.display='none'">`;
-        html += `\n    <svg viewBox="0 0 ${imgNatWidth} ${imgNatHeight}" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">\n`;
-        
+    <img src="${currentImgUrl}" style="width: 100%; height: auto; display: block;" alt="Interactive">
+`;
+
+        if (watermarkDataUrl) {
+            html += `    <!-- Водяний знак (Логотип) -->
+    <img src="${watermarkDataUrl}" alt="Watermark" style="position: absolute; bottom: 2%; right: 2%; max-width: clamp(60px, 15cqw, 150px); max-height: clamp(25px, 6cqw, 60px); z-index: 20; opacity: 0.8; pointer-events: none; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6));" onerror="this.style.display='none'">\n`;
+        }
+
+        html += `    
+    <!-- SVG Шар (Адаптивні стрілки та Зони) -->
+    <svg viewBox="0 0 ${imgNatWidth} ${imgNatHeight}" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">
+`;
         safeMarkers.forEach((m, i) => {
             if(m.shape === 'polygon') {
                 const pts = m.points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' ');
-                const c = m.color || '#2563eb'; const opN = m.opNormal !== undefined ? m.opNormal / 100 : 0.4; const opH = m.opHover !== undefined ? m.opHover / 100 : 0.8;
-                html += `        <polygon points="${pts}" fill="${c}" fill-opacity="${opN}" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" class="gen-poly" onclick="openGenModal(${i})" style="pointer-events: auto; cursor: pointer; transition: fill-opacity 0.2s;" onmouseover="this.setAttribute('fill-opacity', '${opH}')" onmouseout="this.setAttribute('fill-opacity', '${opN}')" />\n`;
+                const c = m.color || '#2563eb';
+                const opN = m.opNormal !== undefined ? m.opNormal / 100 : 0.4;
+                const opH = m.opHover !== undefined ? m.opHover / 100 : 0.8;
+                html += `        <polygon points="${pts}" fill="${c}" fill-opacity="${opN}" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" class="gen-poly" onclick="openGenModal(${i})" data-title="${m.title}" style="pointer-events: auto; cursor: pointer; transition: fill-opacity 0.2s;" onmouseover="this.setAttribute('fill-opacity', '${opH}')" onmouseout="this.setAttribute('fill-opacity', '${opN}')" />\n`;
             } else if (m.shape !== 'polygon' && m.targets && m.targets.length > 0) {
                 const markerColor = m.shape === 'label' ? (m.labelColor || '#1e293b') : (m.color || '#eab308');
-                const animClass = m.arrowAnimated ? 'gen-arrow-anim' : '';
+                const isAnimated = m.arrowAnimated;
+                const dir = m.arrowDirection || 'to';
+                const animClass = isAnimated ? 'gen-arrow-anim' : '';
+                
                 html += `        <defs><marker id="gen-arrowhead-${i}" markerWidth="10" markerHeight="6" refX="15" refY="3" orient="auto"><polygon points="0 1, 8 3, 0 5" fill="${markerColor}" /></marker></defs>\n`;
                 m.targets.forEach(t => {
-                    let x1, y1, x2, y2; if ((m.arrowDirection || 'to') === 'from') { x1 = t.tx; y1 = t.ty; x2 = m.x; y2 = m.y; } else { x1 = m.x; y1 = m.y; x2 = t.tx; y2 = t.ty; }
+                    let x1, y1, x2, y2;
+                    if (dir === 'from') {
+                        x1 = t.tx; y1 = t.ty;
+                        x2 = m.x; y2 = m.y;
+                    } else {
+                        x1 = m.x; y1 = m.y;
+                        x2 = t.tx; y2 = t.ty;
+                    }
                     html += `        <line x1="${(x1 * imgNatWidth / 100).toFixed(1)}" y1="${(y1 * imgNatHeight / 100).toFixed(1)}" x2="${(x2 * imgNatWidth / 100).toFixed(1)}" y2="${(y2 * imgNatHeight / 100).toFixed(1)}" stroke="${markerColor}" class="${animClass} gen-arrow-line" vector-effect="non-scaling-stroke" marker-end="url(#gen-arrowhead-${i})" />\n`;
                 });
             }
@@ -1382,29 +2595,77 @@
         html += `    </svg>\n`;
 
         let genNumberCounter = 1; 
+
         safeMarkers.forEach((m, i) => {
             if(m.shape === 'label') {
-                const fw = m.isBold ? 'bold' : 'normal'; const fs = m.isItalic ? 'italic' : 'normal'; const td = m.isUnderline ? 'underline' : 'none';
-                let transformStr = ''; let anchor = m.labelAnchor || 'auto';
-                if (anchor === 'auto') { let isUp = false; if (m.targets && m.targets.length > 0) isUp = ((m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length) < m.y); transformStr = isUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))'; }
-                else if (anchor === 'top') { transformStr = 'translate(-50%, 4px)'; } else if (anchor === 'bottom') { transformStr = 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'left') { transformStr = 'translate(4px, -50%)'; } else if (anchor === 'right') { transformStr = 'translate(calc(-100% - 4px), -50%)'; } else if (anchor === 'center') { transformStr = 'translate(-50%, -50%)'; }
-                let extStyle = '';
-                if (m.labelStyle === 'shadow') extStyle = ' text-shadow: 0px 1px 3px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,0.6);';
-                else if (m.labelStyle === 'panel') extStyle = ' background: rgba(255, 255, 255, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);';
-                else if (m.labelStyle === 'panel-dark') extStyle = ' background: rgba(15, 23, 42, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);';
-                else if (m.labelStyle === 'custom-panel') { const hx = m.labelBgColor || '#ffffff'; const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100; const r = parseInt(hx.slice(1, 3), 16); const g = parseInt(hx.slice(3, 5), 16); const b = parseInt(hx.slice(5, 7), 16); extStyle = ` background: rgba(${r}, ${g}, ${b}, ${op}); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);`; }
-                const sVal = m.labelSize || 24; const scSize = `font-size: clamp(8px, calc(${sVal} * 0.1cqw), ${sVal}px);`;
-                html += `    <div class="gen-label" style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap;${extStyle}">${m.labelText}</div>\n`;
+                const fw = m.isBold ? 'bold' : 'normal';
+                const fs = m.isItalic ? 'italic' : 'normal';
+                const td = m.isUnderline ? 'underline' : 'none';
+                
+                let transformStr = '';
+                let anchor = m.labelAnchor || 'auto';
+                if (anchor === 'auto') {
+                    let isPointingUp = false;
+                    if (m.targets && m.targets.length > 0) {
+                        let avgTy = m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length;
+                        isPointingUp = (avgTy < m.y);
+                    }
+                    transformStr = isPointingUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))';
+                } else if (anchor === 'top') { transformStr = 'translate(-50%, 4px)'; }
+                else if (anchor === 'bottom') { transformStr = 'translate(-50%, calc(-100% - 4px))'; }
+                else if (anchor === 'left') { transformStr = 'translate(4px, -50%)'; }
+                else if (anchor === 'right') { transformStr = 'translate(calc(-100% - 4px), -50%)'; }
+                else if (anchor === 'center') { transformStr = 'translate(-50%, -50%)'; }
+
+                let extraStyles = '';
+                if (m.labelStyle === 'shadow') {
+                    extraStyles = ' text-shadow: 0px 1px 3px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,0.6);';
+                } else if (m.labelStyle === 'panel') {
+                    extraStyles = ' background: rgba(255, 255, 255, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);';
+                } else if (m.labelStyle === 'panel-dark') {
+                    extraStyles = ' background: rgba(15, 23, 42, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);';
+                } else if (m.labelStyle === 'custom-panel') {
+                    const hex = m.labelBgColor || '#ffffff';
+                    const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100;
+                    const r = parseInt(hex.slice(1, 3), 16);
+                    const g = parseInt(hex.slice(3, 5), 16);
+                    const b = parseInt(hex.slice(5, 7), 16);
+                    extraStyles = ` background: rgba(${r}, ${g}, ${b}, ${op}); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);`;
+                }
+
+                const sizeVal = m.labelSize || 24;
+                const scaledSize = `font-size: clamp(8px, calc(${sizeVal} * 0.1cqw), ${sizeVal}px);`;
+
+                html += `    <div class="gen-label" style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scaledSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap;${extraStyles}">${m.labelText}</div>\n`;
             } else if (m.shape !== 'polygon' && m.shape !== 'label') {
-                const c = m.color || '#2563eb'; let icon = m.icon && m.icon !== 'number' ? iconMap[m.icon] : genNumberCounter++;
-                let ttStyle = "left: 50%; transform: translateX(-50%);"; if (m.x < 15) ttStyle = "left: -5px; transform: none;"; if (m.x > 85) ttStyle = "left: auto; right: -5px; transform: none;";
-                if (m.y < 15) ttStyle += " top: calc(100% + 8px); bottom: auto;"; else ttStyle += " bottom: calc(100% + 8px); top: auto;";
+                const c = m.color || '#2563eb';
+                
+                let icon = '';
+                if (m.icon && m.icon !== 'number') {
+                    icon = iconMap[m.icon];
+                } else {
+                    icon = genNumberCounter++; 
+                }
+                
+                let ttStyle = "left: 50%; transform: translateX(-50%);";
+                if (m.x < 15) ttStyle = "left: -5px; transform: none;";
+                if (m.x > 85) ttStyle = "left: auto; right: -5px; transform: none;";
+                
+                if (m.y < 15) {
+                    ttStyle += " top: calc(100% + 8px); bottom: auto;";
+                } else {
+                    ttStyle += " bottom: calc(100% + 8px); top: auto;";
+                }
+
                 html += `    <div class="gen-marker gen-pulse" onclick="handleMarkerTap(event, ${i})" style="position: absolute; top: ${m.y}%; left: ${m.x}%; width: clamp(24px, 3cqw, 32px); height: clamp(24px, 3cqw, 32px); background: ${c}; border: 1.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size: clamp(10px, 1.2cqw, 14px);">
-        ${icon}<span class="gen-tooltip" style="${ttStyle}">${m.title}</span></div>\n`;
+        ${icon}
+        <span class="gen-tooltip" style="${ttStyle}">${m.title}</span>
+    </div>\n`;
             }
         });
 
         html += `
+    <!-- Модальне вікно (З мобільним адаптивним "Bottom Sheet" лейаутом) -->
     <div id="gen-modal" onclick="if(event.target === this) closeGenModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 99999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease-in-out; box-sizing: border-box;">
         <div id="gen-modal-window" style="background: #fff; padding: 24px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); transition: transform 0.25s ease-in-out; transform: translateY(20px); box-sizing: border-box;">
             <button onclick="closeGenModal()" style="position: absolute; top: 12px; right: 12px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; color: #64748b; z-index: 10;">&times;</button>
@@ -1413,94 +2674,297 @@
         </div>
     </div>
 </div>
+
 <style>
-    @keyframes markerPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
-    .gen-pulse { animation: markerPulse 2s infinite; } .gen-marker { transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
-    .gen-marker::before { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%; }
-    .gen-marker:hover { transform: translate(-50%, -50%) scale(1.1) !important; z-index: 30 !important; }
-    .gen-arrow-line { stroke-width: clamp(1.5px, 0.35cqw, 3.5px); }
-    @keyframes genDashFlow { to { stroke-dashoffset: -10; } } .gen-arrow-anim { stroke-dasharray: 6 4; animation: genDashFlow 0.5s linear infinite; }
-    .gen-tooltip { position: absolute; background: #0f172a; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: normal; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s ease-in-out; z-index: 40; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #334155; }
+    @keyframes markerPulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+        70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+    .gen-pulse { animation: markerPulse 2s infinite; }
+    .gen-marker { transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
+    
+    .gen-marker::before {
+        content: ''; position: absolute;
+        top: -10px; left: -10px; right: -10px; bottom: -10px;
+        border-radius: 50%;
+    }
+    
+    .gen-marker:hover { 
+        transform: translate(-50%, -50%) scale(1.1) !important; 
+        z-index: 30 !important; 
+    }
+
+    .gen-arrow-line {
+        stroke-width: clamp(1.5px, 0.35cqw, 3.5px);
+    }
+
+    @keyframes genDashFlow {
+        to { stroke-dashoffset: -10; }
+    }
+    .gen-arrow-anim {
+        stroke-dasharray: 6 4;
+        animation: genDashFlow 0.5s linear infinite;
+    }
+    
+    .gen-tooltip {
+        position: absolute;
+        background: #0f172a; color: #fff; padding: 4px 8px; border-radius: 4px; 
+        font-size: 11px; font-weight: normal; white-space: nowrap; 
+        pointer-events: none; opacity: 0; transition: opacity 0.2s ease-in-out; z-index: 40;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
+    }
     .gen-marker:hover .gen-tooltip, .gen-marker.touch-active .gen-tooltip { opacity: 1; }
-    .gen-quiz-option { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: background 0.15s, border-color 0.15s; font-size: 14px; margin-bottom: 8px; }
-    .gen-quiz-option:active { background: #f1f5f9; } .gen-quiz-option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; margin: 0; flex-shrink: 0; }
-    .gen-label { transition: scale 0.2s ease, filter 0.2s ease, border-color 0.2s ease; scale: 1; pointer-events: auto; } .gen-label:hover { scale: 1.05; filter: brightness(1.10); }
-    @media (max-width: 600px) { #gen-modal { align-items: flex-end; } #gen-modal-window { width: 100% !important; max-width: 100% !important; border-radius: 20px 20px 0 0 !important; transform: translateY(100%); padding: 24px 20px 40px 20px !important; } .gen-tooltip { font-size: 10px; padding: 3px 6px; } }
+
+    .gen-quiz-option {
+        display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; 
+        background: #f8fafc; border-radius: 8px; border: 1.5px solid #e2e8f0; 
+        transition: background 0.15s, border-color 0.15s; font-size: 14px; margin-bottom: 8px;
+    }
+    .gen-quiz-option:active { background: #f1f5f9; }
+    .gen-quiz-option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; margin: 0; flex-shrink: 0; }
+
+    /* ДОДАТКОВІ СТИЛІ ДЛЯ ПЛАВНОЇ ХОВЕР-АНІМАЦІЇ НАПИСІВ (РЕЖИМ УЧНЯ) */
+    .gen-label {
+        transition: scale 0.2s ease, filter 0.2s ease, border-color 0.2s ease;
+        scale: 1;
+        pointer-events: auto;
+    }
+    .gen-label:hover {
+        scale: 1.05;
+        filter: brightness(1.10);
+    }
+
+    @media (max-width: 600px) {
+        #gen-modal {
+            align-items: flex-end;
+        }
+        #gen-modal-window {
+            width: 100% !important;
+            max-width: 100% !important;
+            border-radius: 20px 20px 0 0 !important;
+            transform: translateY(100%);
+            padding: 24px 20px 40px 20px !important;
+        }
+        .gen-tooltip {
+            font-size: 10px;
+            padding: 3px 6px;
+        }
+    }
 </style>
+
 <script>
     const genData = ${JSON.stringify(safeMarkers)};
     let activeTouchIndex = null;
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (typeof closeGenModal === 'function') closeGenModal(); } });
-    function handleMarkerTap(e, i) {
-        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); const m = e.currentTarget;
-        if (isTouch) { if (activeTouchIndex !== i) { e.preventDefault(); e.stopPropagation(); document.querySelectorAll('.gen-marker').forEach(el => el.classList.remove('touch-active')); m.classList.add('touch-active'); activeTouchIndex = i; return; } }
-        openGenModal(i);
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (typeof closeGenModal === 'function') closeGenModal();
+        }
+    });
+
+    function handleMarkerTap(event, index) {
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        const marker = event.currentTarget;
+        
+        if (isTouch) {
+            if (activeTouchIndex !== index) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active'));
+                
+                marker.classList.add('touch-active');
+                activeTouchIndex = index;
+                return;
+            }
+        }
+        
+        openGenModal(index);
     }
-    document.addEventListener('click', e => { if (!e.target.closest('.gen-marker')) { document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active')); activeTouchIndex = null; } });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.gen-marker')) {
+            document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active'));
+            activeTouchIndex = null;
+        }
+    });
 
     function openGenModal(i) {
-        const d = genData[i]; if(d.shape === 'label') return; 
+        const d = genData[i];
+        if(d.shape === 'label') return; 
+        
         if(d.type === 'transition') { window.location.href = d.content; return; }
-        document.getElementById('gen-modal-title').innerHTML = d.title; const body = document.getElementById('gen-modal-body');
-        if (d.type === 'text') { body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>'; }
-        else if (d.type === 'video') { const wUrl = d.content.replace('/embed/', '/watch?v='); body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+wUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">YouTube</a></div>'; }
-        else if (d.type === 'audio') {
-            if (d.content.includes('drive.google.com')) { const match = d.content.match(/[-\\\w]{25,35}/); if (match) { body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6;">Google Диск</a></div>'; } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box;">Відкрити аудіо</a></div>'; } }
-            else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6;">Завантажити аудіофайл</a></div>'; }
-        }
-        else if (d.type === 'link') { body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center;">Відкрити посилання</a>'; }
-        else if (d.type === 'quiz') {
-            const q = d.quizData; let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`;
-            q.options.forEach((opt, idx) => { qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`; });
-            qHtml += \`</div><button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px;">Перевірити відповідь</button><div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`;
+        
+        document.getElementById('gen-modal-title').innerHTML = d.title;
+        const body = document.getElementById('gen-modal-body');
+        
+        if (d.type === 'text') {
+            body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>';
+        } else if (d.type === 'video') {
+            const watchUrl = d.content.replace('/embed/', '/watch?v=');
+            body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+watchUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">Відкрити додаток на YouTube</a></div>';
+        } else if (d.type === 'audio') {
+            if (d.content.includes('drive.google.com')) {
+                const match = d.content.match(/[-\\\w]{25,35}/);
+                if (match) {
+                    body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Відкрити файл на Google Диску</a></div>';
+                } else {
+                    body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box; text-align:center;">Відкрити аудіо-посилання</a></div>';
+                }
+            } else {
+                body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Завантажити оригінальний аудіофайл</a></div>';
+            }
+        } else if (d.type === 'link') {
+            body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">Відкрити веб-посилання</a>';
+        } else if (d.type === 'quiz') {
+            const q = d.quizData;
+            let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`;
+            q.options.forEach((opt, idx) => {
+                qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`;
+            });
+            qHtml += \`</div>
+                <button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px; transition: background 0.2s;">Перевірити відповідь</button>
+                <div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`;
             body.innerHTML = qHtml;
         }
-        const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.display = 'flex'; setTimeout(() => { m.style.opacity = '1'; win.style.transform = 'translateY(0)'; }, 10);
+        
+        const m = document.getElementById('gen-modal');
+        const win = document.getElementById('gen-modal-window');
+        m.style.display = 'flex'; 
+        setTimeout(() => { 
+            m.style.opacity = '1'; 
+            win.style.transform = 'translateY(0)';
+        }, 10);
     }
-    function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; win.style.transform = window.innerWidth <= 600 ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
+
+    function closeGenModal() {
+        const m = document.getElementById('gen-modal');
+        const win = document.getElementById('gen-modal-window');
+        m.style.opacity = '0';
+        
+        const isMobile = window.innerWidth <= 600;
+        win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)';
+        
+        setTimeout(() => { 
+            m.style.display = 'none'; 
+            document.getElementById('gen-modal-body').innerHTML=''; 
+        }, 250);
+    }
+
     function checkQuiz(i) {
-        const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res');
-        if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть варіант!</span>';
-        const isC = parseInt(sel.value) === d.quizData.correctIndex; const msg = isC ? (d.quizData.msgCorrect || '✅ Правильно!') : (d.quizData.msgIncorrect || '❌ Неправильно.');
-        res.innerHTML = \`<div style="color:\${isC ? '#166534' : '#991b1b'}; background:\${isC ? '#f0fdf4' : '#fef2f2'}; border: 1.5px solid \${isC ? '#bbf7d0' : '#fecaca'}; padding: 12px; border-radius: 8px;">\${msg}</div>\`;
+        const d = genData[i];
+        const sel = document.querySelector('input[name="gquiz"]:checked');
+        const res = document.getElementById('gquiz-res');
+        if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>';
+        
+        const isCorrect = parseInt(sel.value) === d.quizData.correctIndex;
+        const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.');
+        const color = isCorrect ? '#166534' : '#991b1b';
+        const bg = isCorrect ? '#f0fdf4' : '#fef2f2';
+        const border = isCorrect ? '#bbf7d0' : '#fecaca';
+        
+        res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`;
     }
     <\/script>
-<!-- ClicPointProjectData:
+<!-- ClicPointProjectData: Збережені дані (НЕ ВИДАЛЯТИ ДЛЯ РЕДАГУВАННЯ!)
 <ClicPointProjectData>
 ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUrl })}
 </ClicPointProjectData>
--->`;
+-->
+<!-- /ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ -->`;
+
         return html;
     }
 
     function generateCode() {
-        const html = getSnippetHTML(); if(!html) return showStatus('Додайте точки або зони!', 'error');
-        const area = document.getElementById('output-area'); document.getElementById('output-code').value = html;
-        area.style.display = 'block'; area.scrollIntoView({ behavior: 'smooth' }); showStatus('Код згенеровано!', 'success');
+        const html = getSnippetHTML();
+        if(!html) return showStatus('Додайте точки або зони!', 'error');
+
+        const area = document.getElementById('output-area');
+        document.getElementById('output-code').value = html;
+        area.style.display = 'block';
+        area.scrollIntoView({ behavior: 'smooth' });
+        showStatus('Код згенеровано!', 'success');
     }
 
+    // Спільна функція для формування повної структури HTML сторінки
     function getFullHTMLContent() {
-        const hC = document.getElementById('output-code').value; if(!hC) return null;
-        return `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Інтерактивне завдання</title></head><body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">${hC}</body></html>`;
+        const htmlContent = document.getElementById('output-code').value;
+        if(!htmlContent) return null;
+        
+        return `<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Image</title>
+</head>
+<body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">
+    ${htmlContent}
+</body>
+</html>`;
     }
 
     function openPreview() {
-        const htmlContent = getSnippetHTML(); if(!htmlContent) return showStatus('Додайте точки!', 'error');
-        document.getElementById('preview-frame').srcdoc = `<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Попередній перегляд</title></head><body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">${htmlContent}</body></html>`;
+        const htmlContent = getSnippetHTML();
+        if(!htmlContent) return showStatus('Додайте точки або зони для перегляду!', 'error');
+
+        // Для прев'ю формуємо власну обгортку, не чіпаючи getFullHTMLContent
+        const fullHTML = `<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Попередній перегляд</title>
+</head>
+<body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">
+    ${htmlContent}
+</body>
+</html>`;
+
+        const frame = document.getElementById('preview-frame');
+        frame.srcdoc = fullHTML;
         document.getElementById('preview-overlay').style.display = 'flex';
     }
-    function closePreview() { document.getElementById('preview-overlay').style.display = 'none'; document.getElementById('preview-frame').srcdoc = ''; }
-    function copyCode() { document.getElementById('output-code').select(); document.execCommand('copy'); showStatus('Скопійовано!', 'success'); }
+
+    function closePreview() {
+        document.getElementById('preview-overlay').style.display = 'none';
+        document.getElementById('preview-frame').srcdoc = ''; 
+    }
+
+    function copyCode() {
+        const code = document.getElementById('output-code');
+        code.select(); 
+        document.execCommand('copy');
+        showStatus('Скопійовано!', 'success');
+    }
+
     function saveAsHTML() {
-        const fullHTML = getFullHTMLContent(); if(!fullHTML) return showStatus('Спочатку згенеруйте код!', 'error');
-        const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; a.click(); URL.revokeObjectURL(url); showStatus('Збережено як HTML файл!', 'success');
+        const fullHTML = getFullHTMLContent();
+        if(!fullHTML) {
+            showStatus('Спочатку згенеруйте код!', 'error');
+            return;
+        }
+        
+        const blob = new Blob([fullHTML], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "interactive_image.html";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showStatus('Збережено як HTML файл!', 'success');
     }
 
     window.addEventListener('beforeunload', function (e) {
         if (currentImgUrl !== '' || markers.length > 0) {
-            const msg = 'Збережіть файл, щоб не втратити роботу!';
-            e.returnValue = msg; return msg;
+            const confirmationMessage = 'Збережіть файл або експортуйте у зручному форматі, щоб не втратити роботу!';
+            e.returnValue = confirmationMessage; 
+            return confirmationMessage;
         }
     });
 
