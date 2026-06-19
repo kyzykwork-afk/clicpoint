@@ -48,6 +48,7 @@
         #viewer-loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             text-align: center; font-family: sans-serif; color: #334155;
+            width: 90%; max-width: 400px;
         }
         .spinner {
             width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #2563eb;
@@ -215,7 +216,6 @@
             z-index: 15;
         }
 
-        /* Стиль для нашого вшитого логотипу */
         #workspace-logo {
             display: none; position: absolute; bottom: 15px; right: 15px;
             max-width: 150px; max-height: 60px; z-index: 20; opacity: 0.8;
@@ -269,7 +269,6 @@
         }
         .poly-move-handle:active { cursor: grabbing; background: #e2e8f0; }
 
-        /* Стиль для текстового напису в редакторі */
         .label-preview {
             position: absolute;
             transform: translate(-50%, calc(-100% - 4px)); 
@@ -289,13 +288,13 @@
         .label-preview:active { cursor: grabbing; }
 
         .modal { 
-            display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; 
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
             background: rgba(15, 23, 42, 0.85); align-items: center; justify-content: center; 
         }
 
         .modal-content { 
             background: #fff; padding: 24px; border-radius: 12px; width: 90%; max-width: 550px; 
-            max-height: 90vh; overflow-y: auto; position: relative;
+            max-height: 90vh; overflow-y: auto; 
         }
 
         .form-group { margin-bottom: 15px; }
@@ -318,14 +317,12 @@
         }
         .format-btn.active { background: #3b82f6; color: white; }
 
-        /* Кнопки швидкого вибору кольору */
         .color-preset {
             display: inline-block; width: 16px; height: 16px; border-radius: 4px; cursor: pointer;
             border: 1px solid rgba(0,0,0,0.2); transition: transform 0.1s;
         }
         .color-preset:hover { transform: scale(1.2); }
 
-        /* Анімація для стрілок у редакторі */
         @keyframes editorDashFlow {
             to { stroke-dashoffset: -10; }
         }
@@ -355,17 +352,11 @@
         .project-name { font-weight: 500; color: #3b82f6; }
         .project-actions button { padding: 6px 12px; font-size: 12px; margin-left: 5px; }
 
-        /* Стилі для інформаційного блоку (Дисклеймер) */
+        /* Стилі для інформаційного блоку */
         .info-footer {
-            margin-top: 35px;
-            padding: 20px 25px;
-            background-color: var(--control-bg);
-            border: 1px solid var(--control-border);
-            border-radius: 12px;
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.6;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+            margin-top: 35px; padding: 20px 25px; background-color: var(--control-bg);
+            border: 1px solid var(--control-border); border-radius: 12px; color: #475569;
+            font-size: 14px; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
         }
         .info-footer p { margin: 0 0 8px 0; }
         .info-footer p:last-child { margin: 0; text-align: center; margin-top: 20px; font-size: 13px; color: #64748b; border-top: 1px solid #bae6fd; padding-top: 15px; }
@@ -378,8 +369,8 @@
 <div id="viewer-container">
     <div id="viewer-loader">
         <div class="spinner"></div>
-        <h2>Завантаження інтерактивного завдання...</h2>
-        <p style="color:#64748b;">Зачекайте декілька секунд.</p>
+        <h2 style="color:#1e293b; font-size: 20px;">Завантаження завдання...</h2>
+        <p style="color:#64748b; font-size: 14px;">Будь ласка, зачекайте декілька секунд.</p>
     </div>
     <iframe id="viewer-iframe"></iframe>
 </div>
@@ -388,7 +379,6 @@
 <div id="app-builder-ui">
     <div class="header">
         <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-            <!-- Картинка логотипу перед назвою додатка -->
             <img id="header-logo" src="" alt="Логотип" style="max-height: 40px; border-radius: 6px; display: none;" onerror="this.style.display='none'">
             <span>⚙️ ClicPoint - Конструктор Інтерактивних Зображень</span>
         </h1>
@@ -456,7 +446,7 @@
             <h3 style="margin-top: 0;">Ваш готовий код:</h3>
             <button onclick="copyCode()" style="margin-bottom: 10px; background: #475569;">📋 Скопіювати код</button>
             <button onclick="saveAsHTML()" style="margin-bottom: 10px; background: #16a34a; margin-left: 10px;">💾 Зберегти як .html</button>
-            <!-- Оновлена кнопка збереження на Диск (відкриває модалку) -->
+            <!-- ОНОВЛЕНА КНОПКА (Тепер викликає openSaveModal, а не стару функцію) -->
             <button id="btn-save-drive" onclick="openSaveModal()" style="margin-bottom: 10px; background: #3b82f6; margin-left: 10px; display: none;">☁️ Зберегти на Диск (LMS)</button>
             <textarea id="output-code" readonly></textarea>
         </div>
@@ -476,7 +466,6 @@
         <h3 id="modal-title-text" style="margin-top:0; color: var(--primary);">📍 Налаштування</h3>
         <div id="modal-error" style="color: var(--danger); font-size: 13px; margin-bottom: 10px; display: none;"></div>
 
-        <!-- ОСНОВНА ГРУПА ДЛЯ МАРКЕРІВ/ПОЛІГОНІВ -->
         <div id="m-title-group" class="form-group">
             <label>Назва (Заголовок):</label>
             <input type="text" id="m-title" placeholder="Наприклад: Двигун трактора">
@@ -512,7 +501,6 @@
             </div>
         </div>
 
-        <!-- Налаштування прозорості (ТІЛЬКИ ДЛЯ ЗОН) -->
         <div class="form-group flex-row" id="polygon-opacity-group" style="display:none; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
             <div class="range-group">
                 <label>Прозорість (спокій): <span id="op-norm-val">40%</span></label>
@@ -536,7 +524,6 @@
             </select>
         </div>
 
-        <!-- Динамічні поля контенту -->
         <div class="form-group" id="group-text">
             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 6px;">
                 <label style="margin-bottom:0;">Опис:</label>
@@ -588,7 +575,6 @@
             </div>
         </div>
         
-        <!-- ГРУПА НАЛАШТУВАНЬ ДЛЯ ТЕКСТОВИХ НАПИСІВ (LABEL) -->
         <div id="group-label-settings" style="display:none; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
             <div class="form-group">
                 <label>Текст напису:</label>
@@ -638,7 +624,6 @@
                 </div>
             </div>
             
-            <!-- Блок: Налаштування користувацької плашки -->
             <div id="custom-panel-settings" style="display:none; margin-top:15px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
                 <div class="flex-row">
                     <div style="flex:1;">
@@ -672,13 +657,11 @@
             </div>
         </div>
 
-        <!-- Блок стрілки (для точок та написів) -->
         <div class="form-group" id="group-arrow" style="border-top: 1px solid #e2e8f0; padding-top: 15px; margin-top: 15px;">
             <label>Стрілки-вказівники:</label>
             <div id="arrows-list" style="margin-bottom: 10px; display:flex; flex-direction:column; gap:5px;"></div>
             <button type="button" id="btn-add-arrow" onclick="startSelectingTarget()" style="background: #3b82f6; width: 100%; padding: 8px;">🎯 Вказати стрілкою на деталь</button>
             
-            <!-- Налаштування анімації та напрямку -->
             <div class="form-group flex-row" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #cbd5e1;">
                 <div>
                     <label>Анімація стрілки:</label>
@@ -711,7 +694,7 @@
 <div class="modal" id="saveProjectModal" onclick="if(event.target === this) document.getElementById('saveProjectModal').style.display='none'">
     <div class="modal-content">
         <h3 style="margin-top:0; color: var(--primary);">☁️ Збереження проекту (LMS)</h3>
-        <p style="font-size:14px; color:#64748b; margin-bottom:15px;">Проект буде збережено на ваш Google Диск у відкритому доступі для учнів.</p>
+        <p style="font-size:14px; color:#64748b; margin-bottom:15px;">Проект буде збережено на ваш Google Диск <b>з відкритим доступом</b> для учнів.</p>
         
         <div class="form-group">
             <label>Назва проекту:</label>
@@ -757,9 +740,7 @@
             <div class="spinner"></div> Завантаження ваших проектів з Google Drive...
         </div>
         
-        <div id="pm-content" style="display:none;">
-            <!-- Список тем і проектів буде генеруватися тут -->
-        </div>
+        <div id="pm-content" style="display:none;"></div>
     </div>
 </div>
 
@@ -786,47 +767,83 @@
         const viewer = document.getElementById('viewer-container');
         viewer.style.display = 'block';
 
-        const targetUrl = `https://docs.google.com/uc?export=download&id=${viewFileId}`;
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const targetUrl = `https://drive.google.com/uc?export=download&id=${viewFileId}`;
+        const primaryProxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        const fallbackProxy = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
 
-        fetch(proxyUrl)
+        // Функція для перевірки, чи файл не є приватним (Google не віддав сторінку логіну)
+        const checkIsPrivate = (html) => {
+            return html.includes('ServiceLogin') || 
+                   html.includes('<title>Google Drive - Access Denied</title>') || 
+                   html.includes('accounts.google.com');
+        };
+
+        // Завантаження через проксі
+        fetch(primaryProxy)
             .then(res => {
-                if (!res.ok) throw new Error('Network error');
+                if (!res.ok) throw new Error('PRIMARY_FAILED');
                 return res.text();
             })
             .then(htmlContent => {
-                // Перевірка, чи Google не повернув сторінку авторизації (означає, що файл приватний)
-                if (htmlContent.includes('ServiceLogin') || htmlContent.includes('<title>Google Drive - Access Denied</title>') || htmlContent.includes('accounts.google.com')) {
-                    throw new Error('PRIVATE_FILE');
-                }
-                
-                document.getElementById('viewer-loader').style.display = 'none';
-                const iframe = document.getElementById('viewer-iframe');
-                iframe.srcdoc = htmlContent;
+                if (checkIsPrivate(htmlContent)) throw new Error('PRIVATE_FILE');
+                renderViewer(htmlContent);
             })
             .catch(err => {
-                console.error("Помилка завантаження Viewer Mode:", err);
-                const loader = document.getElementById('viewer-loader');
-                
                 if (err.message === 'PRIVATE_FILE') {
-                    loader.innerHTML = `
-                        <h3 style="color: #dc2626;">🔒 Помилка доступу</h3>
-                        <p style="color: #475569;">Цей файл є приватним.<br><br><b>Рішення:</b> Викладачу потрібно зберегти його через кнопку <b>"Зберегти на Диск (LMS)"</b>, щоб система автоматично відкрила доступ для учнів.</p>
-                    `;
+                    showViewerError('PRIVATE');
                 } else {
-                    loader.innerHTML = `
-                        <h3 style="color: #dc2626;">❌ Помилка завантаження.</h3>
-                        <p style="color: #475569;">Можливо, посилання недійсне, або файл був видалений.</p>
-                    `;
+                    // Якщо перший проксі впав, пробуємо запасний
+                    console.warn("Основний проксі не спрацював, пробуємо альтернативний...");
+                    fetch(fallbackProxy)
+                        .then(res2 => {
+                            if (!res2.ok) throw new Error('NETWORK_ERROR');
+                            return res2.text();
+                        })
+                        .then(htmlContent2 => {
+                            if (checkIsPrivate(htmlContent2)) throw new Error('PRIVATE_FILE');
+                            renderViewer(htmlContent2);
+                        })
+                        .catch(err2 => {
+                            if (err2.message === 'PRIVATE_FILE') {
+                                showViewerError('PRIVATE');
+                            } else {
+                                showViewerError('NETWORK');
+                            }
+                        });
                 }
             });
     }
 
+    function renderViewer(html) {
+        document.getElementById('viewer-loader').style.display = 'none';
+        const iframe = document.getElementById('viewer-iframe');
+        iframe.srcdoc = html;
+    }
+
+    function showViewerError(type) {
+        const loader = document.getElementById('viewer-loader');
+        if (type === 'PRIVATE') {
+            loader.innerHTML = `
+                <h3 style="color: #dc2626; font-size: 22px;">🔒 Помилка доступу</h3>
+                <p style="color: #475569; font-size: 15px; line-height: 1.5;">Цей файл був збережений <b>без публічного доступу</b>.<br><br>
+                <b>Рішення:</b> Викладачу потрібно відкрити цей проект у конструкторі та ще раз зберегти його через кнопку <b>"☁️ Зберегти на Диск (LMS)"</b>.</p>
+            `;
+        } else {
+            loader.innerHTML = `
+                <h3 style="color: #dc2626; font-size: 22px;">❌ Помилка завантаження</h3>
+                <p style="color: #475569; font-size: 15px; line-height: 1.5;">Можливо, посилання недійсне, файл був видалений з Google Диску, або наш сервер тимчасово перевантажений.</p>
+            `;
+        }
+    }
+
+    // Зупиняємо подальше виконання скриптів конструктора, якщо ми в режимі перегляду
     if (viewFileId) {
         throw new Error("Viewer Mode Initialized. Builder scripts halted.");
     }
 
+    // ==========================================
     // --- АВТОРИЗАЦІЯ GOOGLE ТА ІНІЦІАЛІЗАЦІЯ ---
+    // ==========================================
     let tokenClient;
     let accessToken = null;
     let pendingSaveToDrive = false;
@@ -843,28 +860,25 @@
                         authBtn.innerText = '☁️ Вийти (Google)';
                         authBtn.classList.remove('info', 'warning');
                         authBtn.classList.add('danger');
-                        
                         document.getElementById('btn-save-drive').style.display = 'inline-block';
                         document.getElementById('btn-my-projects').style.display = 'inline-block';
-                        
                         showStatus('Успішно авторизовано в Google Drive!', 'success');
                         
                         if(pendingSaveToDrive) {
                             pendingSaveToDrive = false;
-                            openSaveModal(); 
+                            // ВИПРАВЛЕННЯ: Тепер викликається модалка, а не стара функція
+                            openSaveModal();
                         }
                     }
                 },
             });
         } else {
-            // Якщо скрипти Google ще не завантажилися, спробувати пізніше
             setTimeout(initGoogleAuth, 500);
         }
     }
 
     function handleGoogleAuth() {
         if (accessToken) {
-            // Вихід
             google.accounts.oauth2.revoke(accessToken, () => {
                 accessToken = null;
                 const authBtn = document.getElementById('btn-google-auth');
@@ -876,7 +890,6 @@
                 showStatus('Вийшли з облікового запису Google.', 'info');
             });
         } else {
-            // Вхід
             if (tokenClient) {
                 tokenClient.requestAccessToken({prompt: 'consent'});
             } else {
@@ -885,13 +898,9 @@
         }
     }
 
-    // Пряме стабільне посилання через CDN сервіс Google Drive
     const RAW_BASE64_LOGO = `https://lh3.googleusercontent.com/d/1vB9QiuqrahasK7pSzKnx-P-3HrhAPNVk`;
-    
-    // Автоматична обробка та підготовка логотипа
     let watermarkDataUrl = '';
     const cleanedCode = RAW_BASE64_LOGO.replace(/\s+/g, ''); 
-    
     if (cleanedCode && !cleanedCode.includes('ВСТАВТЕ_ВАШ_КОД_ТУТ')) {
         if (cleanedCode.startsWith('data:image') || cleanedCode.startsWith('http') || cleanedCode.endsWith('.png') || cleanedCode.endsWith('.jpg')) {
             watermarkDataUrl = cleanedCode;
@@ -907,18 +916,15 @@
     let imgNatHeight = 1000;
     let tempCoords = { x: 0, y: 0, shape: '' }; 
     
-    // Стани редактора
     let preventNextClick = false; 
     let isSelectingTarget = false; 
     let isDrawingPolygon = false;
     let isAddingText = false;
     let tempPolygonPoints = [];
 
-    // Стан динамічних опцій квізу
     let tempQuizOptions = ['', '', ''];
     let tempQuizCorrect = 0;
 
-    // ЛОГІКА ПЕРЕТЯГУВАННЯ
     let activeDragIndex = null;
     let activeDragElement = null;
     let activeDragType = null;
@@ -928,7 +934,6 @@
     let dragStartY = 0;
     let initialPolyPoints = []; 
 
-    // Стан Історії (Undo/Redo)
     let stateHistory = [];
     let historyIndex = -1;
 
@@ -938,34 +943,11 @@
     };
 
     async function initLogo() {
-        const driveTextFileUrl = 'https://docs.google.com/uc?export=download&id=140XGrGojBCURyw16TwPdErmd5I4yEKcA';
         const fallbackImageUrl = 'https://lh3.googleusercontent.com/d/1vB9QiuqrahasK7pSzKnx-P-3HrhAPNVk';
-        
-        try {
-            const response = await fetch(driveTextFileUrl);
-            if (!response.ok) throw new Error('Помилка запиту до текстового файлу');
-            let text = await response.text();
-            text = text.trim();
-            if (text.length > 500) {
-                if (!text.startsWith('data:image')) {
-                    watermarkDataUrl = 'data:image/png;base64,' + text;
-                } else {
-                    watermarkDataUrl = text;
-                }
-                console.log('Логотип успішно вбудовано з текстового файлу Google Drive у Base64');
-                updateUILogos();
-                return;
-            }
-        } catch (err) {
-            console.warn('Не вдалося завантажити текстовий файл через CORS, переходимо до Спроби 2 (програмне перетворення зображення у Base64):', err);
-        }
-
         try {
             watermarkDataUrl = await convertImageToBase64(fallbackImageUrl);
-            console.log('Логотип успішно конвертовано у Base64 за допомогою Canvas');
             updateUILogos();
         } catch (err) {
-            console.error('Помилка конвертації обох варіантів логотипу:', err);
             watermarkDataUrl = fallbackImageUrl;
             updateUILogos();
         }
@@ -982,15 +964,12 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
                 try {
-                    const dataURL = canvas.toDataURL('image/png');
-                    resolve(dataURL);
+                    resolve(canvas.toDataURL('image/png'));
                 } catch(e) {
                     reject(e);
                 }
             };
-            img.onerror = function(err) {
-                reject(err);
-            };
+            img.onerror = reject;
             img.src = url;
         });
     }
@@ -1010,17 +989,16 @@
         }
     }
 
-    // Запускаємо ініціалізацію негайно або при завантаженні DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
             initLogo();
-            initGoogleAuth(); // Ініціалізація Google Identity Services
+            initGoogleAuth();
         });
     } else {
         initLogo();
         initGoogleAuth();
     }
-    
+
     // ==========================================
     // ЛОГІКА GOOGLE DRIVE (МЕНЕДЖЕР ПРОЕКТІВ)
     // ==========================================
@@ -1122,11 +1100,15 @@
         if(!themeName) return statusEl.innerHTML = '<span style="color:red;">Оберіть або створіть тему!</span>';
 
         const fullHTML = getFullHTMLContent();
-        statusEl.innerHTML = '<span style="color:blue;">⏳ Створення папок та збереження...</span>';
+        statusEl.innerHTML = '<span style="color:blue;">⏳ 1/3 Створення папок...</span>';
         document.getElementById('btn-confirm-save').disabled = true;
 
         try {
+            // 1. Отримуємо ідентифікатор папки
             const themeFolderId = await ensureAppFolders(themeName);
+            
+            // 2. Завантажуємо файл
+            statusEl.innerHTML = '<span style="color:blue;">⏳ 2/3 Збереження файлу...</span>';
             const fileMetadata = { name: projectName + '.html', mimeType: 'text/html', parents: [themeFolderId] };
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
@@ -1141,7 +1123,8 @@
             if(!uploadRes.ok) throw new Error("Upload failed");
             const fileData = await uploadRes.json();
 
-            statusEl.innerHTML = '<span style="color:blue;">⏳ Відкриття доступу для учнів...</span>';
+            // 3. Відкриваємо доступ (НАЙВАЖЛИВІШИЙ КРОК ДЛЯ УЧНІВ)
+            statusEl.innerHTML = '<span style="color:blue;">⏳ 3/3 Налаштування публічного доступу...</span>';
             const permBody = { role: 'reader', type: 'anyone' };
             await fetch(`${GOOGLE_DRIVE_API}/${fileData.id}/permissions`, {
                 method: 'POST',
@@ -1149,13 +1132,14 @@
                 body: JSON.stringify(permBody)
             });
 
+            // 4. Генеруємо лінк
             const studentLink = `${window.location.origin}${window.location.pathname}?view=${fileData.id}`;
             statusEl.innerHTML = `
                 <span style="color:green;">✅ Успішно збережено та опубліковано!</span><br>
                 <div style="margin-top:10px; padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px;">
                     Посилання для учнів:<br>
                     <input type="text" value="${studentLink}" readonly style="width:100%; margin-top:5px; margin-bottom:5px; font-size:12px;">
-                    <button onclick="navigator.clipboard.writeText('${studentLink}'); alert('Скопійовано!')" style="padding:4px 8px; font-size:12px;">📋 Скопіювати</button>
+                    <button onclick="navigator.clipboard.writeText('${studentLink}'); alert('Скопійовано!')" style="padding:4px 8px; font-size:12px; background:#16a34a; color:#fff; border:none; border-radius:4px; cursor:pointer;">📋 Скопіювати</button>
                 </div>
             `;
         } catch (e) {
@@ -2889,7 +2873,6 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
         showStatus('Код згенеровано!', 'success');
     }
 
-    // Спільна функція для формування повної структури HTML сторінки
     function getFullHTMLContent() {
         const htmlContent = document.getElementById('output-code').value;
         if(!htmlContent) return null;
@@ -2911,7 +2894,6 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
         const htmlContent = getSnippetHTML();
         if(!htmlContent) return showStatus('Додайте точки або зони для перегляду!', 'error');
 
-        // Для прев'ю формуємо власну обгортку, не чіпаючи getFullHTMLContent
         const fullHTML = `<!DOCTYPE html>
 <html lang="uk">
 <head>
