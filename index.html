@@ -607,7 +607,10 @@
     <div class="modal-content" style="max-width: 700px; width: 95%;">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;">
             <h3 style="margin:0; color: var(--primary);">📁 Менеджер проектів</h3>
-            <button onclick="document.getElementById('projectManagerModal').style.display='none'" style="background:transparent; color:#64748b; font-size:24px; padding:0; line-height:1;">&times;</button>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button onclick="createNewTheme()" style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">+ Створити теку</button>
+                <button onclick="document.getElementById('projectManagerModal').style.display='none'" style="background:transparent; color:#64748b; font-size:24px; padding:0; line-height:1; border:none; cursor:pointer;">&times;</button>
+            </div>
         </div>
         
         <div id="pm-loader" style="text-align:center; padding: 20px;">
@@ -1000,7 +1003,8 @@
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span id="icon-${theme.id}" style="font-size:12px; color:#64748b; width:15px; display:inline-block; text-align:center;">▶</span>
                             <span id="name-${theme.id}" style="display:flex; align-items:center; gap:5px;">📁 <span>${theme.name}</span></span>
-                            <button onclick="startRename(event, '${theme.id}', '${safeThemeName}', true)" class="toolbar-btn" style="padding:2px 6px; font-size:11px; margin-left:5px;" title="Перейменувати папку">✏️</button>
+                            <button onclick="startRename(event, '${theme.id}', '${safeThemeName}', true)" class="toolbar-btn" style="padding:2px 6px; font-size:11px; margin-left:5px;" title="Перейменувати теку">✏️</button>
+                            <button onclick="deleteDriveTheme(event, '${theme.id}')" class="toolbar-btn" style="padding:2px 6px; font-size:11px; color: #dc2626;" title="Видалити теку">🗑</button>
                         </div>
                         <span style="font-size:12px; font-weight:normal; color:#64748b;">(${filesData.files.length} файлів)</span>
                     </div>
@@ -1036,6 +1040,55 @@
     }
 
     // --- НОВІ ФУНКЦІЇ ДЛЯ МЕНЕДЖЕРА ПРОЕКТІВ ---
+
+    async function createNewTheme() {
+        const name = prompt("Введіть назву нової теки:");
+        if (!name || !name.trim()) return;
+        
+        showStatus("Створення теки...", "info");
+        document.getElementById('pm-loader').style.display = 'block';
+        document.getElementById('pm-content').style.display = 'none';
+        
+        try {
+            let rootFolder = await findFolder(ROOT_FOLDER_NAME);
+            if (!rootFolder) rootFolder = await createFolder(ROOT_FOLDER_NAME);
+            await createFolder(name.trim(), rootFolder.id);
+            
+            showStatus("Теку успішно створено!", "success");
+            openProjectManager(); // Оновлюємо список
+        } catch (e) {
+            console.error(e);
+            showStatus("Помилка створення теки.", "error");
+            document.getElementById('pm-loader').style.display = 'none';
+            document.getElementById('pm-content').style.display = 'block';
+        }
+    }
+
+    async function deleteDriveTheme(event, folderId) {
+        event.stopPropagation(); // Зупиняє розгортання папки при кліку
+        
+        if (!confirm("⚠️ УВАГА! Ви дійсно хочете видалити цю теку?\n\nУСІ ПРОЕКТИ (файли) всередині неї також будуть БЕЗПОВОРОТНО ВИДАЛЕНІ з вашого Google Диску!")) return;
+        
+        showStatus('Видалення теки...', 'info');
+        document.getElementById('pm-loader').style.display = 'block';
+        document.getElementById('pm-content').style.display = 'none';
+        
+        try {
+            const res = await fetch(`${GOOGLE_DRIVE_API}/${folderId}`, {
+                method: 'DELETE',
+                headers: new Headers({ 'Authorization': `Bearer ${accessToken}` })
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            
+            showStatus('Теку успішно видалено.', 'success');
+            openProjectManager(); // Оновлюємо список
+        } catch (e) {
+            console.error(e);
+            showStatus('Помилка при видаленні теки.', 'error');
+            document.getElementById('pm-loader').style.display = 'none';
+            document.getElementById('pm-content').style.display = 'block';
+        }
+    }
 
     function toggleFolder(themeId) {
         const list = document.getElementById(`list-${themeId}`);
