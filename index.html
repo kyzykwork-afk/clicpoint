@@ -942,7 +942,7 @@
             statusEl.innerHTML = `<span style="color:green;">✅ Успішно збережено та опубліковано!</span><br>
                 <div style="margin-top:10px; padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px;">Посилання для учнів:<br>
                 <input type="text" value="${studentLink}" readonly style="width:100%; margin-top:5px; margin-bottom:5px; font-size:12px;">
-                <button onclick="navigator.clipboard.writeText('${studentLink}'); alert('Скопійовано!')" style="padding:4px 8px; font-size:12px; background:#16a34a; color:#fff; border:none; border-radius:4px; cursor:pointer;">📋 Скопіювати</button></div>`;
+                <button onclick="navigator.clipboard.writeText('${studentLink}'); showStatus('Скопійовано!', 'success')" style="padding:4px 8px; font-size:12px; background:#16a34a; color:#fff; border:none; border-radius:4px; cursor:pointer;">📋 Скопіювати</button></div>`;
         } catch (e) {
             console.error(e); statusEl.innerHTML = '<span style="color:red;">❌ Сталася помилка при збереженні.</span>';
         } finally { document.getElementById('btn-confirm-save').disabled = false; }
@@ -967,21 +967,120 @@
                 const filesQuery = `mimeType='text/html' and '${theme.id}' in parents and trashed=false`;
                 const filesData = await driveFetch(`${GOOGLE_DRIVE_API}?q=${encodeURIComponent(filesQuery)}&fields=files(id,name)`);
                 
-                htmlStr += `<div class="project-theme" id="theme-div-${theme.id}"><div class="project-theme-header">📁 ${theme.name} <span style="font-size:12px; font-weight:normal; color:#64748b;">(${filesData.files.length} файлів)</span></div><ul class="project-list">`;
+                const safeThemeName = theme.name.replace(/'/g, "\\'");
                 
-                if (filesData.files.length === 0) htmlStr += `<li class="project-item" style="color:#94a3b8; font-size:13px;">Немає проектів у цій темі.</li>`;
-                else filesData.files.forEach(f => {
-                    const link = `${window.location.origin}${window.location.pathname}?view=${f.id}`;
-                    htmlStr += `<li class="project-item" id="proj-${f.id}">
-                        <div class="project-name">📄 ${f.name.replace('.html', '')}</div>
-                        <div class="project-actions"><button class="info" onclick="navigator.clipboard.writeText('${link}'); alert('Посилання скопійовано!')" title="Копіювати посилання для учнів">🔗 Лінк</button>
-                        <button class="warning" onclick="editDriveProject('${f.id}')" title="Завантажити в редактор">✏️ Редагувати</button>
-                        <button class="danger" onclick="deleteDriveProject('${f.id}')">🗑</button></div></li>`;
-                });
+                htmlStr += `<div class="project-theme" id="theme-div-${theme.id}">
+                    <div class="project-theme-header" onclick="toggleFolder('${theme.id}')" style="cursor:pointer; transition: background 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='#f8fafc'">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span id="icon-${theme.id}" style="font-size:12px; color:#64748b; width:15px; display:inline-block; text-align:center;">▶</span>
+                            <span id="name-${theme.id}" style="display:flex; align-items:center; gap:5px;">📁 <span>${theme.name}</span></span>
+                            <button onclick="startRename(event, '${theme.id}', '${safeThemeName}', true)" class="toolbar-btn" style="padding:2px 6px; font-size:11px; margin-left:5px;" title="Перейменувати папку">✏️</button>
+                        </div>
+                        <span style="font-size:12px; font-weight:normal; color:#64748b;">(${filesData.files.length} файлів)</span>
+                    </div>
+                    <ul class="project-list" id="list-${theme.id}" style="display:none;">`;
+                
+                if (filesData.files.length === 0) {
+                    htmlStr += `<li class="project-item" style="color:#94a3b8; font-size:13px;">Немає проектів у цій темі.</li>`;
+                } else {
+                    filesData.files.forEach(f => {
+                        const link = `${window.location.origin}${window.location.pathname}?view=${f.id}`;
+                        const displayName = f.name.replace('.html', '');
+                        const safeDisplayName = displayName.replace(/'/g, "\\'");
+                        
+                        htmlStr += `<li class="project-item" id="proj-${f.id}">
+                            <div class="project-name" style="display:flex; align-items:center; gap:8px;">
+                                <span id="name-${f.id}" style="display:flex; align-items:center; gap:5px;">📄 <span>${displayName}</span></span>
+                                <button onclick="startRename(event, '${f.id}', '${safeDisplayName}', false)" class="toolbar-btn" style="padding:2px 6px; font-size:11px;" title="Перейменувати проект">✏️</button>
+                            </div>
+                            <div class="project-actions">
+                                <button class="info" onclick="navigator.clipboard.writeText('${link}'); showStatus('Посилання скопійовано!', 'success')" title="Копіювати посилання для учнів">🔗 Лінк</button>
+                                <button class="warning" onclick="editDriveProject('${f.id}')" title="Завантажити в редактор">✏️ Редагувати</button>
+                                <button class="danger" onclick="deleteDriveProject('${f.id}')">🗑</button>
+                            </div>
+                        </li>`;
+                    });
+                }
                 htmlStr += `</ul></div>`;
             }
             loader.style.display = 'none'; content.style.display = 'block'; content.innerHTML = htmlStr;
         } catch(e) { console.error(e); loader.innerHTML = '<span style="color:red;">❌ Помилка завантаження проектів.</span>'; }
+    }
+
+    // --- НОВІ ФУНКЦІЇ ДЛЯ МЕНЕДЖЕРА ПРОЕКТІВ ---
+
+    function toggleFolder(themeId) {
+        const list = document.getElementById(`list-${themeId}`);
+        const icon = document.getElementById(`icon-${themeId}`);
+        if (list.style.display === 'none') {
+            list.style.display = 'block';
+            icon.innerText = '▼';
+        } else {
+            list.style.display = 'none';
+            icon.innerText = '▶';
+        }
+    }
+
+    function startRename(event, id, currentName, isFolder) {
+        event.stopPropagation();
+        const nameContainer = document.getElementById(`name-${id}`);
+        const iconPrefix = isFolder ? '📁 ' : '📄 ';
+        nameContainer.innerHTML = `
+            ${iconPrefix}
+            <input type="text" id="input-${id}" value="${currentName}" style="padding: 2px 5px; font-size: 14px; width: 150px; border-radius: 4px; border: 1px solid #cbd5e1;" onclick="event.stopPropagation()">
+            <button onclick="saveRename(event, '${id}', ${isFolder}, '${currentName.replace(/'/g, "\\'")}')" style="padding: 2px 6px; background: #16a34a; color: white; border: none; border-radius: 4px; cursor: pointer;" title="Зберегти">✔️</button>
+            <button onclick="cancelRename(event, '${id}', '${currentName.replace(/'/g, "\\'")}', ${isFolder})" style="padding: 2px 6px; background: #94a3b8; color: white; border: none; border-radius: 4px; cursor: pointer;" title="Скасувати">✖</button>
+        `;
+        setTimeout(() => document.getElementById(`input-${id}`).focus(), 50);
+    }
+
+    function cancelRename(event, id, originalName, isFolder) {
+        if(event) event.stopPropagation();
+        const nameContainer = document.getElementById(`name-${id}`);
+        const iconPrefix = isFolder ? '📁 ' : '📄 ';
+        nameContainer.innerHTML = `${iconPrefix}<span>${originalName}</span>`;
+    }
+
+    async function saveRename(event, id, isFolder, originalName) {
+        event.stopPropagation();
+        const input = document.getElementById(`input-${id}`);
+        const newName = input.value.trim();
+        
+        if (!newName || newName === originalName) {
+            cancelRename(null, id, originalName, isFolder);
+            return;
+        }
+
+        const finalName = isFolder ? newName : newName + '.html';
+
+        try {
+            input.disabled = true;
+            const res = await fetch(`${GOOGLE_DRIVE_API}/${id}`, {
+                method: 'PATCH',
+                headers: new Headers({
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }),
+                body: JSON.stringify({ name: finalName })
+            });
+            
+            if(!res.ok) throw new Error("Rename failed");
+
+            const nameContainer = document.getElementById(`name-${id}`);
+            const iconPrefix = isFolder ? '📁 ' : '📄 ';
+            nameContainer.innerHTML = `${iconPrefix}<span>${newName}</span>`;
+            
+            // Оновлюємо кнопку редагування
+            const editBtn = nameContainer.nextElementSibling;
+            const safeNewName = newName.replace(/'/g, "\\'");
+            editBtn.setAttribute('onclick', `startRename(event, '${id}', '${safeNewName}', ${isFolder})`);
+
+            showStatus('Успішно перейменовано!', 'success');
+        } catch (e) {
+            console.error(e);
+            showStatus('Помилка при перейменуванні.', 'error');
+            cancelRename(null, id, originalName, isFolder);
+        }
     }
 
     async function editDriveProject(fileId) {
