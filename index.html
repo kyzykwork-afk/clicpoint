@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClicPoint v10.4 - Конструктор Інтерактивних Зображень (Mobile Optimized)</title>
+    <title>ClicPoint v10.5 - Конструктор Інтерактивних Зображень (Zoom/Pan & Mobile Optimized)</title>
     
     <!-- Підключення Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -175,7 +175,8 @@
             border: 2px dashed #cbd5e1; 
             border-radius: 8px;
             background: #e2e8f0; 
-            overflow: hidden; 
+            overflow: hidden; /* Критично для Zoom/Pan */
+            touch-action: none; /* Запобігає скролу екрану при панорамуванні на мобільних */
             user-select: none;
         }
         
@@ -185,6 +186,31 @@
             display: block; 
             margin: 0 auto; 
             pointer-events: none; 
+        }
+
+        /* Стилі кнопок Zoom */
+        .zoom-btn {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #334155;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            padding: 0;
+        }
+        .zoom-btn:hover { background: #e2e8f0; color: #0f172a; }
+        .zoom-btn-text {
+            font-size: 13px;
+            font-weight: 700;
+            width: auto;
+            padding: 0 8px;
         }
 
         /* Шари відображення (Z-Index) */
@@ -305,12 +331,8 @@
             box-shadow: none !important;
             transform: none !important;
         }
-        .undo-redo-group button:hover {
-            opacity: 0.9;
-        }
-        .undo-redo-group button:first-child {
-            border-right: 1px solid rgba(255, 255, 255, 0.4);
-        }
+        .undo-redo-group button:hover { opacity: 0.9; }
+        .undo-redo-group button:first-child { border-right: 1px solid rgba(255, 255, 255, 0.4); }
     </style>
 </head>
 <body>
@@ -386,13 +408,24 @@
             </div>
 
             <div id="workspace-wrapper">
+                <!-- Плаваюча панель Zoom у редакторі -->
+                <div id="zoom-controls" style="position: absolute; top: 10px; right: 10px; z-index: 50; display: none; gap: 5px; background: rgba(255,255,255,0.95); padding: 6px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                    <button class="zoom-btn" onclick="handleZoom(1.2)" title="Збільшити">➕</button>
+                    <button class="zoom-btn zoom-btn-text" onclick="resetZoom()" title="Скинути масштаб">100%</button>
+                    <button class="zoom-btn" onclick="handleZoom(0.833)" title="Зменшити">➖</button>
+                </div>
+                
                 <div class="draw-instruction" id="poly-instruction">Клікайте по контуру об'єкта.</div>
-                <img id="main-img" src="" alt="Workspace">
-                <img id="workspace-logo" src="" alt="Logo" onerror="this.style.display='none'">
-                <svg id="arrow-layer"></svg>
-                <div id="click-layer" onclick="handleImageClick(event)"></div>
-                <svg id="polygon-layer"></svg>
-                <div id="ui-layer"></div>
+                
+                <!-- Контейнер для Zoom та Pan -->
+                <div id="zoom-container" style="transform-origin: 0 0; width: 100%; position: relative; line-height: 0;">
+                    <img id="main-img" src="" alt="Workspace">
+                    <img id="workspace-logo" src="" alt="Logo" onerror="this.style.display='none'">
+                    <svg id="arrow-layer"></svg>
+                    <div id="click-layer" onclick="handleImageClick(event)"></div>
+                    <svg id="polygon-layer"></svg>
+                    <div id="ui-layer"></div>
+                </div>
             </div>
         </div>
 
@@ -660,11 +693,8 @@
     // ЛОГІКА РЕЖИМУ УЧНЯ (VIEWER MODE)
     // ==========================================
     
-    // --- УВАГА: ВСТАВТЕ ВАШ API KEY НИЖЧЕ ---
-    // (Без нього великі файли будуть блокуватися антивірусом Google)
     const CLIENT_ID = '795187281705-posp8gjh6mf2dfhamhk96j6qocacpqop.apps.googleusercontent.com';
     const GOOGLE_API_KEY = 'AIzaSyBKCBCW1JzJKsTfI2dXzqAU75A2HtWO5t8'; 
-    // ------------------------------------------
 
     const urlParams = new URLSearchParams(window.location.search);
     const viewFileId = urlParams.get('view');
@@ -680,7 +710,6 @@
                 let htmlContent = '';
                 
                 if (GOOGLE_API_KEY) {
-                    // ОФІЦІЙНИЙ МЕТОД (100% надійно, ігнорує вірусний сканер)
                     const apiUrl = `https://www.googleapis.com/drive/v3/files/${viewFileId}?alt=media&key=${GOOGLE_API_KEY}`;
                     const res = await fetch(apiUrl);
                     
@@ -690,7 +719,6 @@
                     }
                     htmlContent = await res.text();
                 } else {
-                    // НЕСТАБІЛЬНИЙ МЕТОД (Резервний проксі)
                     const targetUrl = `https://drive.google.com/uc?export=download&id=${viewFileId}&confirm=t`;
                     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                     
@@ -698,7 +726,6 @@
                     if (!res.ok) throw new Error('PROXY_ERROR');
                     htmlContent = await res.text();
                     
-                    // Перевіряємо, чи Google не підсунув сторінку авторизації або антивірусу
                     if (htmlContent.includes('ServiceLogin')) throw new Error('PRIVATE_OR_NOT_FOUND');
                     if (htmlContent.includes('uc-download-link') || htmlContent.includes('дозволяє перевіряти файли такого розміру') || htmlContent.includes('Google Drive can\'t scan')) {
                         throw new Error('VIRUS_SCAN_BLOCK');
@@ -721,7 +748,7 @@
                 } else if (err.message === 'VIRUS_SCAN_BLOCK') {
                     loader.innerHTML = `
                         <h3 style="color: #eab308; font-size: 22px;">⚠️ Обмеження Google Drive</h3>
-                        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Завдання завелике. Щоб обійти блокування Google і учні могли його відкрити, викладачу необхідно створити <b>API Key</b> і додати його у код конструктора на рядку 531.</p>
+                        <p style="color: #475569; font-size: 15px; line-height: 1.5;">Завдання завелике. Щоб обійти блокування Google і учні могли його відкрити, викладачу необхідно створити <b>API Key</b> і додати його у код конструктора.</p>
                     `;
                 } else {
                     loader.innerHTML = `
@@ -742,9 +769,8 @@
     let tokenClient;
     let accessToken = null;
     let pendingSaveToDrive = false;
-    let currentThemes = []; // Зберігає поточний список тем для вікна переміщення
+    let currentThemes = [];
 
-    // Допоміжна функція для зміни інтерфейсу авторизації
     function setAuthUI(isLoggedIn) {
         const authBtn = document.getElementById('btn-google-auth');
         if (isLoggedIn) {
@@ -774,32 +800,23 @@
                 callback: (tokenResponse) => {
                     if (tokenResponse && tokenResponse.access_token) {
                         accessToken = tokenResponse.access_token;
-                        
-                        // Зберігаємо токен і час закінчення його дії в браузері (зазвичай діє 1 годину)
                         localStorage.setItem('gdrive_access_token', accessToken);
                         localStorage.setItem('gdrive_token_expires', Date.now() + (tokenResponse.expires_in * 1000));
                         
                         setAuthUI(true);
                         showStatus('Успішно авторизовано в Google Drive!', 'success');
-                        
-                        if(pendingSaveToDrive) {
-                            pendingSaveToDrive = false;
-                            openSaveModal();
-                        }
+                        if(pendingSaveToDrive) { pendingSaveToDrive = false; openSaveModal(); }
                     }
                 },
             });
 
-            // Відновлення сесії при перезавантаженні сторінки
             const savedToken = localStorage.getItem('gdrive_access_token');
             const expiresAt = localStorage.getItem('gdrive_token_expires');
             
             if (savedToken && expiresAt && Date.now() < parseInt(expiresAt)) {
-                // Токен ще дійсний
                 accessToken = savedToken;
                 setAuthUI(true);
             } else if (savedToken) {
-                // Токен прострочений - очищаємо пам'ять
                 localStorage.removeItem('gdrive_access_token');
                 localStorage.removeItem('gdrive_token_expires');
             }
@@ -813,18 +830,14 @@
         if (accessToken) {
             google.accounts.oauth2.revoke(accessToken, () => {
                 accessToken = null;
-                // Очищаємо пам'ять при виході
                 localStorage.removeItem('gdrive_access_token');
                 localStorage.removeItem('gdrive_token_expires');
                 setAuthUI(false);
                 showStatus('Вийшли з облікового запису Google.', 'info');
             });
         } else {
-            if (tokenClient) {
-                tokenClient.requestAccessToken({prompt: 'consent'});
-            } else {
-                showStatus('Клієнт Google ще завантажується...', 'warning');
-            }
+            if (tokenClient) { tokenClient.requestAccessToken({prompt: 'consent'}); } 
+            else { showStatus('Клієнт Google ще завантажується...', 'warning'); }
         }
     }
 
@@ -832,11 +845,8 @@
     let watermarkDataUrl = '';
     const cleanedCode = RAW_BASE64_LOGO.replace(/\s+/g, ''); 
     if (cleanedCode && !cleanedCode.includes('ВСТАВТЕ_ВАШ_КОД_ТУТ')) {
-        if (cleanedCode.startsWith('data:image') || cleanedCode.startsWith('http') || cleanedCode.endsWith('.png') || cleanedCode.endsWith('.jpg')) {
-            watermarkDataUrl = cleanedCode;
-        } else {
-            watermarkDataUrl = 'data:image/png;base64,' + cleanedCode;
-        }
+        if (cleanedCode.startsWith('data:image') || cleanedCode.startsWith('http') || cleanedCode.endsWith('.png') || cleanedCode.endsWith('.jpg')) { watermarkDataUrl = cleanedCode; } 
+        else { watermarkDataUrl = 'data:image/png;base64,' + cleanedCode; }
     }
 
     let currentImgUrl = '';
@@ -856,23 +866,23 @@
     let stateHistory = [];
     let historyIndex = -1;
 
+    // Змінні для Zoom і Pan
+    let zoomScale = 1;
+    let panX = 0; let panY = 0;
+    let isPanning = false; let startPanX = 0; let startPanY = 0; let hasMovedPan = false;
+    let initialPinchDistance = null;
+
     const iconMap = { 'number': '', 'info': 'ℹ️', 'video': '▶️', 'warning': '⚠️', 'link': '🔗', 'star': '⭐', 'audio': '🎵', 'quiz': '❓' };
 
     async function initLogo() {
         const fallbackImageUrl = 'https://lh3.googleusercontent.com/d/1vB9QiuqrahasK7pSzKnx-P-3HrhAPNVk';
-        try {
-            watermarkDataUrl = await convertImageToBase64(fallbackImageUrl);
-            updateUILogos();
-        } catch (err) {
-            watermarkDataUrl = fallbackImageUrl;
-            updateUILogos();
-        }
+        try { watermarkDataUrl = await convertImageToBase64(fallbackImageUrl); updateUILogos(); } 
+        catch (err) { watermarkDataUrl = fallbackImageUrl; updateUILogos(); }
     }
 
     function convertImageToBase64(url) {
         return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
+            const img = new Image(); img.crossOrigin = 'Anonymous';
             img.onload = function() {
                 const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height;
                 canvas.getContext('2d').drawImage(img, 0, 0);
@@ -889,8 +899,186 @@
         if (workspaceLogo && watermarkDataUrl) { workspaceLogo.src = watermarkDataUrl; if (currentImgUrl) workspaceLogo.style.display = 'block'; }
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { initLogo(); initGoogleAuth(); });
-    else { initLogo(); initGoogleAuth(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { initLogo(); initGoogleAuth(); initZoomPan(); });
+    else { initLogo(); initGoogleAuth(); initZoomPan(); }
+
+    // ==========================================
+    // ЛОГІКА МАСШТАБУВАННЯ ТА ПАНОРАМУВАННЯ (РЕДАКТОР)
+    // ==========================================
+    
+    function clampPan() {
+        const rect = document.getElementById('workspace-wrapper').getBoundingClientRect();
+        const minX = rect.width * (1 - zoomScale);
+        const minY = rect.height * (1 - zoomScale);
+        
+        panX = Math.max(minX, Math.min(0, panX));
+        panY = Math.max(minY, Math.min(0, panY));
+    }
+
+    function initZoomPan() {
+        const wrapper = document.getElementById('workspace-wrapper');
+        
+        wrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.1 : 0.9;
+            handleZoom(factor, e.clientX, e.clientY);
+        }, { passive: false });
+
+        wrapper.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return; // Тільки ліва кнопка миші
+            if (activeDragElement || isSelectingTarget) return; 
+            if (e.target.closest('.zoom-btn')) return;
+            
+            // Запобігаємо нативному drag-and-drop та виділенню, що зриває панорамування
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault(); 
+            }
+            
+            if (zoomScale <= 1) return; // Блокуємо панорамування при 100%
+            
+            isPanning = true;
+            hasMovedPan = false;
+            startPanX = e.clientX - panX;
+            startPanY = e.clientY - panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isPanning || zoomScale <= 1) return;
+            
+            if (e.buttons !== 1) {
+                isPanning = false;
+                setTimeout(() => hasMovedPan = false, 50);
+                return;
+            }
+            
+            let rawPanX = e.clientX - startPanX;
+            let rawPanY = e.clientY - startPanY;
+            
+            const rect = document.getElementById('workspace-wrapper').getBoundingClientRect();
+            const minX = rect.width * (1 - zoomScale);
+            const minY = rect.height * (1 - zoomScale);
+            
+            let clampedPanX = Math.max(minX, Math.min(0, rawPanX));
+            let clampedPanY = Math.max(minY, Math.min(0, rawPanY));
+            
+            // Фікс від відставання курсору при блокуванні межі
+            if (rawPanX !== clampedPanX) startPanX = e.clientX - clampedPanX;
+            if (rawPanY !== clampedPanY) startPanY = e.clientY - clampedPanY;
+            
+            if (Math.abs(clampedPanX - panX) > 3 || Math.abs(clampedPanY - panY) > 3) hasMovedPan = true;
+            panX = clampedPanX;
+            panY = clampedPanY;
+            updateZoomTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isPanning) {
+                isPanning = false;
+                setTimeout(() => hasMovedPan = false, 50);
+            }
+        });
+        
+        window.addEventListener('mouseleave', () => {
+            if (isPanning) { isPanning = false; setTimeout(() => hasMovedPan = false, 50); }
+        });
+
+        wrapper.addEventListener('touchstart', (e) => {
+            if (activeDragElement || isSelectingTarget || e.target.closest('.zoom-btn') || e.target.closest('.marker-preview') || e.target.closest('.poly-handle')) return;
+            if (e.touches.length === 1) {
+                if (zoomScale <= 1) return; // Блокуємо панорамування при 100%
+                isPanning = true;
+                hasMovedPan = false;
+                startPanX = e.touches[0].clientX - panX;
+                startPanY = e.touches[0].clientY - panY;
+            } else if (e.touches.length === 2) {
+                isPanning = false;
+                initialPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (isPanning && e.touches.length === 1) {
+                if (zoomScale <= 1) return;
+                e.preventDefault();
+                
+                let rawPanX = e.touches[0].clientX - startPanX;
+                let rawPanY = e.touches[0].clientY - startPanY;
+                
+                const rect = document.getElementById('workspace-wrapper').getBoundingClientRect();
+                const minX = rect.width * (1 - zoomScale);
+                const minY = rect.height * (1 - zoomScale);
+                
+                let clampedPanX = Math.max(minX, Math.min(0, rawPanX));
+                let clampedPanY = Math.max(minY, Math.min(0, rawPanY));
+                
+                if (rawPanX !== clampedPanX) startPanX = e.touches[0].clientX - clampedPanX;
+                if (rawPanY !== clampedPanY) startPanY = e.touches[0].clientY - clampedPanY;
+                
+                if (Math.abs(clampedPanX - panX) > 3 || Math.abs(clampedPanY - panY) > 3) hasMovedPan = true;
+                panX = clampedPanX;
+                panY = clampedPanY;
+                updateZoomTransform();
+            } else if (e.touches.length === 2 && initialPinchDistance) {
+                e.preventDefault();
+                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                const factor = currentDist / initialPinchDistance;
+                
+                if (Math.abs(factor - 1) > 0.02) {
+                    const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    handleZoom(factor > 1 ? 1.05 : 0.95, cx, cy);
+                    initialPinchDistance = currentDist;
+                }
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchend', (e) => {
+            if (isPanning) { isPanning = false; setTimeout(() => hasMovedPan = false, 50); }
+            if (e.touches.length < 2) initialPinchDistance = null;
+        });
+    }
+
+    function handleZoom(factor, cx, cy) {
+        const oldScale = zoomScale;
+        let newScale = zoomScale * factor;
+        
+        // Встановлюємо жорсткі рамки: мінімум 100% (1x)
+        newScale = Math.max(1, Math.min(newScale, 10)); 
+        if (newScale === oldScale) return;
+
+        const wrapperRect = document.getElementById('workspace-wrapper').getBoundingClientRect();
+        if (cx === undefined) cx = wrapperRect.left + wrapperRect.width / 2;
+        if (cy === undefined) cy = wrapperRect.top + wrapperRect.height / 2;
+
+        const dx = cx - wrapperRect.left;
+        const dy = cy - wrapperRect.top;
+
+        const xs = (dx - panX) / oldScale;
+        const ys = (dy - panY) / oldScale;
+
+        zoomScale = newScale;
+        panX = dx - xs * zoomScale;
+        panY = dy - ys * zoomScale;
+
+        if (zoomScale <= 1) { 
+            panX = 0;
+            panY = 0;
+        } else {
+            clampPan();
+        }
+
+        updateZoomTransform();
+    }
+
+    function resetZoom() {
+        zoomScale = 1; panX = 0; panY = 0;
+        updateZoomTransform();
+    }
+
+    function updateZoomTransform() {
+        document.getElementById('zoom-container').style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+    }
+
 
     // ==========================================
     // ЛОГІКА GOOGLE DRIVE (МЕНЕДЖЕР ПРОЕКТІВ)
@@ -906,7 +1094,6 @@
         headers.append('Authorization', `Bearer ${accessToken}`);
         const res = await fetch(url, { ...options, headers });
         
-        // Якщо токен став недійсним під час роботи
         if (res.status === 401) {
             accessToken = null;
             localStorage.removeItem('gdrive_access_token');
@@ -998,7 +1185,6 @@
             if(!uploadRes.ok) throw new Error("Upload failed");
             const fileData = await uploadRes.json();
 
-            // ВАЖЛИВО: Надання доступу для учнів
             statusEl.innerHTML = '<span style="color:blue;">⏳ 3/3 Відкриття публічного доступу...</span>';
             const permBody = { role: 'reader', type: 'anyone' };
             await fetch(`${GOOGLE_DRIVE_API}/${fileData.id}/permissions`, {
@@ -1027,7 +1213,7 @@
             const themesQuery = `mimeType='application/vnd.google-apps.folder' and '${rootFolder.id}' in parents and trashed=false`;
             const themesData = await driveFetch(`${GOOGLE_DRIVE_API}?q=${encodeURIComponent(themesQuery)}&fields=files(id,name)`);
             
-            currentThemes = themesData.files; // Зберігаємо для вікна переміщення
+            currentThemes = themesData.files; 
 
             if(themesData.files.length === 0) { loader.style.display = 'none'; content.style.display = 'block'; content.innerHTML = '<div style="text-align:center; color:#64748b;">Папка проектів порожня.</div>'; return; }
 
@@ -1079,8 +1265,6 @@
         } catch(e) { console.error(e); loader.innerHTML = '<span style="color:red;">❌ Помилка завантаження проектів.</span>'; }
     }
 
-    // --- НОВІ ФУНКЦІЇ ДЛЯ МЕНЕДЖЕРА ПРОЕКТІВ ---
-
     async function createNewTheme() {
         const name = prompt("Введіть назву нової теки:");
         if (!name || !name.trim()) return;
@@ -1095,7 +1279,7 @@
             await createFolder(name.trim(), rootFolder.id);
             
             showStatus("Теку успішно створено!", "success");
-            openProjectManager(); // Оновлюємо список
+            openProjectManager(); 
         } catch (e) {
             console.error(e);
             showStatus("Помилка створення теки.", "error");
@@ -1105,8 +1289,7 @@
     }
 
     async function deleteDriveTheme(event, folderId) {
-        event.stopPropagation(); // Зупиняє розгортання папки при кліку
-        
+        event.stopPropagation(); 
         if (!confirm("⚠️ УВАГА! Ви дійсно хочете видалити цю теку?\n\nУСІ ПРОЕКТИ (файли) всередині неї також будуть БЕЗПОВОРОТНО ВИДАЛЕНІ з вашого Google Диску!")) return;
         
         showStatus('Видалення теки...', 'info');
@@ -1114,14 +1297,10 @@
         document.getElementById('pm-content').style.display = 'none';
         
         try {
-            const res = await fetch(`${GOOGLE_DRIVE_API}/${folderId}`, {
-                method: 'DELETE',
-                headers: new Headers({ 'Authorization': `Bearer ${accessToken}` })
-            });
+            const res = await fetch(`${GOOGLE_DRIVE_API}/${folderId}`, { method: 'DELETE', headers: new Headers({ 'Authorization': `Bearer ${accessToken}` }) });
             if (!res.ok) throw new Error("Delete failed");
-            
             showStatus('Теку успішно видалено.', 'success');
-            openProjectManager(); // Оновлюємо список
+            openProjectManager(); 
         } catch (e) {
             console.error(e);
             showStatus('Помилка при видаленні теки.', 'error');
@@ -1133,13 +1312,7 @@
     function toggleFolder(themeId) {
         const list = document.getElementById(`list-${themeId}`);
         const icon = document.getElementById(`icon-${themeId}`);
-        if (list.style.display === 'none') {
-            list.style.display = 'block';
-            icon.innerText = '▼';
-        } else {
-            list.style.display = 'none';
-            icon.innerText = '▶';
-        }
+        if (list.style.display === 'none') { list.style.display = 'block'; icon.innerText = '▼'; } else { list.style.display = 'none'; icon.innerText = '▶'; }
     }
 
     function startRename(event, id, currentName, isFolder) {
@@ -1166,32 +1339,21 @@
         event.stopPropagation();
         const input = document.getElementById(`input-${id}`);
         const newName = input.value.trim();
-        
-        if (!newName || newName === originalName) {
-            cancelRename(null, id, originalName, isFolder);
-            return;
-        }
+        if (!newName || newName === originalName) { cancelRename(null, id, originalName, isFolder); return; }
 
         const finalName = isFolder ? newName : newName + '.html';
 
         try {
             input.disabled = true;
             const res = await fetch(`${GOOGLE_DRIVE_API}/${id}`, {
-                method: 'PATCH',
-                headers: new Headers({
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }),
-                body: JSON.stringify({ name: finalName })
+                method: 'PATCH', headers: new Headers({ 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }), body: JSON.stringify({ name: finalName })
             });
-            
             if(!res.ok) throw new Error("Rename failed");
 
             const nameContainer = document.getElementById(`name-${id}`);
             const iconPrefix = isFolder ? '📁 ' : '📄 ';
             nameContainer.innerHTML = `${iconPrefix}<span>${newName}</span>`;
             
-            // Оновлюємо кнопку редагування
             const editBtn = nameContainer.nextElementSibling;
             const safeNewName = newName.replace(/'/g, "\\'");
             editBtn.setAttribute('onclick', `startRename(event, '${id}', '${safeNewName}', ${isFolder})`);
@@ -1210,24 +1372,18 @@
             const newName = `Копія - ${fileName}.html`;
             const body = { name: newName, parents: [folderId] };
             const res = await fetch(`${GOOGLE_DRIVE_API}/${fileId}/copy`, {
-                method: 'POST',
-                headers: new Headers({
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }),
-                body: JSON.stringify(body)
+                method: 'POST', headers: new Headers({ 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' }), body: JSON.stringify(body)
             });
             if(!res.ok) throw new Error("Copy failed");
             const copyData = await res.json();
             
-            // Надаємо доступ для створеної копії
             const permBody = { role: 'reader', type: 'anyone' };
             await fetch(`${GOOGLE_DRIVE_API}/${copyData.id}/permissions`, {
                 method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' }, body: JSON.stringify(permBody)
             });
 
             showStatus('Успішно скопійовано!', 'success');
-            openProjectManager(); // Оновлюємо список
+            openProjectManager(); 
         } catch (e) {
             console.error(e);
             showStatus('Помилка копіювання.', 'error');
@@ -1243,19 +1399,10 @@
         
         const select = document.getElementById('move-theme-select');
         select.innerHTML = '';
+        currentThemes.forEach(t => { if(t.id !== oldFolderId) { select.innerHTML += `<option value="${t.id}">${t.name}</option>`; } });
         
-        currentThemes.forEach(t => {
-            if(t.id !== oldFolderId) {
-                select.innerHTML += `<option value="${t.id}">${t.name}</option>`;
-            }
-        });
-        
-        if (select.options.length === 0) {
-            select.innerHTML = '<option value="">(Немає інших тем)</option>';
-            document.getElementById('btn-confirm-move').disabled = true;
-        } else {
-            document.getElementById('btn-confirm-move').disabled = false;
-        }
+        if (select.options.length === 0) { select.innerHTML = '<option value="">(Немає інших тем)</option>'; document.getElementById('btn-confirm-move').disabled = true; } 
+        else { document.getElementById('btn-confirm-move').disabled = false; }
     }
 
     async function submitMoveProject() {
@@ -1271,16 +1418,12 @@
 
         try {
             const res = await fetch(`${GOOGLE_DRIVE_API}/${fileId}?addParents=${newFolderId}&removeParents=${oldFolderId}`, {
-                method: 'PATCH',
-                headers: new Headers({ 'Authorization': `Bearer ${accessToken}` })
+                method: 'PATCH', headers: new Headers({ 'Authorization': `Bearer ${accessToken}` })
             });
             if(!res.ok) throw new Error("Move failed");
             
             statusEl.innerHTML = '<span style="color:green;">✅ Успішно переміщено!</span>';
-            setTimeout(() => {
-                document.getElementById('moveProjectModal').style.display = 'none';
-                openProjectManager(); // Оновлюємо список
-            }, 1000);
+            setTimeout(() => { document.getElementById('moveProjectModal').style.display = 'none'; openProjectManager(); }, 1000);
         } catch (e) {
             console.error(e);
             statusEl.innerHTML = '<span style="color:red;">❌ Помилка переміщення.</span>';
@@ -1409,11 +1552,16 @@
             const polyLayer = document.getElementById('polygon-layer'); polyLayer.setAttribute('viewBox', `0 0 ${imgNatWidth} ${imgNatHeight}`); polyLayer.setAttribute('preserveAspectRatio', 'none');
             if(watermarkDataUrl) { const logoEl = document.getElementById('workspace-logo'); logoEl.src = watermarkDataUrl; logoEl.style.display = 'block'; }
             showStatus('Готово! Клікайте для точок або малюйте зони.', 'success');
+            
             document.getElementById('editor-layout').style.display = 'flex'; 
             document.getElementById('preview-panel').style.display = 'flex'; 
             document.getElementById('bottom-actions').style.display = 'flex'; 
             document.getElementById('output-area').style.display = 'none';
+            document.getElementById('zoom-controls').style.display = 'flex'; 
+
             if (document.getElementById('btn-my-projects-top')) document.getElementById('btn-my-projects-top').style.display = 'none';
+            
+            resetZoom(); 
             if (historyIndex === -1) saveState(); renderMarkersPreview();
         };
         img.onerror = () => showStatus('Помилка завантаження зображення.', 'error'); img.src = url;
@@ -1476,9 +1624,14 @@
     function resetDrawUI() { isDrawingPolygon = false; isAddingText = false; document.getElementById('btn-draw-poly').style.display = 'inline-block'; document.getElementById('btn-finish-poly').style.display = 'none'; document.getElementById('btn-cancel-poly').style.display = 'none'; document.getElementById('poly-instruction').style.display = 'none'; document.getElementById('click-layer').style.cursor = 'crosshair'; }
 
     function handleImageClick(e) {
+        if (hasMovedPan) return; 
         if (preventNextClick || e.target.id !== 'click-layer') return;
-        const layer = document.getElementById('click-layer'); const rect = layer.getBoundingClientRect();
-        let xPercent = ((e.clientX - rect.left) / rect.width) * 100; let yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        const layer = document.getElementById('click-layer'); 
+        const rect = layer.getBoundingClientRect();
+        
+        let xPercent = ((e.clientX - rect.left) / rect.width) * 100; 
+        let yPercent = ((e.clientY - rect.top) / rect.height) * 100;
         xPercent = Math.max(0, Math.min(100, xPercent)); yPercent = Math.max(0, Math.min(100, yPercent));
 
         if (isSelectingTarget) { if(!markers[editingIndex].targets) markers[editingIndex].targets = []; markers[editingIndex].targets.push({tx: parseFloat(xPercent.toFixed(2)), ty: parseFloat(yPercent.toFixed(2))}); isSelectingTarget = false; document.getElementById('click-layer').style.cursor = 'crosshair'; renderMarkersPreview(); openEditModal(editingIndex); return; }
@@ -1571,18 +1724,24 @@
                 else if (m.labelStyle === 'custom-panel') { const hex = m.labelBgColor || '#ffffff'; const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); lbl.style.background = `rgba(${r}, ${g}, ${b}, ${op})`; lbl.style.padding = '8px 16px'; lbl.style.borderRadius = '8px'; lbl.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'; lbl.style.textShadow = 'none'; }
                 else { lbl.style.textShadow = 'none'; lbl.style.background = 'transparent'; lbl.style.padding = '5px'; lbl.style.boxShadow = 'none'; lbl.style.borderRadius = '0'; }
                 lbl.innerText = m.labelText || 'Новий напис'; lbl.dataset.index = index; lbl.dataset.type = 'label';
-                lbl.addEventListener('mousedown', startDrag); lbl.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(index); }); uiLayer.appendChild(lbl);
+                lbl.addEventListener('mousedown', startDrag); 
+                lbl.addEventListener('click', (e) => { e.stopPropagation(); if(hasMovedPan) return; openEditModal(index); }); 
+                uiLayer.appendChild(lbl);
             } else if(m.shape === 'polygon') {
                 const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon'); poly.id = `poly-${index}`;
                 const pts = m.points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' '); poly.setAttribute('points', pts);
-                const opNorm = m.opNormal !== undefined ? m.opNormal / 100 : 0.4; poly.setAttribute('fill', m.color || '#2563eb'); poly.setAttribute('fill-opacity', opNorm); poly.setAttribute('stroke', m.color || '#2563eb'); poly.setAttribute('stroke-width', '2'); poly.setAttribute('vector-effect', 'non-scaling-stroke'); poly.setAttribute('class', 'polygon-preview'); poly.dataset.index = index; poly.addEventListener('click', (e) => { e.stopPropagation(); openEditModal(index); }); polyLayer.appendChild(poly);
+                const opNorm = m.opNormal !== undefined ? m.opNormal / 100 : 0.4; poly.setAttribute('fill', m.color || '#2563eb'); poly.setAttribute('fill-opacity', opNorm); poly.setAttribute('stroke', m.color || '#2563eb'); poly.setAttribute('stroke-width', '2'); poly.setAttribute('vector-effect', 'non-scaling-stroke'); poly.setAttribute('class', 'polygon-preview'); poly.dataset.index = index; 
+                poly.addEventListener('click', (e) => { e.stopPropagation(); if(hasMovedPan) return; openEditModal(index); }); 
+                polyLayer.appendChild(poly);
                 let sumX = 0, sumY = 0; m.points.forEach(p => { sumX += Number(p.x); sumY += Number(p.y); });
                 const moveHandle = document.createElement('div'); moveHandle.className = 'poly-move-handle'; moveHandle.style.left = (sumX / m.points.length) + '%'; moveHandle.style.top = (sumY / m.points.length) + '%'; moveHandle.innerHTML = '✢'; moveHandle.dataset.index = index; moveHandle.dataset.type = 'poly-move'; moveHandle.title = "Перетягніть, щоб перемістити всю зону"; moveHandle.addEventListener('mousedown', startDrag); moveHandle.addEventListener('click', (e) => e.stopPropagation()); uiLayer.appendChild(moveHandle);
                 m.points.forEach((p, ptIndex) => { const handle = document.createElement('div'); handle.className = 'poly-handle'; handle.style.left = p.x + '%'; handle.style.top = p.y + '%'; handle.style.border = `2px solid ${m.color || '#2563eb'}`; handle.dataset.index = index; handle.dataset.ptIndex = ptIndex; handle.dataset.type = 'poly-point'; handle.addEventListener('mousedown', startDrag); handle.addEventListener('click', (e) => e.stopPropagation()); uiLayer.appendChild(handle); });
             } else {
                 const dot = document.createElement('div'); dot.className = 'marker-preview'; dot.style.left = m.x + '%'; dot.style.top = m.y + '%'; dot.style.backgroundColor = m.color || '#2563eb'; dot.dataset.index = index; dot.dataset.type = 'marker';
                 let iconContent = ''; if (m.icon && m.icon !== 'number') { iconContent = iconMap[m.icon]; } else { iconContent = numberCounter++; }
-                dot.innerHTML = `<span style="pointer-events:none;">${iconContent}</span>`; dot.addEventListener('mousedown', startDrag); dot.addEventListener('click', (e) => e.stopPropagation()); uiLayer.appendChild(dot); 
+                dot.innerHTML = `<span style="pointer-events:none;">${iconContent}</span>`; dot.addEventListener('mousedown', startDrag); 
+                dot.addEventListener('click', (e) => { e.stopPropagation(); if(hasMovedPan) return; openEditModal(index); }); 
+                uiLayer.appendChild(dot); 
             }
 
             if (m.shape !== 'polygon' && m.targets && m.targets.length > 0) {
@@ -1655,20 +1814,34 @@
     function getSnippetHTML() {
         if(markers.length === 0) return null;
         const safeMarkers = markers.map(m => { if (m.shape === 'label') { return { ...m, labelText: (m.labelText||'').replace(/"/g, '&quot;').replace(/\n/g, '<br>') }; } return { ...m, title: m.title.replace(/"/g, '&quot;'), content: (m.content||'').replace(/"/g, '&quot;').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>') }; });
-        let html = `<!-- ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ ClicPoint -->\n<div id="gen-int-container" style="position: relative; width: 100%; max-width: 100%; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; border-radius: 8px; container-type: inline-size; box-sizing: border-box;">\n    <img src="${currentImgUrl}" style="width: 100%; height: auto; display: block;" alt="Interactive">\n`;
-        if (watermarkDataUrl) { html += `    <img src="${watermarkDataUrl}" alt="Watermark" style="position: absolute; bottom: 2%; right: 2%; max-width: clamp(60px, 15cqw, 150px); max-height: clamp(25px, 6cqw, 60px); z-index: 20; opacity: 0.8; pointer-events: none; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6));" onerror="this.style.display='none'">\n`; }
-        html += `    <svg viewBox="0 0 ${imgNatWidth} ${imgNatHeight}" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">\n`;
+        
+        let html = `<!-- ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ ClicPoint (З підтримкою Zoom та Pan) -->\n`;
+        html += `<div id="gen-int-wrapper" style="position: relative; width: 100%; max-width: 100%; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; border-radius: 8px; box-sizing: border-box; touch-action: none; background: #e2e8f0; user-select: none; -webkit-user-select: none;">\n`;
+        
+        // Панель управління зумом для учнів
+        html += `    <div id="gen-zoom-controls" style="position: absolute; top: 10px; right: 10px; z-index: 50; display: flex; gap: 5px; background: rgba(255,255,255,0.95); padding: 6px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">\n`;
+        html += `        <button onclick="genHandleZoom(1.2)" title="Збільшити" style="border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px; width: 32px; height: 32px; cursor: pointer; color: #334155; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">➕</button>\n`;
+        html += `        <button onclick="genResetZoom()" title="Скинути масштаб" style="border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px; padding: 0 8px; height: 32px; cursor: pointer; color: #334155; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">100%</button>\n`;
+        html += `        <button onclick="genHandleZoom(0.833)" title="Зменшити" style="border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px; width: 32px; height: 32px; cursor: pointer; color: #334155; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">➖</button>\n`;
+        html += `    </div>\n`;
+
+        html += `    <div id="gen-zoom-container" style="transform-origin: 0 0; width: 100%; position: relative; line-height: 0; transform: translate(0px, 0px) scale(1);">\n`;
+        html += `        <img src="${currentImgUrl}" style="width: 100%; height: auto; display: block;" alt="Interactive">\n`;
+        
+        if (watermarkDataUrl) { html += `        <img src="${watermarkDataUrl}" alt="Watermark" style="position: absolute; bottom: 2%; right: 2%; max-width: clamp(60px, 15cqw, 150px); max-height: clamp(25px, 6cqw, 60px); z-index: 20; opacity: 0.8; pointer-events: none; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.6));" onerror="this.style.display='none'">\n`; }
+        html += `        <svg viewBox="0 0 ${imgNatWidth} ${imgNatHeight}" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">\n`;
+        
         safeMarkers.forEach((m, i) => {
             if(m.shape === 'polygon') {
                 const pts = m.points.map(p => `${(p.x * imgNatWidth / 100).toFixed(1)},${(p.y * imgNatHeight / 100).toFixed(1)}`).join(' '); const c = m.color || '#2563eb'; const opN = m.opNormal !== undefined ? m.opNormal / 100 : 0.4; const opH = m.opHover !== undefined ? m.opHover / 100 : 0.8;
-                html += `        <polygon points="${pts}" fill="${c}" fill-opacity="${opN}" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" class="gen-poly" onclick="openGenModal(${i})" data-title="${m.title}" style="pointer-events: auto; cursor: pointer; transition: fill-opacity 0.2s;" onmouseover="this.setAttribute('fill-opacity', '${opH}')" onmouseout="this.setAttribute('fill-opacity', '${opN}')" />\n`;
+                html += `            <polygon points="${pts}" fill="${c}" fill-opacity="${opN}" stroke="${c}" stroke-width="2" vector-effect="non-scaling-stroke" class="gen-poly" onclick="if(typeof genHasMovedPan !== 'undefined' && genHasMovedPan) return; openGenModal(${i})" data-title="${m.title}" style="pointer-events: auto; cursor: pointer; transition: fill-opacity 0.2s;" onmouseover="this.setAttribute('fill-opacity', '${opH}')" onmouseout="this.setAttribute('fill-opacity', '${opN}')" />\n`;
             } else if (m.shape !== 'polygon' && m.targets && m.targets.length > 0) {
                 const markerColor = m.shape === 'label' ? (m.labelColor || '#1e293b') : (m.color || '#eab308'); const isAnimated = m.arrowAnimated; const dir = m.arrowDirection || 'to'; const animClass = isAnimated ? 'gen-arrow-anim' : '';
-                html += `        <defs><marker id="gen-arrowhead-${i}" markerWidth="10" markerHeight="6" refX="15" refY="3" orient="auto"><polygon points="0 1, 8 3, 0 5" fill="${markerColor}" /></marker></defs>\n`;
-                m.targets.forEach(t => { let x1, y1, x2, y2; if (dir === 'from') { x1 = t.tx; y1 = t.ty; x2 = m.x; y2 = m.y; } else { x1 = m.x; y1 = m.y; x2 = t.tx; y2 = t.ty; } html += `        <line x1="${(x1 * imgNatWidth / 100).toFixed(1)}" y1="${(y1 * imgNatHeight / 100).toFixed(1)}" x2="${(x2 * imgNatWidth / 100).toFixed(1)}" y2="${(y2 * imgNatHeight / 100).toFixed(1)}" stroke="${markerColor}" class="${animClass} gen-arrow-line" vector-effect="non-scaling-stroke" marker-end="url(#gen-arrowhead-${i})" />\n`; });
+                html += `            <defs><marker id="gen-arrowhead-${i}" markerWidth="10" markerHeight="6" refX="15" refY="3" orient="auto"><polygon points="0 1, 8 3, 0 5" fill="${markerColor}" /></marker></defs>\n`;
+                m.targets.forEach(t => { let x1, y1, x2, y2; if (dir === 'from') { x1 = t.tx; y1 = t.ty; x2 = m.x; y2 = m.y; } else { x1 = m.x; y1 = m.y; x2 = t.tx; y2 = t.ty; } html += `            <line x1="${(x1 * imgNatWidth / 100).toFixed(1)}" y1="${(y1 * imgNatHeight / 100).toFixed(1)}" x2="${(x2 * imgNatWidth / 100).toFixed(1)}" y2="${(y2 * imgNatHeight / 100).toFixed(1)}" stroke="${markerColor}" class="${animClass} gen-arrow-line" vector-effect="non-scaling-stroke" marker-end="url(#gen-arrowhead-${i})" />\n`; });
             }
         });
-        html += `    </svg>\n`;
+        html += `        </svg>\n`;
 
         let genNumberCounter = 1; 
         safeMarkers.forEach((m, i) => {
@@ -1677,15 +1850,18 @@
                 let transformStr = ''; let anchor = m.labelAnchor || 'auto'; if (anchor === 'auto') { let isPointingUp = false; if (m.targets && m.targets.length > 0) { let avgTy = m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length; isPointingUp = (avgTy < m.y); } transformStr = isPointingUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'top') { transformStr = 'translate(-50%, 4px)'; } else if (anchor === 'bottom') { transformStr = 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'left') { transformStr = 'translate(4px, -50%)'; } else if (anchor === 'right') { transformStr = 'translate(calc(-100% - 4px), -50%)'; } else if (anchor === 'center') { transformStr = 'translate(-50%, -50%)'; }
                 let extraStyles = ''; if (m.labelStyle === 'shadow') { extraStyles = ' text-shadow: 0px 1px 3px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,0.6);'; } else if (m.labelStyle === 'panel') { extraStyles = ' background: rgba(255, 255, 255, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'; } else if (m.labelStyle === 'panel-dark') { extraStyles = ' background: rgba(15, 23, 42, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);'; } else if (m.labelStyle === 'custom-panel') { const hex = m.labelBgColor || '#ffffff'; const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); extraStyles = ` background: rgba(${r}, ${g}, ${b}, ${op}); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);`; }
                 const sizeVal = m.labelSize || 24; const scaledSize = `font-size: clamp(8px, calc(${sizeVal} * 0.1cqw), ${sizeVal}px);`;
-                html += `    <div class="gen-label" style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scaledSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap;${extraStyles}">${m.labelText}</div>\n`;
+                html += `        <div class="gen-label" style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scaledSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap;${extraStyles}">${m.labelText}</div>\n`;
             } else if (m.shape !== 'polygon' && m.shape !== 'label') {
                 const c = m.color || '#2563eb'; let icon = ''; if (m.icon && m.icon !== 'number') { icon = iconMap[m.icon]; } else { icon = genNumberCounter++; }
                 let ttStyle = "left: 50%; transform: translateX(-50%);"; if (m.x < 15) ttStyle = "left: -5px; transform: none;"; if (m.x > 85) ttStyle = "left: auto; right: -5px; transform: none;"; if (m.y < 15) { ttStyle += " top: calc(100% + 8px); bottom: auto;"; } else { ttStyle += " bottom: calc(100% + 8px); top: auto;"; }
-                html += `    <div class="gen-marker gen-pulse" onclick="handleMarkerTap(event, ${i})" style="position: absolute; top: ${m.y}%; left: ${m.x}%; width: clamp(24px, 3cqw, 32px); height: clamp(24px, 3cqw, 32px); background: ${c}; border: 1.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size: clamp(10px, 1.2cqw, 14px);">\n        ${icon}\n        <span class="gen-tooltip" style="${ttStyle}">${m.title}</span>\n    </div>\n`;
+                html += `        <div class="gen-marker gen-pulse" onclick="if(typeof genHasMovedPan !== 'undefined' && genHasMovedPan) return; handleMarkerTap(event, ${i})" style="position: absolute; top: ${m.y}%; left: ${m.x}%; width: clamp(24px, 3cqw, 32px); height: clamp(24px, 3cqw, 32px); background: ${c}; border: 1.5px solid #fff; border-radius: 50%; transform: translate(-50%, -50%); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.4); z-index: 10; display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size: clamp(10px, 1.2cqw, 14px);">\n            ${icon}\n            <span class="gen-tooltip" style="${ttStyle}">${m.title}</span>\n        </div>\n`;
             }
         });
 
+        html += `    </div>\n`; // End gen-zoom-container
+        
         html += `
+    <!-- Модальне вікно учня -->
     <div id="gen-modal" onclick="if(event.target === this) closeGenModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 99999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease-in-out; box-sizing: border-box;">
         <div id="gen-modal-window" style="background: #fff; padding: 24px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); transition: transform 0.25s ease-in-out; transform: translateY(20px); box-sizing: border-box;">
             <button onclick="closeGenModal()" style="position: absolute; top: 12px; right: 12px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; color: #64748b; z-index: 10;">&times;</button>
@@ -1694,7 +1870,9 @@
         </div>
     </div>
 </div>
+
 <style>
+    #gen-zoom-controls button:hover { background: #e2e8f0 !important; color: #0f172a !important; }
     @keyframes markerPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
     .gen-pulse { animation: markerPulse 2s infinite; } .gen-marker { transition: transform 0.2s; -webkit-tap-highlight-color: transparent; }
     .gen-marker::before { content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; border-radius: 50%; }
@@ -1711,10 +1889,181 @@
 <script>
     const genData = ${JSON.stringify(safeMarkers)};
     let activeTouchIndex = null;
+    
+    // --- Логіка Zoom/Pan для учнів ---
+    const genWrapper = document.getElementById('gen-int-wrapper');
+    const genContainer = document.getElementById('gen-zoom-container');
+    let genZoomScale = 1, genPanX = 0, genPanY = 0;
+    let genIsPanning = false, genStartPanX = 0, genStartPanY = 0;
+    window.genHasMovedPan = false; 
+    let genInitPinchDist = null;
+
+    function genClampPan() {
+        const rect = genWrapper.getBoundingClientRect();
+        const minX = rect.width * (1 - genZoomScale);
+        const minY = rect.height * (1 - genZoomScale);
+        
+        genPanX = Math.max(minX, Math.min(0, genPanX));
+        genPanY = Math.max(minY, Math.min(0, genPanY));
+    }
+
+    function genUpdateTransform() {
+        genContainer.style.transform = \`translate(\${genPanX}px, \${genPanY}px) scale(\${genZoomScale})\`;
+    }
+
+    window.genHandleZoom = function(factor, cx, cy) {
+        const oldScale = genZoomScale;
+        let newScale = genZoomScale * factor;
+        
+        // Встановлюємо жорсткі рамки: мінімум 100% (1x)
+        newScale = Math.max(1, Math.min(newScale, 10)); 
+        if (newScale === oldScale) return;
+
+        const rect = genWrapper.getBoundingClientRect();
+        if (cx === undefined) cx = rect.left + rect.width / 2;
+        if (cy === undefined) cy = rect.top + rect.height / 2;
+
+        const dx = cx - rect.left; const dy = cy - rect.top;
+        const xs = (dx - genPanX) / oldScale; const ys = (dy - genPanY) / oldScale;
+
+        genZoomScale = newScale;
+        genPanX = dx - xs * genZoomScale;
+        genPanY = dy - ys * genZoomScale;
+        
+        if (genZoomScale <= 1) {
+            genPanX = 0;
+            genPanY = 0;
+        } else {
+            genClampPan();
+        }
+        
+        genUpdateTransform();
+    };
+
+    window.genResetZoom = function() { genZoomScale = 1; genPanX = 0; genPanY = 0; genUpdateTransform(); };
+
+    genWrapper.addEventListener('wheel', e => {
+        e.preventDefault();
+        genHandleZoom(e.deltaY < 0 ? 1.1 : 0.9, e.clientX, e.clientY);
+    }, { passive: false });
+
+    genWrapper.addEventListener('mousedown', e => {
+        if (e.button !== 0) return; // Тільки ліва кнопка
+        if (e.target.closest('.gen-marker') || e.target.closest('.gen-poly') || e.target.closest('.gen-label') || e.target.closest('#gen-zoom-controls')) return;
+        
+        // Запобігаємо нативному перетягуванню картинки та виділенню
+        e.preventDefault();
+        
+        if (genZoomScale <= 1) return; // Блокуємо панорамування при 100%
+        
+        genIsPanning = true; window.genHasMovedPan = false;
+        genStartPanX = e.clientX - genPanX; genStartPanY = e.clientY - genPanY;
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (!genIsPanning || genZoomScale <= 1) return;
+        
+        // Запобіжник: якщо кнопку відпустили поза вікном
+        if (e.buttons !== 1) {
+            genIsPanning = false;
+            setTimeout(() => window.genHasMovedPan = false, 50);
+            return;
+        }
+        
+        let rawPanX = e.clientX - genStartPanX;
+        let rawPanY = e.clientY - genStartPanY;
+        
+        const rect = genWrapper.getBoundingClientRect();
+        const minX = rect.width * (1 - genZoomScale);
+        const minY = rect.height * (1 - genZoomScale);
+        
+        let clampedPanX = Math.max(minX, Math.min(0, rawPanX));
+        let clampedPanY = Math.max(minY, Math.min(0, rawPanY));
+        
+        if (rawPanX !== clampedPanX) genStartPanX = e.clientX - clampedPanX;
+        if (rawPanY !== clampedPanY) genStartPanY = e.clientY - clampedPanY;
+        
+        if (Math.abs(clampedPanX - genPanX) > 3 || Math.abs(clampedPanY - genPanY) > 3) window.genHasMovedPan = true;
+        genPanX = clampedPanX;
+        genPanY = clampedPanY;
+        genUpdateTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (genIsPanning) { genIsPanning = false; setTimeout(() => window.genHasMovedPan = false, 50); }
+    });
+    
+    // Також зупиняємо, якщо миша покидає вікно
+    window.addEventListener('mouseleave', () => {
+        if (genIsPanning) { genIsPanning = false; setTimeout(() => window.genHasMovedPan = false, 50); }
+    });
+
+    genWrapper.addEventListener('touchstart', e => {
+        if (e.target.closest('.gen-marker') || e.target.closest('.gen-poly') || e.target.closest('.gen-label') || e.target.closest('#gen-zoom-controls')) return;
+        if (e.touches.length === 1) {
+            if (genZoomScale <= 1) return; // Блокуємо панорамування при 100%
+            genIsPanning = true; window.genHasMovedPan = false;
+            genStartPanX = e.touches[0].clientX - genPanX; genStartPanY = e.touches[0].clientY - genPanY;
+        } else if (e.touches.length === 2) {
+            genIsPanning = false;
+            genInitPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', e => {
+        if (genIsPanning && e.touches.length === 1) {
+            if (genZoomScale <= 1) return;
+            e.preventDefault();
+            
+            let rawPanX = e.touches[0].clientX - genStartPanX;
+            let rawPanY = e.touches[0].clientY - genStartPanY;
+            
+            const rect = genWrapper.getBoundingClientRect();
+            const minX = rect.width * (1 - genZoomScale);
+            const minY = rect.height * (1 - genZoomScale);
+            
+            let clampedPanX = Math.max(minX, Math.min(0, rawPanX));
+            let clampedPanY = Math.max(minY, Math.min(0, rawPanY));
+            
+            if (rawPanX !== clampedPanX) genStartPanX = e.touches[0].clientX - clampedPanX;
+            if (rawPanY !== clampedPanY) genStartPanY = e.touches[0].clientY - clampedPanY;
+            
+            if (Math.abs(clampedPanX - genPanX) > 3 || Math.abs(clampedPanY - genPanY) > 3) window.genHasMovedPan = true;
+            genPanX = clampedPanX;
+            genPanY = clampedPanY;
+            genUpdateTransform();
+        } else if (e.touches.length === 2 && genInitPinchDist) {
+            e.preventDefault();
+            const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            const factor = dist / genInitPinchDist;
+            if (Math.abs(factor - 1) > 0.02) {
+                const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                genHandleZoom(factor > 1 ? 1.05 : 0.95, cx, cy);
+                genInitPinchDist = dist;
+            }
+        }
+    }, { passive: false });
+
+    window.addEventListener('touchend', e => {
+        if (genIsPanning) { genIsPanning = false; setTimeout(() => window.genHasMovedPan = false, 50); }
+        if (e.touches.length < 2) genInitPinchDist = null;
+    });
+    // ---------------------------------------------
+
     document.addEventListener('keydown', function(event) { if (event.key === 'Escape') { if (typeof closeGenModal === 'function') closeGenModal(); } });
-    function handleMarkerTap(event, index) { const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); const marker = event.currentTarget; if (isTouch) { if (activeTouchIndex !== index) { event.preventDefault(); event.stopPropagation(); document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active')); marker.classList.add('touch-active'); activeTouchIndex = index; return; } } openGenModal(index); }
+    
+    function handleMarkerTap(event, index) { 
+        if(window.genHasMovedPan) return; // Ігноруємо якщо користувач панорамував фон
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); const marker = event.currentTarget; 
+        if (isTouch) { if (activeTouchIndex !== index) { event.preventDefault(); event.stopPropagation(); document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active')); marker.classList.add('touch-active'); activeTouchIndex = index; return; } } 
+        openGenModal(index); 
+    }
+    
     document.addEventListener('click', function(e) { if (!e.target.closest('.gen-marker')) { document.querySelectorAll('.gen-marker').forEach(m => m.classList.remove('touch-active')); activeTouchIndex = null; } });
+    
     function openGenModal(i) {
+        if(window.genHasMovedPan) return;
         const d = genData[i]; if(d.shape === 'label') return; if(d.type === 'transition') { window.location.href = d.content; return; }
         document.getElementById('gen-modal-title').innerHTML = d.title; const body = document.getElementById('gen-modal-body');
         if (d.type === 'text') { body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>'; } else if (d.type === 'video') { const watchUrl = d.content.replace('/embed/', '/watch?v='); body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+watchUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">Відкрити додаток на YouTube</a></div>'; } else if (d.type === 'audio') { if (d.content.includes('drive.google.com')) { const match = d.content.match(/[-\\\w]{25,35}/); if (match) { body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Відкрити файл на Google Диску</a></div>'; } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box; text-align:center;">Відкрити аудіо-посилання</a></div>'; } } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Завантажити оригінальний аудіофайл</a></div>'; } } else if (d.type === 'link') { body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">Відкрити веб-посилання</a>'; } else if (d.type === 'quiz') { const q = d.quizData; let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`; q.options.forEach((opt, idx) => { qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`; }); qHtml += \`</div><button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px; transition: background 0.2s;">Перевірити відповідь</button><div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`; body.innerHTML = qHtml; }
