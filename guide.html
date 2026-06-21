@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інструкція користувача - ClicPoint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Lato', system-ui, sans-serif; 
+            background: #f0f9ff; 
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+        }
+        h1, h2, h3 { font-family: 'Poppins', sans-serif; color: #2563eb; }
+        
+        .header {
+            background: #ffffff;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 { margin: 0; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        
+        .btn-back {
+            padding: 10px 20px;
+            background: #e2e8f0;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: #cbd5e1; color: #1e293b; }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 40px auto;
+            gap: 40px;
+            padding: 0 20px;
+            align-items: flex-start;
+        }
+
+        /* Бічне меню */
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 100px;
+        }
+        .sidebar h3 { margin-top: 0; margin-bottom: 20px; font-size: 20px; color: #1e293b; }
+        .sidebar a {
+            display: block;
+            padding: 12px 15px;
+            color: #475569;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .sidebar a:hover { background: #eff6ff; color: #2563eb; }
+
+        /* Основний контент */
+        .content {
+            flex: 3;
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+        }
+        .content h2 { 
+            font-size: 28px; 
+            border-bottom: 2px solid #f1f5f9; 
+            padding-bottom: 10px; 
+            margin-top: 50px; 
+            margin-bottom: 20px;
+        }
+        .content h2:first-child { margin-top: 0; }
+        
+        .step-box {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+        }
+        
+        .highlight { color: #2563eb; font-weight: bold; }
+        .kbd { background: #e2e8f0; padding: 3px 8px; border-radius: 4px; font-family: monospace; font-size: 14px; }
+
+        /* Адаптивність */
+        @media (max-width: 800px) {
+            .container { flex-direction: column; }
+            .sidebar { position: static; width: 100%; box-sizing: border-box; }
+            .content { padding: 30px 20px; width: 100%; box-sizing: border-box; }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1><i class="fa-solid fa-book-open"></i> Посібник користувача ClicPoint</h1>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> На головну</a>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Зміст інструкції</h3>
+            <a href="#step1">1. Авторизація та хмара</a>
+            <a href="#step2">2. Завантаження зображення</a>
+            <a href="#step3">3. Додавання маркерів</a>
+            <a href="#step4">4. Збереження проєкту</a>
+            <a href="#step5">5. Як поділитися з учнями</a>
+        </div>
+
+        <div class="content">
+            
+            <p style="font-size: 18px; color: #475569; margin-bottom: 40px;">
+                Вітаємо у <strong>ClicPoint</strong>! Цей інструмент створений спеціально для освітян, щоб допомогти вам швидко перетворювати звичайні фотографії, схеми обладнання чи креслення на інтерактивні навчальні тренажери.
+            </p>
+
+            <h2 id="step1">1. Авторизація та збереження у хмарі</h2>
+            <div class="step-box">
+                <p>Щоб ви могли створювати свої матеріали та надійно зберігати їх, ClicPoint використовує ваш Google Диск. Це абсолютно безпечно і безкоштовно.</p>
+                <ol>
+                    <li>Відкрийте <a href="editor.html" class="highlight">Конструктор</a>.</li>
+                    <li>У верхньому меню натисніть кнопку <b>"☁️ Увійти з Google"</b>.</li>
+                    <li>Оберіть свій робочий або особистий Google-акаунт та надайте дозвіл на збереження файлів.</li>
+                </ol>
+                <p><i>Після цього всі ваші створені проєкти будуть автоматично зберігатися у вашому хмарному сховищі, і ви ніколи їх не втратите.</i></p>
+            </div>
+
+            <h2 id="step2">2. Завантаження зображення</h2>
+            <div class="step-box">
+                <p>Будь-який інтерактивний матеріал починається з базового зображення (наприклад, схеми двигуна чи будови рослини).</p>
+                <ul>
+                    <li><b>З комп'ютера:</b> Натисніть кнопку <b>"Обрати файл"</b> та виберіть потрібну картинку на вашому пристрої.</li>
+                    <li><b>З інтернету:</b> Якщо ви знайшли гарну схему в мережі, просто вставте посилання на неї у поле <span class="kbd">URL зображення</span> і натисніть "Завантажити фото".</li>
+                </ul>
+            </div>
+
+            <h2 id="step3">3. Додавання інтерактивних маркерів</h2>
+            <div class="step-box">
+                <p>Маркери — це "гарячі точки", на які натискатимуть ваші учні, щоб отримати інформацію. Ви можете додавати на них текстові пояснення, формули чи підказки.</p>
+                <ol>
+                    <li>Просто клікніть мишкою у будь-якому місці завантаженого зображення (наприклад, на конкретній деталі механізму).</li>
+                    <li>З'явиться вікно налаштувань маркера. Введіть заголовок та детальний опис.</li>
+                    <li>Оберіть колір маркера (наприклад, червоний для небезпечних зон, зелений для правильних відповідей).</li>
+                    <li>Натисніть "Зберегти".</li>
+                </ol>
+                <p><i>💡 <b>Корисна порада:</b> Якщо ви хочете змінити вже існуючий маркер, просто натисніть на нього. Ваш попередній текст опису нікуди не зникне — він залишиться у вікні редактора, щоб вам було зручно вносити правки!</i></p>
+            </div>
+
+            <h2 id="step4">4. Збереження проєкту</h2>
+            <div class="step-box">
+                <p>Коли ви розставили всі маркери та додали описи, матеріал потрібно зберегти.</p>
+                <ol>
+                    <li>Знайдіть поле <b>"Назва проєкту"</b> та введіть зрозуміле ім'я (наприклад, <i>"Будова трансмісії трактора"</i>).</li>
+                    <li>Натисніть синю кнопку <b>"☁️ Зберегти на Google Диск"</b>.</li>
+                    <li>Дочекайтеся повідомлення про успішне збереження. Ваш тренажер готовий!</li>
+                </ol>
+            </div>
+
+            <h2 id="step5">5. Як поділитися з учнями (Генерація посилання)</h2>
+            <div class="step-box">
+                <p>Найголовніша функція ClicPoint — це можливість легко передати матеріал студентам для вивчення.</p>
+                <ol>
+                    <li>Натисніть кнопку <b>"Мої проєкти"</b>, щоб відкрити менеджер файлів.</li>
+                    <li>Знайдіть у списку потрібний урок.</li>
+                    <li>Натисніть кнопку <span class="kbd">🔗 Лінк</span> біля назви проєкту. Посилання автоматично скопіюється!</li>
+                    <li>Надішліть це посилання учням (у Viber, Telegram, Google Classroom тощо).</li>
+                </ol>
+                <p><b>Важливо:</b> Учням <u>не потрібно</u> реєструватися або мати паролі. Перейшовши за вашим посиланням, вони одразу побачать готовий тренажер у зручному режимі перегляду, без зайвих кнопок редактора!</p>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
