@@ -383,6 +383,12 @@
             </button>
         </div>
 
+        <!-- Інформація про поточний проект (з'являється при редагуванні з Диску) -->
+        <div id="current-project-info" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px 20px; border-radius: 8px; margin-bottom: 15px; color: #166534; font-size: 15px; font-weight: 500; align-items: center; gap: 8px;">
+            📂 <span id="current-theme-name" style="opacity: 0.8;"></span> <span style="opacity: 0.5;">/</span> <b id="current-file-name" style="font-size: 16px;"></b>
+            <span style="margin-left: auto; font-size: 12px; background: #16a34a; color: white; padding: 2px 8px; border-radius: 12px;">Режим редагування</span>
+        </div>
+
         <!-- Обгортка: панель інструментів зліва, редактор справа -->
         <div class="editor-layout" id="editor-layout">
             <div class="control-panel" id="tools-panel">
@@ -771,6 +777,19 @@
     let pendingSaveToDrive = false;
     let currentThemes = [];
 
+    // Змінні для відстеження поточного відкритого файлу
+    let currentEditingFileId = null;
+    let currentEditingFileName = '';
+    let currentEditingThemeName = '';
+
+    function resetCurrentProjectInfo() {
+        currentEditingFileId = null;
+        currentEditingFileName = '';
+        currentEditingThemeName = '';
+        const infoPanel = document.getElementById('current-project-info');
+        if (infoPanel) infoPanel.style.display = 'none';
+    }
+
     function setAuthUI(isLoggedIn) {
         const authBtn = document.getElementById('btn-google-auth');
         if (isLoggedIn) {
@@ -1139,7 +1158,9 @@
 
         document.getElementById('saveProjectModal').style.display = 'flex';
         document.getElementById('save-status').innerText = '';
-        document.getElementById('drive-project-name').value = '';
+        
+        // Автозаповнення назви проекту, якщо він вже редагується
+        document.getElementById('drive-project-name').value = currentEditingFileName ? currentEditingFileName : '';
         hideNewThemeInput();
 
         const select = document.getElementById('drive-theme-select');
@@ -1150,8 +1171,15 @@
                 const query = `mimeType='application/vnd.google-apps.folder' and '${rootFolder.id}' in parents and trashed=false`;
                 const data = await driveFetch(`${GOOGLE_DRIVE_API}?q=${encodeURIComponent(query)}&fields=files(id,name)`);
                 select.innerHTML = '';
-                if(data.files.length === 0) select.innerHTML = '<option value="">(Немає тем)</option>';
-                else data.files.forEach(f => { select.innerHTML += `<option value="${f.name}">${f.name}</option>`; });
+                if(data.files.length === 0) {
+                    select.innerHTML = '<option value="">(Немає тем)</option>';
+                } else {
+                    data.files.forEach(f => { 
+                        // Автовибір теми, якщо вона відома
+                        const isSelected = (f.name === currentEditingThemeName) ? 'selected' : '';
+                        select.innerHTML += `<option value="${f.name}" ${isSelected}>${f.name}</option>`; 
+                    });
+                }
             } else select.innerHTML = '<option value="">(Немає тем, створіть нову)</option>';
         } catch (e) { select.innerHTML = '<option value="">Помилка завантаження</option>'; }
     }
@@ -1190,6 +1218,14 @@
             await fetch(`${GOOGLE_DRIVE_API}/${fileData.id}/permissions`, {
                 method: 'POST', headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' }, body: JSON.stringify(permBody)
             });
+
+            // Оновлюємо інформацію про поточний відкритий проект
+            currentEditingFileName = projectName;
+            currentEditingThemeName = themeName;
+            document.getElementById('current-theme-name').innerText = themeName;
+            document.getElementById('current-file-name').innerText = projectName;
+            const infoPanel = document.getElementById('current-project-info');
+            if (infoPanel) infoPanel.style.display = 'flex';
 
             const studentLink = `${window.location.origin}${window.location.pathname}?view=${fileData.id}`;
             statusEl.innerHTML = `<span style="color:green;">✅ Успішно збережено та опубліковано!</span><br>
@@ -1251,7 +1287,7 @@
                             </div>
                             <div class="project-actions" style="display:flex; gap:4px; flex-wrap:wrap; align-items:center;">
                                 <button class="info" onclick="navigator.clipboard.writeText('${link}'); showStatus('Посилання скопійовано!', 'success')" title="Копіювати посилання для учнів">🔗 Лінк</button>
-                                <button class="warning" onclick="editDriveProject('${f.id}')" title="Завантажити в редактор">✏️ Ред</button>
+                                <button class="warning" onclick="editDriveProject('${f.id}', '${safeThemeName}', '${safeDisplayName}')" title="Завантажити в редактор">✏️ Ред</button>
                                 <button class="success" style="background:#10b981;" onclick="copyDriveProject('${f.id}', '${theme.id}', '${safeDisplayName}')" title="Створити копію">📄 Копія</button>
                                 <button class="info" style="background:#6366f1;" onclick="openMoveProjectModal('${f.id}', '${theme.id}', '${safeDisplayName}')" title="Перемістити в іншу тему">➡️ Перемістити</button>
                                 <button class="danger" onclick="deleteDriveProject('${f.id}')" title="Видалити">🗑</button>
@@ -1431,15 +1467,28 @@
         }
     }
 
-    async function editDriveProject(fileId) {
+    async function editDriveProject(fileId, themeName, fileName) {
         if(!confirm("Поточний відкритий проект буде замінено. Продовжити?")) return;
-        document.getElementById('projectManagerModal').style.display = 'none'; showStatus('Завантаження проекту з Диску...', 'info');
+        document.getElementById('projectManagerModal').style.display = 'none'; 
+        showStatus('Завантаження проекту з Диску...', 'info');
         try {
             const res = await fetch(`${GOOGLE_DRIVE_API}/${fileId}?alt=media`, { headers: new Headers({ 'Authorization': `Bearer ${accessToken}` }) });
             if(!res.ok) throw new Error("Не вдалося завантажити контент");
             const htmlContent = await res.text();
+            
+            currentEditingFileId = fileId;
+            currentEditingFileName = fileName;
+            currentEditingThemeName = themeName;
+            document.getElementById('current-theme-name').innerText = themeName;
+            document.getElementById('current-file-name').innerText = fileName;
+            const infoPanel = document.getElementById('current-project-info');
+            if (infoPanel) infoPanel.style.display = 'flex';
+            
             importProject({ target: { files: [new File([htmlContent], "project.html", {type: "text/html"})] } }, htmlContent);
-        } catch(e) { console.error(e); showStatus('Помилка завантаження файлу.', 'error'); }
+        } catch(e) { 
+            console.error(e); 
+            showStatus('Помилка завантаження файлу.', 'error'); 
+        }
     }
 
     async function deleteDriveProject(fileId) {
@@ -1453,19 +1502,6 @@
     // ==========================================
     // ЛОГІКА РЕДАКТОРА
     // ==========================================
-
-    document.addEventListener('keydown', function(event) {
-        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
-        if (event.key === 'Escape') {
-            const previewOverlay = document.getElementById('preview-overlay');
-            if (previewOverlay && previewOverlay.style.display === 'flex') { closePreview(); return; }
-            if (isSelectingTarget) { isSelectingTarget = false; document.getElementById('click-layer').style.cursor = 'crosshair'; showStatus('Створення стрілки скасовано.', 'info'); openEditModal(editingIndex); }
-            else if (isDrawingPolygon || isAddingText) { cancelPolygonDraw(); isAddingText = false; showStatus('Дію скасовано.', 'info'); }
-            else { closeModal(); document.getElementById('saveProjectModal').style.display = 'none'; document.getElementById('projectManagerModal').style.display = 'none'; }
-        }
-        if (event.ctrlKey && event.key.toLowerCase() === 'z') { event.preventDefault(); if (event.shiftKey) redo(); else undo(); }
-        if (event.ctrlKey && event.key.toLowerCase() === 'y') { event.preventDefault(); redo(); }
-    });
 
     function insertTag(startTag, endTag) {
         const textarea = document.getElementById('m-text'); const start = textarea.selectionStart; const end = textarea.selectionEnd;
@@ -1523,12 +1559,14 @@
     function processImageUrl(url) { const idMatch = url.match(/[-\w]{25,35}/); if (idMatch && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${idMatch[0]}=w1000`; return url; }
 
     function loadImage() {
+        resetCurrentProjectInfo();
         const rawUrl = document.getElementById('imgUrl').value.trim(); const fileInput = document.getElementById('imgFile');
         if (fileInput.files && fileInput.files.length > 0) { loadLocalImage({ target: fileInput }); return; }
         if(!rawUrl) return showStatus('Вставте посилання або оберіть файл!', 'error'); setupWorkspace(processImageUrl(rawUrl));
     }
 
     function loadLocalImage(event) {
+        resetCurrentProjectInfo();
         const file = event.target.files ? event.target.files[0] : null; if(!file) return; showStatus('Оптимізація та стиснення зображення...', 'info');
         const reader = new FileReader();
         reader.onload = function(e) { 
@@ -1575,6 +1613,7 @@
     }
 
     function importProject(event, directContent = null) {
+        if(!directContent) resetCurrentProjectInfo();
         let file, contentPromise;
         if (directContent) { contentPromise = Promise.resolve(directContent); file = { name: "drive_project.html" }; } 
         else { file = event.target.files[0]; if(!file) return; contentPromise = new Promise((resolve) => { const reader = new FileReader(); reader.onload = e => resolve(e.target.result); reader.readAsText(file); }); }
@@ -1930,6 +1969,7 @@
         genPanX = dx - xs * genZoomScale;
         genPanY = dy - ys * genZoomScale;
         
+        // Жорстке центрування, якщо масштаб повернувся до 100%
         if (genZoomScale <= 1) {
             genPanX = 0;
             genPanY = 0;
@@ -2072,11 +2112,13 @@
     function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; const isMobile = window.innerWidth <= 600; win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
     function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; }
     <\/script>
-<!-- ClicPointProjectData:
+<!-- ClicPointProjectData: Збережені дані (НЕ ВИДАЛЯТИ ДЛЯ РЕДАГУВАННЯ!)
 <ClicPointProjectData>
 ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUrl })}
 </ClicPointProjectData>
--->`;
+-->
+<!-- /ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ -->`;
+
         return html;
     }
 
