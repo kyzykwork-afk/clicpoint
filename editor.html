@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClicPoint v10.5 - Конструктор Інтерактивних Зображень (Zoom/Pan & Mobile Optimized)</title>
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JCCMV05DXT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JCCMV05DXT');
+    </script>
+
     <!-- Підключення Google API -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js"></script>
@@ -1243,6 +1253,10 @@
                 <div style="margin-top:10px; padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px;">Посилання для учнів:<br>
                 <input type="text" value="${studentLink}" readonly style="width:100%; margin-top:5px; margin-bottom:5px; font-size:12px;">
                 <button onclick="navigator.clipboard.writeText('${studentLink}'); showStatus('Скопійовано!', 'success')" style="padding:4px 8px; font-size:12px; background:#16a34a; color:#fff; border:none; border-radius:4px; cursor:pointer;">📋 Скопіювати</button></div>`;
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'save_drive', { 'theme': themeName, 'project': projectName });
+            }
         } catch (e) {
             console.error(e); statusEl.innerHTML = '<span style="color:red;">❌ Сталася помилка при збереженні.</span>';
         } finally { document.getElementById('btn-confirm-save').disabled = false; }
@@ -1612,6 +1626,10 @@
             
             resetZoom(); 
             if (historyIndex === -1) saveState(); renderMarkersPreview();
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'image_loaded', { 'event_category': 'Editor' });
+            }
         };
         img.onerror = () => showStatus('Помилка завантаження зображення.', 'error'); img.src = url;
     }
@@ -1866,6 +1884,9 @@
         const safeMarkers = markers.map(m => { if (m.shape === 'label') { return { ...m, labelText: (m.labelText||'').replace(/"/g, '&quot;').replace(/\n/g, '<br>') }; } return { ...m, title: m.title.replace(/"/g, '&quot;'), content: (m.content||'').replace(/"/g, '&quot;').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br>') }; });
         
         let html = `<!-- ІНТЕРАКТИВНЕ ЗОБРАЖЕННЯ ClicPoint (З підтримкою Zoom та Pan) -->\n`;
+        html += `<!-- Google tag (gtag.js) -->\n`;
+        html += `<script async src="https://www.googletagmanager.com/gtag/js?id=G-JCCMV05DXT"><\/script>\n`;
+        html += `<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', 'G-JCCMV05DXT');\n<\/script>\n`;
         html += `<div id="gen-int-wrapper" style="position: relative; width: 100%; max-width: 100%; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; border-radius: 8px; box-sizing: border-box; touch-action: none; background: #e2e8f0; user-select: none; -webkit-user-select: none;">\n`;
         
         // Панель управління зумом для учнів
@@ -2122,9 +2143,17 @@
         document.getElementById('gen-modal-title').innerHTML = d.title; const body = document.getElementById('gen-modal-body');
         if (d.type === 'text') { body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>'; } else if (d.type === 'video') { const watchUrl = d.content.replace('/embed/', '/watch?v='); body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+watchUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">Відкрити додаток на YouTube</a></div>'; } else if (d.type === 'audio') { if (d.content.includes('drive.google.com')) { const match = d.content.match(/[-\\\w]{25,35}/); if (match) { body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Відкрити файл на Google Диску</a></div>'; } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box; text-align:center;">Відкрити аудіо-посилання</a></div>'; } } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Завантажити оригінальний аудіофайл</a></div>'; } } else if (d.type === 'link') { body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">Відкрити веб-посилання</a>'; } else if (d.type === 'quiz') { const q = d.quizData; let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`; q.options.forEach((opt, idx) => { qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`; }); qHtml += \`</div><button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px; transition: background 0.2s;">Перевірити відповідь</button><div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`; body.innerHTML = qHtml; }
         const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.display = 'flex'; setTimeout(() => { m.style.opacity = '1'; win.style.transform = 'translateY(0)'; }, 10);
+        
+        if (typeof gtag === 'function') {
+            gtag('event', 'view_marker', { 'marker_title': d.title, 'marker_type': d.type });
+        }
     }
     function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; const isMobile = window.innerWidth <= 600; win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
-    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; }
+    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
+        if (typeof gtag === 'function') {
+            gtag('event', 'quiz_submission', { 'is_correct': isCorrect, 'quiz_title': d.title });
+        }
+    }
     <\/script>
 <!-- ClicPointProjectData: Збережені дані (НЕ ВИДАЛЯТИ ДЛЯ РЕДАГУВАННЯ!)
 <ClicPointProjectData>
@@ -2139,6 +2168,9 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
     function generateCode() {
         const html = getSnippetHTML(); if(!html) return showStatus('Додайте точки або зони!', 'error');
         const area = document.getElementById('output-area'); document.getElementById('output-code').value = html; area.style.display = 'block'; area.scrollIntoView({ behavior: 'smooth' }); showStatus('Код згенеровано!', 'success');
+        if (typeof gtag === 'function') {
+            gtag('event', 'generate_code', { 'markers_count': markers.length });
+        }
     }
 
     function getFullHTMLContent() {
@@ -2154,7 +2186,11 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
 
     function closePreview() { document.getElementById('preview-overlay').style.display = 'none'; document.getElementById('preview-frame').srcdoc = ''; }
     function copyCode() { const code = document.getElementById('output-code'); code.select(); document.execCommand('copy'); showStatus('Скопійовано!', 'success'); }
-    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus('Спочатку додайте маркери або зони!', 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus('Збережено як HTML файл!', 'success'); }
+    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus('Спочатку додайте маркери або зони!', 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus('Збережено як HTML файл!', 'success'); 
+        if (typeof gtag === 'function') {
+            gtag('event', 'save_html', { 'markers_count': markers.length });
+        }
+    }
 
     window.addEventListener('beforeunload', function (e) { if (currentImgUrl !== '' || markers.length > 0) { const confirmationMessage = 'Збережіть файл або експортуйте у зручному форматі, щоб не втратити роботу!'; e.returnValue = confirmationMessage; return confirmationMessage; } });
 </script>
