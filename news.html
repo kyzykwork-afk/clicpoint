@@ -105,7 +105,7 @@
             <a href="https://app.kyzyklab.pp.ua/support.html" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-rose-500 hover:bg-rose-600 transition-colors text-white rounded-lg text-sm font-semibold shadow-sm">
                 <i class="fa-solid fa-heart"></i> Підтримати проєкт
             </a>
-            <button onclick="checkAdminAccess()" id="btn-admin-panel-toggle" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 transition-colors text-white rounded-lg text-sm font-semibold shadow-sm">
+            <button onclick="checkAdminAccess()" id="btn-admin-panel-toggle" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 transition-colors text-white rounded-lg text-sm font-semibold shadow-sm hidden">
                 <i class="fa-solid fa-gear"></i> Адмін Панель
             </button>
         </div>
@@ -192,7 +192,7 @@
 </footer>
 
 <!-- МОДАЛЬНЕ ВІКНО: ПАНЕЛЬ РЕДАКТОРА (Тільки для Режиму Розробника) -->
-<div id="admin-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<div id="admin-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative">
         <button onclick="closeAdminPanel()" class="absolute top-4 right-4 bg-slate-100 hover:bg-slate-200 transition-colors w-10 h-10 rounded-full flex items-center justify-center text-slate-500">
             <i class="fa-solid fa-xmark text-lg"></i>
@@ -404,19 +404,19 @@
 <!-- ======================================================= -->
 <script id="news-database" type="application/json">
 {
-  "generalInfo": "<p>Ласкаво просимо на офіційну сторінку оновлень проєкту <strong><font color=\"#2563eb\">ClicPoint</font></strong>! Тут ми публікуємо повну інформацію про додавання нових функцій, оптимізацію роботи застосунку та швидкі патчі виявлених помилок.</p><p>Проєкт розвивається силами Дмитра Кизика у вільний час для допомоги українському вчительству. Будемо вдячні за ваші відгуки!</p>",
+  "generalInfo": "<p>Ласкаво просимо на офіційну сторінку оновлень проєкту <strong><font color="#2563eb">ClicPoint</font></strong>! Тут ми публікуємо повну інформацію про додавання нових функцій, оптимізацію роботи застосунку та швидкі патчі виявлених помилок.</p><p>Проєкт розвивається силами Дмитра Кизика у вільний час для допомоги українському вчительству. Будемо вдячні за ваші відгуки!</p>",
   "updates": [
     {
       "id": 2,
       "date": "2026-07-24",
       "title": "Оновлення сторінки інструкції користувача:",
-      "content": "<li><p data-path-to-node=\"2,0,0\"><b data-path-to-node=\"2,0,0\" data-index-in-node=\"0\">Додано розділ \"Відеоогляд застосунку\":</b> Інтегровано адаптивний YouTube-плеєр із детальним покроковим оглядом можливостей конструктора.</p></li><li><p data-path-to-node=\"2,1,0\"><b data-path-to-node=\"2,1,0\" data-index-in-node=\"0\">Створено інтерактивну \"Галерею проєктів\":</b> Додано нову секцію для демонстрації готових візуальних тренажерів.</p></li><li><p data-path-to-node=\"2,2,0\"><b data-path-to-node=\"2,2,0\" data-index-in-node=\"0\">Реалізовано режим попереднього перегляду (Модальні вікна):</b> Тепер приклади проєктів з галереї відкриваються у зручному спливаючому вікні прямо на сторінці інструкції. Користувачі можуть взаємодіяти з маркерами та вивчати будову механізмів без переходу на інші вкладки.</p></li><li><p data-path-to-node=\"2,3,0\"><b data-path-to-node=\"2,3,0\" data-index-in-node=\"0\">Покращено візуальний дизайн карток:</b> Для карток галереї налаштовано мінімалістичний дизайн із використанням реальних скріншотів готових проєктів замість текстових підписів.</p></li><li><p data-path-to-node=\"2,4,0\"><b data-path-to-node=\"2,4,0\" data-index-in-node=\"0\">Оновлено бічну навігацію:</b> У зміст інструкції додано швидкі посилання для переходу до відеоогляду та галереї прикладів.</p></li>"
+      "content": "<li><p data-path-to-node="2,0,0"><b data-path-to-node="2,0,0" data-index-in-node="0">Додано розділ "Відеоогляд застосунку":</b> Інтегровано адаптивний YouTube-плеєр із детальним покроковим оглядом можливостей конструктора.</p></li><li><p data-path-to-node="2,1,0"><b data-path-to-node="2,1,0" data-index-in-node="0">Створено інтерактивну "Галерею проєктів":</b> Додано нову секцію для демонстрації готових візуальних тренажерів.</p></li><li><p data-path-to-node="2,2,0"><b data-path-to-node="2,2,0" data-index-in-node="0">Реалізовано режим попереднього перегляду (Модальні вікна):</b> Тепер приклади проєктів з галереї відкриваються у зручному спливаючому вікні прямо на сторінці інструкції. Користувачі можуть взаємодіяти з маркерами та вивчати будову механізмів без переходу на інші вкладки.</p></li><li><p data-path-to-node="2,3,0"><b data-path-to-node="2,3,0" data-index-in-node="0">Покращено візуальний дизайн карток:</b> Для карток галереї налаштовано мінімалістичний дизайн із використанням реальних скріншотів готових проєктів замість текстових підписів.</p></li><li><p data-path-to-node="2,4,0"><b data-path-to-node="2,4,0" data-index-in-node="0">Оновлено бічну навігацію:</b> У зміст інструкції додано швидкі посилання для переходу до відеоогляду та галереї прикладів.</p></li>"
     },
     {
       "id": 1,
       "date": "2026-07-15",
       "title": "Версія 10.6 - Підтримка та виправлення тексту",
-      "content": "<ul><li><strong><font color=\"#2563eb\">Оптимізовано роботу написів</font></strong>: відтепер багаторядкові написи (Enter) зберігають правильний міжрядковий інтервал <code>line-height</code> та не зминаються при перетягуванні до країв завдяки параметру <code>max-content</code>.</li><li><strong><font color=\"#f43f5e\">Кнопка підтримки</font></strong>: інтегровано офіційні лінки для добровільної підтримки проєкту на робочій панелі та в підвалі конструктора.</li><li><strong>Адаптивність</strong>: покращено вирівнювання інтерфейсу на мобільних телефонах під час редагування.</li></ul>"
+      "content": "<ul><li><strong><font color="#2563eb">Оптимізовано роботу написів</font></strong>: відтепер багаторядкові написи (Enter) зберігають правильний міжрядковий інтервал <code>line-height</code> та не зминаються при перетягуванні до країв завдяки параметру <code>max-content</code>.</li><li><strong><font color="#f43f5e">Кнопка підтримки</font></strong>: інтегровано офіційні лінки для добровільної підтримки проєкту на робочій панелі та в підвалі конструктора.</li><li><strong>Адаптивність</strong>: покращено вирівнювання інтерфейсу на мобільних телефонах під час редагування.</li></ul>"
     }
   ]
 }
@@ -429,7 +429,7 @@
     let updateToDeleteId = null;
     let currentRange = null; // Пам'ять для виділеного тексту
 
-    // window.onload та інші функції стеження залишаються без змін
+    // window.onload та інші функції стеження
     window.onload = function() {
         renderPageContent();
         
@@ -739,13 +739,21 @@
 
     // Генерація та збереження фінальної сторінки (Self-updating File)
     function exportUpdatedPage() {
-        // Оновлюємо опис з текстового поля перед фінальною збіркою
+        // 1. Оновлюємо опис з текстового поля перед фінальною збіркою
         database.generalInfo = document.getElementById('edit-general-info').innerHTML;
 
-        // Отримуємо повний вихідний код поточної сторінки
+        // 2. Закриваємо всі модальні вікна перед збереженням
+        closeAdminPanel();
+        closePasswordModal();
+        closeConfirmModal();
+
+        // 3. Синхронізуємо статичний вміст у коді
+        renderPageContent();
+
+        // 4. Отримуємо повний вихідний код поточної сторінки
         let fullHTML = document.documentElement.outerHTML;
 
-        // Пошук та заміна тексту всередині тегу <script id="news-database">
+        // 5. Пошук та заміна тексту всередині тегу <script id="news-database">
         const dbStartTag = '<script id="news-database" type="application/json">';
         const dbEndTag = '</' + 'script>';
 
@@ -759,14 +767,17 @@
 
         const formattedJSON = JSON.stringify(database, null, 2);
         
-        // Збираємо новий HTML документ
+        // 6. Збираємо новий HTML документ
         const updatedHTML = 
-            "<!DOCTYPE html>\n" +
-            fullHTML.substring(0, startIdx + dbStartTag.length) + "\n" +
-            formattedJSON + "\n" +
+            "<!DOCTYPE html>
+" +
+            fullHTML.substring(0, startIdx + dbStartTag.length) + "
+" +
+            formattedJSON + "
+" +
             fullHTML.substring(endIdx);
 
-        // Створення блоб-файлу та ініціалізація завантаження
+        // 7. Створення блоб-файлу та ініціалізація завантаження
         const blob = new Blob([updatedHTML], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
