@@ -3,7 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClicPoint v10.5 - Конструктор Інтерактивних Зображень (Zoom/Pan & Mobile Optimized)</title>
+    
+    <!-- 1. ОСНОВНІ SEO МЕТА-ТЕГИ -->
+    <title>ClicPoint v10.5 - Конструктор Інтерактивних Зображень</title>
+    <meta name="description" content="Онлайн-конструктор інтерактивних зображень ClicPoint. Створюйте інтерактивні схеми, плакати, мікро-тести та візуальні тренажери для освіти безкоштовно.">
+    <meta name="keywords" content="ClicPoint, конструктор інтерактивних зображень, онлайн редактор, інтерактивні плакати, візуальні тренажери, цифрова освіта, Дмитро Кизик">
+    <meta name="author" content="Дмитро Кизик">
+    <meta name="robots" content="index, follow">
+
+    <!-- 2. КАНОНІЧНЕ ПОСИЛАННЯ -->
+    <link rel="canonical" href="https://app.kyzyklab.pp.ua/editor.html">
+
+    <!-- 3. OPEN GRAPH (Для соцмереж: Facebook, Telegram, Viber, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://app.kyzyklab.pp.ua/editor.html">
+    <meta property="og:title" content="ClicPoint — Конструктор Інтерактивних Зображень">
+    <meta property="og:description" content="Безкоштовний інструмент для створення інтерактивних візуальних тренажерів, схем та мікро-тестів.">
+    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
+    <meta property="og:site_name" content="ClicPoint">
+    <meta property="og:locale" content="uk_UA">
+
+    <!-- 4. TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ClicPoint — Конструктор Інтерактивних Зображень">
+    <meta name="twitter:description" content="Створюйте інтерактивні схеми та тренажери прямо у браузері.">
+    <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
+
+    <!-- 5. ІКОНКА ВКЛАДКИ (Favicon) -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JCCMV05DXT"></script>
@@ -366,7 +393,7 @@
 <div id="app-builder-ui">
     <div class="header">
         <h1 style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-            <img id="header-logo" src="" alt="Логотип" style="max-height: 40px; border-radius: 6px; display: none;" onerror="this.style.display='none'">
+            <img id="header-logo" src="" alt="Логотип ClicPoint" style="max-height: 40px; border-radius: 6px; display: none;" onerror="this.style.display='none'">
             <span>⚙️ ClicPoint - Конструктор Інтерактивних Зображень</span>
         </h1>
     </div>
@@ -443,8 +470,8 @@
                 
                 <!-- Контейнер для Zoom та Pan -->
                 <div id="zoom-container" style="transform-origin: 0 0; width: 100%; position: relative; line-height: 0;">
-                    <img id="main-img" src="" alt="Workspace">
-                    <img id="workspace-logo" src="" alt="Logo" onerror="this.style.display='none'">
+                    <img id="main-img" src="" alt="Робоча область редактора ClicPoint">
+                    <img id="workspace-logo" src="" alt="Логотип розробника" onerror="this.style.display='none'">
                     <svg id="arrow-layer"></svg>
                     <div id="click-layer" onclick="handleImageClick(event)"></div>
                     <svg id="polygon-layer"></svg>
@@ -1351,7 +1378,7 @@
 
     async function deleteDriveTheme(event, folderId) {
         event.stopPropagation(); 
-        if (!confirm("⚠️ УВАГА! Ви дійсно хочете видалити цю тему?\n\nУСІ ПРОЕКТИ (файли) всередині неї також будуть БЕЗПОВОРОТНО ВИДАЛЕНІ з вашого Google Диску!")) return;
+        if (!confirm("⚠️ УВАГА! Ви дійсно хочете видалити цю тему?\n\nУСІ ПРОЕКТИ (файли) всередині неї також будут БЕЗПОВОРОТНО ВИДАЛЕНІ з вашого Google Диску!")) return;
         
         showStatus('Видалення теки...', 'info');
         document.getElementById('pm-loader').style.display = 'block';
@@ -1550,7 +1577,7 @@
         const container = document.getElementById('arrows-list'); container.innerHTML = '';
         if(editingIndex !== null && markers[editingIndex] && markers[editingIndex].targets) {
             markers[editingIndex].targets.forEach((t, i) => {
-                container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1;"><span style="font-size:13px; font-weight:bold; color:#475569;">Стрілка ${i+1}</span><button type="button" onclick="removeArrow(${i})" style="background:#f43f5e; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">✖ Видалити</button></div>`;
+                container.innerHTML += `<div style="display:flex; justify-between; align-items:center; background:#f8fafc; padding:5px 10px; border-radius:6px; border:1px solid #cbd5e1;"><span style="font-size:13px; font-weight:bold; color:#475569;">Стрілка ${i+1}</span><button type="button" onclick="removeArrow(${i})" style="background:#f43f5e; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">✖ Видалити</button></div>`;
             });
         }
     }
@@ -1681,7 +1708,7 @@
         });
     }
 
-    function startTextMode() { isAddingText = true; isDrawingPolygon = false; document.getElementById('click-layer').style.cursor = 'text'; document.getElementById('poly-instruction').innerText = 'Клікніть де завгодно, щоб додати напис.'; document.getElementById('poly-instruction').style.display = 'block'; }
+    function startTextMode() { isAddingText = true; isDrawingPolygon = false; document.getElementById('click-layer').style.cursor = 'text'; document.getElementById('poly-instruction').innerText = 'Клікайте де завгодно, щоб додати напис.'; document.getElementById('poly-instruction').style.display = 'block'; }
     function startPolygonDraw() { isDrawingPolygon = true; isAddingText = false; tempPolygonPoints = []; document.getElementById('btn-draw-poly').style.display = 'none'; document.getElementById('btn-finish-poly').style.display = 'inline-block'; document.getElementById('btn-cancel-poly').style.display = 'inline-block'; document.getElementById('poly-instruction').innerText = 'Клікайте по контуру об\'єкта.'; document.getElementById('poly-instruction').style.display = 'block'; document.getElementById('click-layer').style.cursor = 'crosshair'; renderMarkersPreview(); updateUndoRedoButtons(); }
     function finishPolygonDraw() {
         if(tempPolygonPoints.length < 3) { showStatus('Зона повинна мати мінімум 3 точки!', 'error'); return cancelPolygonDraw(); }
