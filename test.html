@@ -1179,8 +1179,9 @@
         });
 
         // Dynamic state updates (e.g., Auth button if logged in)
-        if (accessToken) {
-            document.getElementById('btn-google-auth').innerText = langData['btnGoogleAuthLogout'];
+        if (typeof accessToken !== 'undefined' && accessToken) {
+            const authBtn = document.getElementById('btn-google-auth');
+            if (authBtn) authBtn.innerText = langData['btnGoogleAuthLogout'];
         }
         
         // Оновлюємо текст кастомної кнопки файлу, якщо файл вибрано
@@ -1193,10 +1194,12 @@
         }
 
         // Update instruction text based on current state
-        if (isDrawingPolygon) {
-            document.getElementById('poly-instruction').innerText = langData['polyInstruction'];
-        } else if (isAddingText) {
-            document.getElementById('poly-instruction').innerText = langData['polyInstructionText'];
+        if (typeof isDrawingPolygon !== 'undefined' && isDrawingPolygon) {
+            const inst = document.getElementById('poly-instruction');
+            if (inst) inst.innerText = langData['polyInstruction'];
+        } else if (typeof isAddingText !== 'undefined' && isAddingText) {
+            const inst = document.getElementById('poly-instruction');
+            if (inst) inst.innerText = langData['polyInstructionText'];
         }
     }
 
@@ -1229,26 +1232,34 @@
             const loader = document.getElementById('viewer-loader');
             try {
                 let htmlContent = '';
+                let fetchSuccess = false;
                 
+                // 1. Спроба завантажити через Google API (Швидко і без лімітів на розмір)
                 if (GOOGLE_API_KEY) {
-                    const apiUrl = `https://www.googleapis.com/drive/v3/files/${viewFileId}?alt=media&key=${GOOGLE_API_KEY}`;
-                    const res = await fetch(apiUrl);
-                    
-                    if (!res.ok) {
-                        if (res.status === 403 || res.status === 404) throw new Error('PRIVATE_OR_NOT_FOUND');
-                        throw new Error('API_ERROR');
+                    try {
+                        const apiUrl = `https://www.googleapis.com/drive/v3/files/${viewFileId}?alt=media&key=${GOOGLE_API_KEY}`;
+                        const res = await fetch(apiUrl);
+                        if (res.ok) {
+                            htmlContent = await res.text();
+                            fetchSuccess = true;
+                        }
+                    } catch (e) {
+                        console.warn("API Key fetch failed, falling back to proxy...", e);
                     }
-                    htmlContent = await res.text();
-                } else {
+                }
+                
+                // 2. Якщо API не спрацювало (або ключ недійсний) — використовуємо запасний варіант з проксі
+                if (!fetchSuccess) {
                     const targetUrl = `https://drive.google.com/uc?export=download&id=${viewFileId}&confirm=t`;
+                    // Повертаємо allorigins проксі, щоб уникнути помилки CORS, яка блокує прямі запити
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                     
-                    // Directly fetch using the uc endpoint since the proxy might fail due to the virus scan warning
-                    const res = await fetch(targetUrl);
+                    const res = await fetch(proxyUrl);
                     if (!res.ok) throw new Error('FETCH_ERROR');
                     htmlContent = await res.text();
                     
                     if (htmlContent.includes('ServiceLogin')) throw new Error('PRIVATE_OR_NOT_FOUND');
-                    // Check for the virus scan block within the HTML response
+                    // Перевірка на сторінку "вірусного сканування" для великих файлів
                     if (htmlContent.includes('uc-download-link') || htmlContent.includes('Google Drive can\'t scan') || htmlContent.includes('дозволяє перевіряти файли такого розміру')) {
                         throw new Error('VIRUS_SCAN_BLOCK');
                     }
@@ -2243,6 +2254,7 @@
             document.getElementById('polygon-opacity-group').style.display = 'none'; 
             document.getElementById('m-type-group').style.display = 'block'; 
             
+            // За замовчуванням показуємо групу тексту, оскільки 'm-type' скинутий на 'text'
             document.getElementById('group-text').style.display = 'block'; 
             document.getElementById('group-video').style.display = 'none'; 
             document.getElementById('group-audio').style.display = 'none'; 
@@ -2745,7 +2757,7 @@
         }
     }
     function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; const isMobile = window.innerWidth <= 600; win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
-    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
+    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || (currentLang==='uk'?'✅ Правильна відповідь!':'✅ Correct!')) : (d.quizData.msgIncorrect || (currentLang==='uk'?'❌ Неправильно, спробуйте ще.':'❌ Incorrect, try again.')); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
         if (typeof gtag === 'function') {
             gtag('event', 'quiz_submission', { 'is_correct': isCorrect, 'quiz_title': d.title });
         }
