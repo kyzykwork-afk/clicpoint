@@ -145,8 +145,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); 
         }
 
-        input[type="file"] { font-size: 14px; }
-
         button { 
             padding: 12px 20px; 
             background: var(--primary); 
@@ -170,6 +168,8 @@
         button.warning { background: var(--warning); color: #1e293b; }
         button.info { background: var(--info); }
         button.purple { background: #8b5cf6; }
+        button.outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        button.outline:hover { background: var(--primary); color: white; }
         
         .lang-btn {
             background: #ffffff;
@@ -183,6 +183,21 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .lang-btn:hover { background: #f8fafc; color: #2563eb; border-color: #93c5fd; }
+
+        /* Кастомна кнопка вибору файлу */
+        .file-upload-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
 
         /* --- Новий лейаут для редактора --- */
         .editor-layout {
@@ -414,7 +429,13 @@
         <div class="control-panel">
             <input type="text" id="imgUrl" data-i18n-ph="imgUrlPlaceholder" placeholder="URL зображення..." style="flex:1;">
             <span style="font-size:13px; color:#64748b;" data-i18n="or">АБО</span>
-            <input type="file" id="imgFile" accept="image/*" onchange="loadLocalImage(event)" style="max-width: 200px;">
+            
+            <!-- Кастомна кнопка вибору файлу -->
+            <div class="file-upload-wrapper">
+                <button type="button" class="outline" id="btn-custom-file" data-i18n="btnSelectFile">📁 Вибрати файл</button>
+                <input type="file" id="imgFile" accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+            
             <button onclick="loadImage()" data-i18n="btnLoadImg">Завантажити фото</button>
             
             <div class="panel-divider"></div>
@@ -774,6 +795,8 @@
         uk: {
             appTitle: "⚙️ ClicPoint - Конструктор Інтерактивних Зображень",
             or: "АБО",
+            btnSelectFile: "📁 Вибрати файл", // ДОДАНО
+            btnSelectFileSelected: "📁 Файл вибрано", // ДОДАНО
             btnLoadImg: "Завантажити фото",
             btnImport: "📂 Імпорт",
             btnGoogleAuth: "☁️ Увійти з Google",
@@ -944,6 +967,8 @@
         en: {
             appTitle: "⚙️ ClicPoint - Interactive Image Builder",
             or: "OR",
+            btnSelectFile: "📁 Select File", // ДОДАНО
+            btnSelectFileSelected: "📁 File Selected", // ДОДАНО
             btnLoadImg: "Load Image",
             btnImport: "📂 Import",
             btnGoogleAuth: "☁️ Login with Google",
@@ -1156,6 +1181,15 @@
         // Dynamic state updates (e.g., Auth button if logged in)
         if (accessToken) {
             document.getElementById('btn-google-auth').innerText = langData['btnGoogleAuthLogout'];
+        }
+        
+        // Оновлюємо текст кастомної кнопки файлу, якщо файл вибрано
+        const fileInput = document.getElementById('imgFile');
+        const customBtn = document.getElementById('btn-custom-file');
+        if (fileInput && customBtn) {
+            if (fileInput.files && fileInput.files.length > 0) {
+                customBtn.innerText = langData['btnSelectFileSelected'];
+            }
         }
 
         // Update instruction text based on current state
@@ -2065,6 +2099,18 @@
 
     function processImageUrl(url) { const idMatch = url.match(/[-\w]{25,35}/); if (idMatch && url.includes('drive.google.com')) return `https://lh3.googleusercontent.com/d/${idMatch[0]}=w1000`; return url; }
 
+    function handleFileSelect(event) {
+        const btn = document.getElementById('btn-custom-file');
+        const file = event.target.files ? event.target.files[0] : null;
+        
+        if (file) {
+            btn.innerText = i18n[currentLang]['btnSelectFileSelected'];
+            loadLocalImage(event);
+        } else {
+            btn.innerText = i18n[currentLang]['btnSelectFile'];
+        }
+    }
+
     function loadImage() {
         resetCurrentProjectInfo();
         const rawUrl = document.getElementById('imgUrl').value.trim(); const fileInput = document.getElementById('imgFile');
@@ -2082,12 +2128,13 @@
                 const canvas = document.createElement('canvas'); const MAX_WIDTH = 1920; const MAX_HEIGHT = 1080; let width = img.width; let height = img.height;
                 if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
                 canvas.width = width; canvas.height = height; canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                setupWorkspace(canvas.toDataURL('image/jpeg', 0.85)); event.target.value = ''; 
+                setupWorkspace(canvas.toDataURL('image/jpeg', 0.85)); 
+                // Не скидаємо значення файлу, щоб кнопка показувала "Файл вибрано"
             };
-            img.onerror = function() { showStatus(getMsg('msgErrorImg'), 'error'); event.target.value = ''; }
+            img.onerror = function() { showStatus(getMsg('msgErrorImg'), 'error'); event.target.value = ''; document.getElementById('btn-custom-file').innerText = i18n[currentLang]['btnSelectFile']; }
             img.src = e.target.result;
         };
-        reader.onerror = function() { showStatus(getMsg('msgErrorLoad'), 'error'); event.target.value = ''; }; reader.readAsDataURL(file);
+        reader.onerror = function() { showStatus(getMsg('msgErrorLoad'), 'error'); event.target.value = ''; document.getElementById('btn-custom-file').innerText = i18n[currentLang]['btnSelectFile']; }; reader.readAsDataURL(file);
     }
 
     function setupWorkspace(url) {
