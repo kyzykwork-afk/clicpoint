@@ -430,7 +430,8 @@
             <div class="panel-divider"></div>
             <!-- Кнопка перемикання мови -->
             <button onclick="toggleLanguage()" class="lang-btn" id="lang-toggle-btn" title="Switch Language">
-                <span id="lang-icon">🇺🇦</span> <span id="lang-text">UK</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                <span id="lang-text">UK</span>
             </button>
         </div>
 
@@ -535,13 +536,13 @@
                 <label data-i18n="modalMarkerIcon">Іконка:</label>
                 <select id="m-icon">
                     <option value="number" data-i18n="iconNumber">Цифра (1, 2...)</option>
-                    <option value="info">ℹ️ Інфо</option>
-                    <option value="video">▶️ Відео</option>
-                    <option value="warning">⚠️ Увага</option>
-                    <option value="link">🔗 Посилання</option>
-                    <option value="star">⭐ Зірка</option>
-                    <option value="audio">🎵 Аудіо</option>
-                    <option value="quiz">❓ Питання</option>
+                    <option value="info" data-i18n="iconInfo">ℹ️ Інфо</option>
+                    <option value="video" data-i18n="iconVideo">▶️ Відео</option>
+                    <option value="warning" data-i18n="iconWarning">⚠️ Увага</option>
+                    <option value="link" data-i18n="iconLink">🔗 Посилання</option>
+                    <option value="star" data-i18n="iconStar">⭐ Зірка</option>
+                    <option value="audio" data-i18n="iconAudio">🎵 Аудіо</option>
+                    <option value="quiz" data-i18n="iconQuiz">❓ Питання</option>
                 </select>
             </div>
             <div>
@@ -816,6 +817,13 @@
             modalMarkerTitle: "Назва (Заголовок):",
             modalMarkerIcon: "Іконка:",
             iconNumber: "Цифра (1, 2...)",
+            iconInfo: "ℹ️ Інфо",
+            iconVideo: "▶️ Відео",
+            iconWarning: "⚠️ Увага",
+            iconLink: "🔗 Посилання",
+            iconStar: "⭐ Зірка",
+            iconAudio: "🎵 Аудіо",
+            iconQuiz: "❓ Питання",
             modalMarkerColor: "Колір:",
             modalPolyOpNorm: "Прозорість (спокій):",
             modalPolyOpHover: "Прозорість (наведення):",
@@ -922,7 +930,9 @@
             msgSaveHtmlSuccess: "Збережено як HTML файл!",
             msgGoogleAuthSuccess: "Успішно авторизовано в Google Drive!",
             msgGoogleLogout: "Вийшли з облікового запису Google.",
-            msgClientLoading: "Клієнт Google ще завантажується..."
+            msgClientLoading: "Клієнт Google ще завантажується...",
+            msgSaveFirstForArrow: "Спочатку збережіть мітку, щоб додати стрілки!",
+            msgAddArrowTarget: "Клікніть на зображенні, щоб додати цільову точку стрілки!"
         },
         en: {
             appTitle: "⚙️ ClicPoint - Interactive Image Builder",
@@ -971,6 +981,13 @@
             modalMarkerTitle: "Title (Heading):",
             modalMarkerIcon: "Icon:",
             iconNumber: "Number (1, 2...)",
+            iconInfo: "ℹ️ Info",
+            iconVideo: "▶️ Video",
+            iconWarning: "⚠️ Warning",
+            iconLink: "🔗 Link",
+            iconStar: "⭐ Star",
+            iconAudio: "🎵 Audio",
+            iconQuiz: "❓ Quiz",
             modalMarkerColor: "Color:",
             modalPolyOpNorm: "Opacity (Idle):",
             modalPolyOpHover: "Opacity (Hover):",
@@ -1077,7 +1094,9 @@
             msgSaveHtmlSuccess: "Saved as HTML file!",
             msgGoogleAuthSuccess: "Successfully authenticated with Google Drive!",
             msgGoogleLogout: "Logged out of Google account.",
-            msgClientLoading: "Google client is still loading..."
+            msgClientLoading: "Google client is still loading...",
+            msgSaveFirstForArrow: "Save the marker first to add arrows!",
+            msgAddArrowTarget: "Click on the image to add arrow target!"
         }
     };
 
@@ -1093,7 +1112,6 @@
         const langData = i18n[currentLang];
         
         // Update language toggle button UI
-        document.getElementById('lang-icon').innerText = currentLang === 'uk' ? '🇺🇦' : '🇬🇧';
         document.getElementById('lang-text').innerText = currentLang === 'uk' ? 'UK' : 'EN';
         
         // Update document lang attribute
@@ -1998,7 +2016,16 @@
     }
 
     function removeArrow(index) { if (editingIndex !== null && markers[editingIndex].targets) { markers[editingIndex].targets.splice(index, 1); renderArrowsList(); renderMarkersPreview(); } }
-    function startSelectingTarget() { if (editingIndex === null) return; isSelectingTarget = true; document.getElementById('markerModal').style.display = 'none'; document.getElementById('click-layer').style.cursor = 'cell'; showStatus(currentLang==='uk'?'Клікніть на зображенні, щоб додати цільову точку стрілки!':'Click on the image to add arrow target!', 'info'); }
+    function startSelectingTarget() { 
+        if (editingIndex === null) {
+            showStatus(getMsg('msgSaveFirstForArrow'), 'warning');
+            return;
+        }
+        isSelectingTarget = true; 
+        document.getElementById('markerModal').style.display = 'none'; 
+        document.getElementById('click-layer').style.cursor = 'cell'; 
+        showStatus(getMsg('msgAddArrowTarget'), 'info'); 
+    }
 
     function saveState() { if (historyIndex < stateHistory.length - 1) { stateHistory = stateHistory.slice(0, historyIndex + 1); } stateHistory.push(JSON.stringify(markers)); historyIndex++; updateUndoRedoButtons(); }
     function updateUndoRedoButtons() {
@@ -2272,6 +2299,7 @@
         document.getElementById('modal-error').style.display = 'none'; document.getElementById('m-title').value = ''; document.getElementById('m-icon').value = 'number'; document.getElementById('m-color').value = '#2563eb'; document.getElementById('m-type').value = 'text'; document.getElementById('m-text').value = ''; document.getElementById('m-video').value = ''; document.getElementById('m-audio').value = ''; document.getElementById('m-link').value = ''; document.getElementById('m-transition').value = '';
         document.getElementById('l-text').value = ''; document.getElementById('l-size').value = '24'; document.getElementById('l-size-val').innerText = '24px'; document.getElementById('l-color').value = '#1e293b'; document.getElementById('l-style').value = 'normal'; document.getElementById('l-anchor').value = 'auto'; document.getElementById('l-bg-color').value = '#ffffff'; document.getElementById('l-bg-op').value = '85'; document.getElementById('l-bg-op-val').innerText = '85%'; document.getElementById('custom-panel-settings').style.display = 'none'; document.getElementById('btn-bold').classList.remove('active'); document.getElementById('btn-italic').classList.remove('active'); document.getElementById('btn-underline').classList.remove('active');
         document.getElementById('m-op-normal').value = '40'; document.getElementById('op-norm-val').innerText = '40%'; document.getElementById('m-op-hover').value = '80'; document.getElementById('op-hov-val').innerText = '80%'; document.getElementById('a-animated').value = 'false'; document.getElementById('a-direction').value = 'to'; tempQuizOptions = ['', '', '']; tempQuizCorrect = 0; document.getElementById('btn-delete-marker').style.display = 'none'; toggleInputs(false);
+        document.getElementById('arrows-list').innerHTML = '';
     }
     function toggleInputs(isUserChange) {
         const type = document.getElementById('m-type').value; document.getElementById('group-text').style.display = type === 'text' ? 'block' : 'none'; document.getElementById('group-video').style.display = type === 'video' ? 'block' : 'none'; document.getElementById('group-audio').style.display = type === 'audio' ? 'block' : 'none'; document.getElementById('group-link').style.display = type === 'link' ? 'block' : 'none'; document.getElementById('group-transition').style.display = type === 'transition' ? 'block' : 'none'; document.getElementById('group-quiz').style.display = type === 'quiz' ? 'block' : 'none';
