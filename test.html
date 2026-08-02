@@ -1241,14 +1241,15 @@
                     htmlContent = await res.text();
                 } else {
                     const targetUrl = `https://drive.google.com/uc?export=download&id=${viewFileId}&confirm=t`;
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                     
-                    const res = await fetch(proxyUrl);
-                    if (!res.ok) throw new Error('PROXY_ERROR');
+                    // Directly fetch using the uc endpoint since the proxy might fail due to the virus scan warning
+                    const res = await fetch(targetUrl);
+                    if (!res.ok) throw new Error('FETCH_ERROR');
                     htmlContent = await res.text();
                     
                     if (htmlContent.includes('ServiceLogin')) throw new Error('PRIVATE_OR_NOT_FOUND');
-                    if (htmlContent.includes('uc-download-link') || htmlContent.includes('дозволяє перевіряти файли такого розміру') || htmlContent.includes('Google Drive can\'t scan')) {
+                    // Check for the virus scan block within the HTML response
+                    if (htmlContent.includes('uc-download-link') || htmlContent.includes('Google Drive can\'t scan') || htmlContent.includes('дозволяє перевіряти файли такого розміру')) {
                         throw new Error('VIRUS_SCAN_BLOCK');
                     }
                 }
