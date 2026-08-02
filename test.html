@@ -433,6 +433,8 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
                 <span id="lang-text">UK</span>
             </button>
+            
+            <button onclick="window.open('https://app.kyzyklab.pp.ua/support.html', '_blank')" style="background: #f43f5e; color: white; margin-left: auto;" class="danger" data-i18n="btnSupportProject">❤️ Підтримати проєкт</button>
         </div>
 
         <div id="status-msg"></div>
@@ -514,7 +516,6 @@
             <p><strong data-i18n="footerDisclaimerTitle">🔒 Дисклеймер:</strong> <span data-i18n="footerDisclaimerText">Усі операції з обробки та генерації коду виконуються на стороні клієнта (Client-Side). Ми не збираємо та не зберігаємо ваші файли. Будь ласка, переконайтеся, що ви маєте права на використання завантажених зображень.</span></p>
             <p style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; border-top: 1px solid #bae6fd; padding-top: 15px; margin-bottom: 0;">
                 <span><em data-i18n="footerCredits">Розробка та тестування: Кизик Дмитро © 2026.</em></span>
-                <a href="https://app.kyzyklab.pp.ua/support.html" target="_blank" style="color: #f43f5e; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;" data-i18n="footerSupport">❤️ Підтримати проєкт</a>
             </p>
         </div>
     </div>
@@ -794,6 +795,7 @@
             btnExportJson: "💾 Експорт .json",
             outputTitle: "Ваш готовий код:",
             btnCopyCode: "📋 Скопіювати код",
+            btnSupportProject: "❤️ Підтримати проєкт",
             
             // Footer
             footerAboutTitle: "🤖 Про проєкт:",
@@ -801,7 +803,6 @@
             footerDisclaimerTitle: "🔒 Дисклеймер:",
             footerDisclaimerText: "Усі операції з обробки та генерації коду виконуються на стороні клієнта (Client-Side). Ми не збираємо та не зберігаємо ваші файли. Будь ласка, переконайтеся, що ви маєте права на використання завантажених зображень.",
             footerCredits: "Розробка та тестування: Кизик Дмитро © 2026.",
-            footerSupport: "❤️ Підтримати проєкт",
 
             // General Buttons
             btnDelete: "🗑 Видалити",
@@ -932,7 +933,13 @@
             msgGoogleLogout: "Вийшли з облікового запису Google.",
             msgClientLoading: "Клієнт Google ще завантажується...",
             msgSaveFirstForArrow: "Спочатку збережіть мітку, щоб додати стрілки!",
-            msgAddArrowTarget: "Клікніть на зображенні, щоб додати цільову точку стрілки!"
+            msgAddArrowTarget: "Клікніть на зображенні, щоб додати цільову точку стрілки!",
+
+            // Validation Errors
+            errNoLabelText: "Введіть текст напису!",
+            errNoTitle: "Введіть заголовок!",
+            errNoQuestion: "Введіть запитання!",
+            errMinOptions: "Введіть щонайменше 2 варіанти відповідей!"
         },
         en: {
             appTitle: "⚙️ ClicPoint - Interactive Image Builder",
@@ -958,6 +965,7 @@
             btnExportJson: "💾 Export .json",
             outputTitle: "Your Ready Code:",
             btnCopyCode: "📋 Copy Code",
+            btnSupportProject: "❤️ Support Project",
             
             // Footer
             footerAboutTitle: "🤖 About Project:",
@@ -965,7 +973,6 @@
             footerDisclaimerTitle: "🔒 Disclaimer:",
             footerDisclaimerText: "All processing and code generation operations are performed Client-Side. We do not collect or store your files. Please ensure you have the rights to use the uploaded images.",
             footerCredits: "Developed and tested by Dmytro Kyzyk © 2026.",
-            footerSupport: "❤️ Support the Project",
 
             // General Buttons
             btnDelete: "🗑 Delete",
@@ -1096,7 +1103,13 @@
             msgGoogleLogout: "Logged out of Google account.",
             msgClientLoading: "Google client is still loading...",
             msgSaveFirstForArrow: "Save the marker first to add arrows!",
-            msgAddArrowTarget: "Click on the image to add arrow target!"
+            msgAddArrowTarget: "Click on the image to add arrow target!",
+            
+            // Validation Errors
+            errNoLabelText: "Enter label text!",
+            errNoTitle: "Enter title!",
+            errNoQuestion: "Enter question!",
+            errMinOptions: "Enter at least 2 options!"
         }
     };
 
@@ -1837,8 +1850,8 @@
         nameContainer.innerHTML = `
             ${iconPrefix}
             <input type="text" id="input-${id}" value="${currentName}" style="padding: 2px 5px; font-size: 14px; width: 150px; border-radius: 4px; border: 1px solid #cbd5e1;" onclick="event.stopPropagation()">
-            <button onclick="saveRename(event, '${id}', ${isFolder}, '${currentName.replace(/'/g, "\\'")}')" style="padding: 2px 6px; background: #16a34a; color: white; border: none; border-radius: 4px; cursor: pointer;" title="Save">✔️</button>
-            <button onclick="cancelRename(event, '${id}', '${currentName.replace(/'/g, "\\'")}', ${isFolder})" style="padding: 2px 6px; background: #94a3b8; color: white; border: none; border-radius: 4px; cursor: pointer;" title="Cancel">✖</button>
+            <button onclick="saveRename(event, '${id}', ${isFolder}, '${currentName.replace(/'/g, "\\'")}')" style="padding: 2px 6px; background: #16a34a; color: white; border: none; border-radius: 4px; cursor: pointer;" title="${currentLang==='uk'?'Зберегти':'Save'}">✔️</button>
+            <button onclick="cancelRename(event, '${id}', '${currentName.replace(/'/g, "\\'")}', ${isFolder})" style="padding: 2px 6px; background: #94a3b8; color: white; border: none; border-radius: 4px; cursor: pointer;" title="${currentLang==='uk'?'Скасувати':'Cancel'}">✖</button>
         `;
         setTimeout(() => document.getElementById(`input-${id}`).focus(), 50);
     }
@@ -2176,7 +2189,23 @@
 
         if (isAddingText) {
             tempCoords = { x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)), shape: 'label' }; editingIndex = null; resetDrawUI(); clearModal();
-            document.getElementById('modal-title-text').innerText = getMsg('modalTitleLabel'); document.getElementById('m-title-group').style.display = 'none'; document.getElementById('appearance-group').style.display = 'none'; document.getElementById('polygon-opacity-group').style.display = 'none'; document.getElementById('m-type-group').style.display = 'none'; document.getElementById('group-text').style.display = 'none'; document.getElementById('group-video').style.display = 'none'; document.getElementById('group-audio').style.display = 'none'; document.getElementById('group-link').style.display = 'none'; document.getElementById('group-transition').style.display = 'none'; document.getElementById('group-quiz').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'block'; document.getElementById('group-arrow').style.display = 'block'; document.getElementById('markerModal').style.display = 'flex'; return;
+            document.getElementById('modal-title-text').innerText = getMsg('modalTitleLabel'); 
+            document.getElementById('m-title-group').style.display = 'block'; 
+            document.getElementById('appearance-group').style.display = 'none'; 
+            document.getElementById('polygon-opacity-group').style.display = 'none'; 
+            document.getElementById('m-type-group').style.display = 'block'; 
+            
+            document.getElementById('group-text').style.display = 'block'; 
+            document.getElementById('group-video').style.display = 'none'; 
+            document.getElementById('group-audio').style.display = 'none'; 
+            document.getElementById('group-link').style.display = 'none'; 
+            document.getElementById('group-transition').style.display = 'none'; 
+            document.getElementById('group-quiz').style.display = 'none'; 
+            
+            document.getElementById('group-label-settings').style.display = 'block'; 
+            document.getElementById('group-arrow').style.display = 'block'; 
+            document.getElementById('markerModal').style.display = 'flex'; 
+            return;
         }
 
         tempCoords = { x: parseFloat(xPercent.toFixed(2)), y: parseFloat(yPercent.toFixed(2)), shape: 'point' }; editingIndex = null; clearModal();
@@ -2309,9 +2338,29 @@
     function openEditModal(index) {
         editingIndex = index; clearModal(); const m = markers[index]; document.getElementById('btn-delete-marker').style.display = 'inline-block';
         if (m.shape === 'label') {
-            document.getElementById('modal-title-text').innerText = getMsg('modalTitleLabel'); document.getElementById('m-title-group').style.display = 'none'; document.getElementById('appearance-group').style.display = 'none'; document.getElementById('polygon-opacity-group').style.display = 'none'; document.getElementById('m-type-group').style.display = 'none'; document.getElementById('group-text').style.display = 'none'; document.getElementById('group-video').style.display = 'none'; document.getElementById('group-audio').style.display = 'none'; document.getElementById('group-link').style.display = 'none'; document.getElementById('group-transition').style.display = 'none'; document.getElementById('group-quiz').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'block'; document.getElementById('group-arrow').style.display = 'block';
-            document.getElementById('l-text').value = m.labelText || ''; document.getElementById('l-size').value = m.labelSize || 24; document.getElementById('l-size-val').innerText = (m.labelSize || 24) + 'px'; document.getElementById('l-color').value = m.labelColor || '#1e293b'; document.getElementById('l-style').value = m.labelStyle || 'normal'; document.getElementById('l-anchor').value = m.labelAnchor || 'auto'; document.getElementById('l-bg-color').value = m.labelBgColor || '#ffffff'; document.getElementById('l-bg-op').value = m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85; document.getElementById('l-bg-op-val').innerText = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) + '%'; document.getElementById('custom-panel-settings').style.display = m.labelStyle === 'custom-panel' ? 'block' : 'none';
-            if (m.isBold) document.getElementById('btn-bold').classList.add('active'); if (m.isItalic) document.getElementById('btn-italic').classList.add('active'); if (m.isUnderline) document.getElementById('btn-underline').classList.add('active');
+            document.getElementById('modal-title-text').innerText = getMsg('modalTitleLabel'); 
+            document.getElementById('m-title-group').style.display = 'block'; 
+            document.getElementById('appearance-group').style.display = 'none'; 
+            document.getElementById('polygon-opacity-group').style.display = 'none'; 
+            document.getElementById('m-type-group').style.display = 'block'; 
+            document.getElementById('group-label-settings').style.display = 'block'; 
+            document.getElementById('group-arrow').style.display = 'block';
+            
+            document.getElementById('l-text').value = m.labelText || ''; 
+            document.getElementById('l-size').value = m.labelSize || 24; document.getElementById('l-size-val').innerText = (m.labelSize || 24) + 'px'; 
+            document.getElementById('l-color').value = m.labelColor || '#1e293b'; 
+            document.getElementById('l-style').value = m.labelStyle || 'normal'; 
+            document.getElementById('l-anchor').value = m.labelAnchor || 'auto'; 
+            document.getElementById('l-bg-color').value = m.labelBgColor || '#ffffff'; 
+            document.getElementById('l-bg-op').value = m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85; document.getElementById('l-bg-op-val').innerText = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) + '%'; 
+            document.getElementById('custom-panel-settings').style.display = m.labelStyle === 'custom-panel' ? 'block' : 'none';
+            if (m.isBold) document.getElementById('btn-bold').classList.add('active'); 
+            if (m.isItalic) document.getElementById('btn-italic').classList.add('active'); 
+            if (m.isUnderline) document.getElementById('btn-underline').classList.add('active');
+            
+            document.getElementById('m-title').value = m.title || m.labelText || '';
+            document.getElementById('m-type').value = m.type || 'text';
+            populateContentTypeFields(m);
         } else if (m.shape === 'polygon') {
             document.getElementById('modal-title-text').innerText = getMsg('modalTitlePoly'); document.getElementById('m-title-group').style.display = 'block'; document.getElementById('appearance-group').style.display = 'flex'; document.getElementById('m-icon').disabled = true; document.getElementById('polygon-opacity-group').style.display = 'flex'; document.getElementById('m-type-group').style.display = 'block'; document.getElementById('group-arrow').style.display = 'none'; document.getElementById('group-label-settings').style.display = 'none';
             document.getElementById('m-title').value = m.title || ''; document.getElementById('m-color').value = m.color || '#2563eb'; document.getElementById('m-op-normal').value = m.opNormal !== undefined ? m.opNormal : 40; document.getElementById('op-norm-val').innerText = (m.opNormal !== undefined ? m.opNormal : 40) + '%'; document.getElementById('m-op-hover').value = m.opHover !== undefined ? m.opHover : 80; document.getElementById('op-hov-val').innerText = (m.opHover !== undefined ? m.opHover : 80) + '%'; document.getElementById('m-type').value = m.type || 'text';
@@ -2332,14 +2381,32 @@
     function saveMarker() {
         const errDiv = document.getElementById('modal-error'); errDiv.style.display = 'none'; let shape = ''; if (editingIndex !== null) { shape = markers[editingIndex].shape; } else { shape = tempCoords.shape; } let mData = {};
         
+        const title = document.getElementById('m-title').value.trim(); 
+        const type = document.getElementById('m-type').value; 
+        let content = ''; let quizData = null;
+        
+        if (type === 'text') { content = document.getElementById('m-text').value; } 
+        else if (type === 'video') { content = document.getElementById('m-video').value.trim(); if (content.includes('youtube.com/watch?v=')) { const videoId = content.split('v=')[1]?.split('&')[0]; if (videoId) content = `https://www.youtube.com/embed/${videoId}`; } else if (content.includes('youtu.be/')) { const videoId = content.split('youtu.be/')[1]?.split('?')[0]; if (videoId) content = `https://www.youtube.com/embed/${videoId}`; } } 
+        else if (type === 'audio') { content = document.getElementById('m-audio').value.trim(); } 
+        else if (type === 'link') { content = document.getElementById('m-link').value.trim(); } 
+        else if (type === 'transition') { content = document.getElementById('m-transition').value.trim(); } 
+        else if (type === 'quiz') { 
+            const qText = document.getElementById('q-text').value.trim(); 
+            if (!qText && shape !== 'label') { errDiv.innerText = getMsg('errNoQuestion') || (currentLang==='uk'?'Введіть запитання!':'Enter question!'); errDiv.style.display = 'block'; return; } 
+            if (qText || shape !== 'label') {
+                quizData = { q: qText, options: tempQuizOptions.filter(o => o.trim() !== ''), correctIndex: tempQuizCorrect, msgCorrect: document.getElementById('q-msg-correct').value, msgIncorrect: document.getElementById('q-msg-incorrect').value }; 
+                if (quizData.options.length < 2) { errDiv.innerText = getMsg('errMinOptions') || (currentLang==='uk'?'Введіть щонайменше 2 варіанти відповідей!':'Enter at least 2 options!'); errDiv.style.display = 'block'; return; } 
+            }
+        }
+
         if (shape === 'label') {
-            const labelText = document.getElementById('l-text').value.trim(); if (!labelText) { errDiv.innerText = currentLang==='uk'?'Введіть текст напису!':'Enter label text!'; errDiv.style.display = 'block'; return; }
-            mData = { shape: 'label', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y, labelText: labelText, labelSize: parseInt(document.getElementById('l-size').value), labelColor: document.getElementById('l-color').value, labelStyle: document.getElementById('l-style').value, labelAnchor: document.getElementById('l-anchor').value, labelBgColor: document.getElementById('l-bg-color').value, labelBgOpacity: parseInt(document.getElementById('l-bg-op').value), isBold: document.getElementById('btn-bold').classList.contains('active'), isItalic: document.getElementById('btn-italic').classList.contains('active'), isUnderline: document.getElementById('btn-underline').classList.contains('active') };
+            const labelText = document.getElementById('l-text').value.trim(); 
+            if (!labelText) { errDiv.innerText = getMsg('errNoLabelText') || (currentLang==='uk'?'Введіть текст напису!':'Enter label text!'); errDiv.style.display = 'block'; return; }
+            mData = { shape: 'label', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y, labelText: labelText, labelSize: parseInt(document.getElementById('l-size').value), labelColor: document.getElementById('l-color').value, labelStyle: document.getElementById('l-style').value, labelAnchor: document.getElementById('l-anchor').value, labelBgColor: document.getElementById('l-bg-color').value, labelBgOpacity: parseInt(document.getElementById('l-bg-op').value), isBold: document.getElementById('btn-bold').classList.contains('active'), isItalic: document.getElementById('btn-italic').classList.contains('active'), isUnderline: document.getElementById('btn-underline').classList.contains('active'), title: title || labelText, type: type, content: content, quizData: quizData };
         } else {
-            const title = document.getElementById('m-title').value.trim(); if (!title) { errDiv.innerText = currentLang==='uk'?'Введіть заголовок!':'Enter title!'; errDiv.style.display = 'block'; return; }
-            const type = document.getElementById('m-type').value; let content = ''; let quizData = null;
-            if (type === 'text') { content = document.getElementById('m-text').value; } else if (type === 'video') { content = document.getElementById('m-video').value.trim(); if (content.includes('youtube.com/watch?v=')) { const videoId = content.split('v=')[1]?.split('&')[0]; if (videoId) content = `https://www.youtube.com/embed/${videoId}`; } else if (content.includes('youtu.be/')) { const videoId = content.split('youtu.be/')[1]?.split('?')[0]; if (videoId) content = `https://www.youtube.com/embed/${videoId}`; } } else if (type === 'audio') { content = document.getElementById('m-audio').value.trim(); } else if (type === 'link') { content = document.getElementById('m-link').value.trim(); } else if (type === 'transition') { content = document.getElementById('m-transition').value.trim(); } else if (type === 'quiz') { const qText = document.getElementById('q-text').value.trim(); if (!qText) { errDiv.innerText = currentLang==='uk'?'Введіть запитання!':'Enter question!'; errDiv.style.display = 'block'; return; } quizData = { q: qText, options: tempQuizOptions.filter(o => o.trim() !== ''), correctIndex: tempQuizCorrect, msgCorrect: document.getElementById('q-msg-correct').value, msgIncorrect: document.getElementById('q-msg-incorrect').value }; if (quizData.options.length < 2) { errDiv.innerText = currentLang==='uk'?'Введіть щонайменше 2 варіанти відповідей!':'Enter at least 2 options!'; errDiv.style.display = 'block'; return; } }
-            if (shape === 'polygon') { mData = { shape: 'polygon', points: editingIndex !== null ? markers[editingIndex].points : [...tempPolygonPoints], title: title, color: document.getElementById('m-color').value, opNormal: parseInt(document.getElementById('m-op-normal').value), opHover: parseInt(document.getElementById('m-op-hover').value), type: type, content: content, quizData: quizData }; } else { mData = { shape: 'point', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y, title: title, icon: document.getElementById('m-icon').value, color: document.getElementById('m-color').value, type: type, content: content, quizData: quizData }; }
+            if (!title) { errDiv.innerText = getMsg('errNoTitle') || (currentLang==='uk'?'Введіть заголовок!':'Enter title!'); errDiv.style.display = 'block'; return; }
+            if (shape === 'polygon') { mData = { shape: 'polygon', points: editingIndex !== null ? markers[editingIndex].points : [...tempPolygonPoints], title: title, color: document.getElementById('m-color').value, opNormal: parseInt(document.getElementById('m-op-normal').value), opHover: parseInt(document.getElementById('m-op-hover').value), type: type, content: content, quizData: quizData }; } 
+            else { mData = { shape: 'point', x: editingIndex !== null ? markers[editingIndex].x : tempCoords.x, y: editingIndex !== null ? markers[editingIndex].y : tempCoords.y, title: title, icon: document.getElementById('m-icon').value, color: document.getElementById('m-color').value, type: type, content: content, quizData: quizData }; }
         }
         
         if (shape !== 'polygon') { mData.targets = editingIndex !== null ? (markers[editingIndex].targets || []) : []; mData.arrowAnimated = document.getElementById('a-animated').value === 'true'; mData.arrowDirection = document.getElementById('a-direction').value; }
@@ -2391,7 +2458,12 @@
                 let transformStr = ''; let anchor = m.labelAnchor || 'auto'; if (anchor === 'auto') { let isPointingUp = false; if (m.targets && m.targets.length > 0) { let avgTy = m.targets.reduce((sum, t) => sum + t.ty, 0) / m.targets.length; isPointingUp = (avgTy < m.y); } transformStr = isPointingUp ? 'translate(-50%, 4px)' : 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'top') { transformStr = 'translate(-50%, 4px)'; } else if (anchor === 'bottom') { transformStr = 'translate(-50%, calc(-100% - 4px))'; } else if (anchor === 'left') { transformStr = 'translate(4px, -50%)'; } else if (anchor === 'right') { transformStr = 'translate(calc(-100% - 4px), -50%)'; } else if (anchor === 'center') { transformStr = 'translate(-50%, -50%)'; }
                 let extraStyles = ''; if (m.labelStyle === 'shadow') { extraStyles = ' text-shadow: 0px 1px 3px rgba(0,0,0,0.9), 0px 0px 2px rgba(0,0,0,0.6);'; } else if (m.labelStyle === 'panel') { extraStyles = ' background: rgba(255, 255, 255, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'; } else if (m.labelStyle === 'panel-dark') { extraStyles = ' background: rgba(15, 23, 42, 0.85); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);'; } else if (m.labelStyle === 'custom-panel') { const hex = m.labelBgColor || '#ffffff'; const op = (m.labelBgOpacity !== undefined ? m.labelBgOpacity : 85) / 100; const r = parseInt(hex.slice(1, 3), 16); const g = parseInt(hex.slice(3, 5), 16); const b = parseInt(hex.slice(5, 7), 16); extraStyles = ` background: rgba(${r}, ${g}, ${b}, ${op}); padding: 0.8cqw 1.6cqw; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);`; }
                 const sizeVal = m.labelSize || 24; const scaledSize = `font-size: clamp(8px, calc(${sizeVal} * 0.1cqw), ${sizeVal}px);`;
-                html += `        <div class="gen-label" style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scaledSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap; width: max-content;${extraStyles}">${m.labelText}</div>\n`;
+                
+                const isInteractive = m.content || (m.quizData && m.quizData.q) || (m.type === 'transition' && m.content);
+                const cursorStyle = isInteractive ? 'cursor: pointer;' : '';
+                const onClickAttr = isInteractive ? `onclick="if(typeof genHasMovedPan !== 'undefined' && genHasMovedPan) return; openGenModal(${i})"` : '';
+                
+                html += `        <div class="gen-label" ${onClickAttr} style="position: absolute; top: ${m.y}%; left: ${m.x}%; transform: ${transformStr}; color: ${m.labelColor}; ${scaledSize} font-weight: ${fw}; font-style: ${fs}; text-decoration: ${td}; pointer-events: auto; z-index: 8; text-align: center; white-space: pre-wrap; width: max-content; ${cursorStyle}${extraStyles}">${m.labelText}</div>\n`;
             } else if (m.shape !== 'polygon' && m.shape !== 'label') {
                 const c = m.color || '#2563eb'; let icon = ''; if (m.icon && m.icon !== 'number') { icon = iconMap[m.icon]; } else { icon = genNumberCounter++; }
                 let ttStyle = "left: 50%; transform: translateX(-50%);"; if (m.x < 15) ttStyle = "left: -5px; transform: none;"; if (m.x > 85) ttStyle = "left: auto; right: -5px; transform: none;"; if (m.y < 15) { ttStyle += " top: calc(100% + 8px); bottom: auto;"; } else { ttStyle += " bottom: calc(100% + 8px); top: auto;"; }
@@ -2424,6 +2496,8 @@
     .gen-marker:hover .gen-tooltip, .gen-marker.touch-active .gen-tooltip { opacity: 1; }
     .gen-quiz-option { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1.5px solid #e2e8f0; transition: background 0.15s, border-color 0.15s; font-size: 14px; margin-bottom: 8px; }
     .gen-quiz-option:active { background: #f1f5f9; } .gen-quiz-option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; margin: 0; flex-shrink: 0; }
+    
+    /* ВИПРАВЛЕННЯ БАГУ: Додаємо 'width: max-content;' та 'line-height: 1.3;' для .gen-label в стилях учнівського фрейму */
     .gen-label { transition: scale 0.2s ease, filter 0.2s ease, border-color 0.2s ease; scale: 1; pointer-events: auto; width: max-content; line-height: 1.3; } .gen-label:hover { scale: 1.05; filter: brightness(1.10); }
     @media (max-width: 600px) { #gen-modal { align-items: flex-end; } #gen-modal-window { width: 100% !important; max-width: 100% !important; border-radius: 20px 20px 0 0 !important; transform: translateY(100%); padding: 24px 20px 40px 20px !important; } .gen-tooltip { font-size: 10px; padding: 3px 6px; } }
 </style>
@@ -2456,6 +2530,7 @@
         const oldScale = genZoomScale;
         let newScale = genZoomScale * factor;
         
+        // Встановлюємо жорсткі рамки: мінімум 100% (1x)
         newScale = Math.max(1, Math.min(newScale, 10)); 
         if (newScale === oldScale) return;
 
@@ -2470,6 +2545,7 @@
         genPanX = dx - xs * genZoomScale;
         genPanY = dy - ys * genZoomScale;
         
+        // Жорстке центрування, якщо масштаб повернувся до 100%
         if (genZoomScale <= 1) {
             genPanX = 0;
             genPanY = 0;
@@ -2488,12 +2564,13 @@
     }, { passive: false });
 
     genWrapper.addEventListener('mousedown', e => {
-        if (e.button !== 0) return; 
+        if (e.button !== 0) return; // Тільки ліва кнопка
         if (e.target.closest('.gen-marker') || e.target.closest('.gen-poly') || e.target.closest('.gen-label') || e.target.closest('#gen-zoom-controls')) return;
         
+        // Запобігаємо нативному перетягуванню картинки та виділенню
         e.preventDefault();
         
-        if (genZoomScale <= 1) return; 
+        if (genZoomScale <= 1) return; // Блокуємо панорамування при 100%
         
         genIsPanning = true; window.genHasMovedPan = false;
         genStartPanX = e.clientX - genPanX; genStartPanY = e.clientY - genPanY;
@@ -2502,6 +2579,7 @@
     window.addEventListener('mousemove', e => {
         if (!genIsPanning || genZoomScale <= 1) return;
         
+        // Запобіжник: якщо кнопку відпустили поза вікном
         if (e.buttons !== 1) {
             genIsPanning = false;
             setTimeout(() => window.genHasMovedPan = false, 50);
@@ -2531,6 +2609,7 @@
         if (genIsPanning) { genIsPanning = false; setTimeout(() => window.genHasMovedPan = false, 50); }
     });
     
+    // Також зупиняємо, якщо миша покидає вікно
     window.addEventListener('mouseleave', () => {
         if (genIsPanning) { genIsPanning = false; setTimeout(() => window.genHasMovedPan = false, 50); }
     });
@@ -2538,7 +2617,7 @@
     genWrapper.addEventListener('touchstart', e => {
         if (e.target.closest('.gen-marker') || e.target.closest('.gen-poly') || e.target.closest('.gen-label') || e.target.closest('#gen-zoom-controls')) return;
         if (e.touches.length === 1) {
-            if (genZoomScale <= 1) return; 
+            if (genZoomScale <= 1) return; // Блокуємо панорамування при 100%
             genIsPanning = true; window.genHasMovedPan = false;
             genStartPanX = e.touches[0].clientX - genPanX; genStartPanY = e.touches[0].clientY - genPanY;
         } else if (e.touches.length === 2) {
@@ -2601,16 +2680,16 @@
     
     function openGenModal(i) {
         if(window.genHasMovedPan) return;
-        const d = genData[i]; if(d.shape === 'label') return; if(d.type === 'transition') { window.location.href = d.content; return; }
-        document.getElementById('gen-modal-title').innerHTML = d.title; const body = document.getElementById('gen-modal-body');
+        const d = genData[i]; 
+        if(d.type === 'transition') { window.location.href = d.content; return; }
+        document.getElementById('gen-modal-title').innerHTML = d.title || d.labelText || ''; 
+        const body = document.getElementById('gen-modal-body');
         
         let linkBtnTxt = "Відкрити веб-посилання";
         let checkBtnTxt = "Перевірити відповідь";
         let noSelTxt = "⚠️ Будь ласка, оберіть один із варіантів!";
-        // Very simple fallback logic for generated viewer html lang. 
-        // We'll rely on the marker's own text primarily, but standard buttons can be semi-localized based on simple heuristics or static values.
         
-        if (d.type === 'text') { body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>'; } else if (d.type === 'video') { const watchUrl = d.content.replace('/embed/', '/watch?v='); body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+watchUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">YouTube</a></div>'; } else if (d.type === 'audio') { if (d.content.includes('drive.google.com')) { const match = d.content.match(/[-\\\w]{25,35}/); if (match) { body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Google Drive</a></div>'; } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box; text-align:center;">Audio Link</a></div>'; } } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Download Original</a></div>'; } } else if (d.type === 'link') { body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">Open Link</a>'; } else if (d.type === 'quiz') { const q = d.quizData; let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`; q.options.forEach((opt, idx) => { qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`; }); qHtml += \`</div><button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px; transition: background 0.2s;">✓</button><div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`; body.innerHTML = qHtml; }
+        if (d.type === 'text') { body.innerHTML = '<p style="margin: 0;">' + d.content + '</p>'; } else if (d.type === 'video') { const watchUrl = d.content.replace('/embed/', '/watch?v='); body.innerHTML = '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background: #000;"><iframe src="'+d.content+'" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><div style="text-align:center; margin-top:14px;"><a href="'+watchUrl+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline; font-weight: 500;">Відкрити додаток на YouTube</a></div>'; } else if (d.type === 'audio') { if (d.content.includes('drive.google.com')) { const match = d.content.match(/[-\\\w]{25,35}/); if (match) { body.innerHTML = '<div style="padding:10px 0;"><iframe src="https://drive.google.com/file/d/' + match[0] + '/preview" width="100%" height="80" style="border:none; border-radius:8px;" allow="autoplay"></iframe></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Відкрити файл на Google Диску</a></div>'; } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; width:100%; box-sizing:border-box; text-align:center;">Відкрити аудіо-посилання</a></div>'; } } else { body.innerHTML = '<div style="text-align:center; padding:15px 0;"><audio controls style="width:100%;" src="'+d.content+'"></audio></div><div style="text-align:center; margin-top:8px;"><a href="'+d.content+'" target="_blank" style="font-size:13px; color:#3b82f6; text-decoration:underline;">Завантажити оригінальний аудіофайл</a></div>'; } } else if (d.type === 'link') { body.innerHTML = '<a href="'+d.content+'" target="_blank" style="display:inline-block; background:#2563eb; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight: 600; width:100%; box-sizing:border-box; text-align:center; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2);">Відкрити веб-посилання</a>'; } else if (d.type === 'quiz') { const q = d.quizData; let qHtml = \`<div style="font-weight:700; margin-bottom:16px; font-size:16px; color: #1e293b;">\${q.q}</div><div style="display:flex; flex-direction:column; gap:2px;">\`; q.options.forEach((opt, idx) => { qHtml += \`<label class="gen-quiz-option"><input type="radio" name="gquiz" value="\${idx}"> <span>\${opt}</span></label>\`; }); qHtml += \`</div><button onclick="checkQuiz(\${i})" style="margin-top:16px; padding:12px 24px; width: 100%; background:#16a34a; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 15px; transition: background 0.2s;">Перевірити відповідь</button><div id="gquiz-res" style="margin-top:16px; font-weight:700; text-align: center; font-size: 15px;"></div>\`; body.innerHTML = qHtml; }
         const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.display = 'flex'; setTimeout(() => { m.style.opacity = '1'; win.style.transform = 'translateY(0)'; }, 10);
         
         if (typeof gtag === 'function') {
@@ -2618,7 +2697,7 @@
         }
     }
     function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; const isMobile = window.innerWidth <= 600; win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
-    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Please select an option!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Correct!') : (d.quizData.msgIncorrect || '❌ Incorrect, try again.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
+    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
         if (typeof gtag === 'function') {
             gtag('event', 'quiz_submission', { 'is_correct': isCorrect, 'quiz_title': d.title });
         }
@@ -2635,7 +2714,7 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
     }
 
     function generateCode() {
-        const html = getSnippetHTML(); if(!html) return showStatus(currentLang==='uk'?'Додайте точки або зони!':'Add points or zones first!', 'error');
+        const html = getSnippetHTML(); if(!html) return showStatus(getMsg('msgAddMarkersPreview'), 'error');
         const area = document.getElementById('output-area'); document.getElementById('output-code').value = html; area.style.display = 'block'; area.scrollIntoView({ behavior: 'smooth' }); showStatus(getMsg('msgCodeGenerated'), 'success');
         if (typeof gtag === 'function') {
             gtag('event', 'generate_code', { 'markers_count': markers.length });
@@ -2649,13 +2728,13 @@ ${JSON.stringify({ image: currentImgUrl, markers: markers, logo: watermarkDataUr
 
     function openPreview() {
         const htmlContent = getSnippetHTML(); if(!htmlContent) return showStatus(getMsg('msgAddMarkersPreview'), 'error');
-        const fullHTML = `<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Preview</title>\n</head>\n<body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">\n    ${htmlContent}\n</body>\n</html>`;
+        const fullHTML = `<!DOCTYPE html>\n<html lang="uk">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>Попередній перегляд</title>\n</head>\n<body style="margin: 0; padding: 20px; background-color: #f8fafc; display: flex; justify-content: center;">\n    ${htmlContent}\n</body>\n</html>`;
         const frame = document.getElementById('preview-frame'); frame.srcdoc = fullHTML; document.getElementById('preview-overlay').style.display = 'flex';
     }
 
     function closePreview() { document.getElementById('preview-overlay').style.display = 'none'; document.getElementById('preview-frame').srcdoc = ''; }
     function copyCode() { const code = document.getElementById('output-code'); code.select(); document.execCommand('copy'); showStatus(getMsg('msgCopied'), 'success'); }
-    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus(currentLang==='uk'?'Спочатку додайте маркери або зони!':'Add markers or zones first!', 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus(getMsg('msgSaveHtmlSuccess'), 'success'); 
+    function saveAsHTML() { const fullHTML = getFullHTMLContent(); if(!fullHTML) { showStatus(getMsg('msgAddMarkersPreview'), 'error'); return; } const blob = new Blob([fullHTML], { type: 'text/html' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "interactive_image.html"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); showStatus(getMsg('msgSaveHtmlSuccess'), 'success'); 
         if (typeof gtag === 'function') {
             gtag('event', 'save_html', { 'markers_count': markers.length });
         }
