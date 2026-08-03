@@ -460,7 +460,7 @@
 
         <div id="status-msg"></div>
 
-        <!-- Кнопка Попередній перегляд (перенесена над вікном редактора) -->
+        <!-- Кнопка Попередній перегляд -->
         <div id="preview-panel" style="display: none; justify-content: flex-end; margin-bottom: 15px;">
             <button class="info" onclick="openPreview()" id="btn-preview" style="background: #8b5cf6; font-size: 16px; padding: 10px 24px; display: flex; align-items: center; gap: 8px;" data-i18n="btnPreview">
                 👁 Попередній перегляд
@@ -1159,12 +1159,9 @@
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (langData[key]) {
-                // Handle mixed content (icons + text) if needed, mostly innerText/innerHTML is fine
                 if(el.tagName === 'OPTION') {
                     el.innerText = langData[key];
                 } else if(el.children.length > 0 && !el.hasAttribute('data-i18n-html-override')) {
-                    // Try to replace just text nodes if children exist, or simply set innerHTML (careful with event listeners on children if overridden)
-                    // For buttons like "📂 Імпорт", innerHTML is safe since it's just text/emoji
                     el.innerHTML = langData[key]; 
                 } else {
                     el.innerText = langData[key];
@@ -1178,28 +1175,31 @@
             if (langData[key]) el.placeholder = langData[key];
         });
 
-        // Dynamic state updates (e.g., Auth button if logged in)
-        if (typeof accessToken !== 'undefined' && accessToken) {
-            const authBtn = document.getElementById('btn-google-auth');
-            if (authBtn) authBtn.innerText = langData['btnGoogleAuthLogout'];
-        }
-        
-        // Оновлюємо текст кастомної кнопки файлу, якщо файл вибрано
-        const fileInput = document.getElementById('imgFile');
-        const customBtn = document.getElementById('btn-custom-file');
-        if (fileInput && customBtn) {
-            if (fileInput.files && fileInput.files.length > 0) {
-                customBtn.innerText = langData['btnSelectFileSelected'];
+        // БЕЗПЕЧНИЙ БЛОК: Використовуємо try...catch, щоб уникнути помилки Temporal Dead Zone
+        // коли функція викликається до створення змінних у режимі учня
+        try {
+            if (typeof accessToken !== 'undefined' && accessToken) {
+                const authBtn = document.getElementById('btn-google-auth');
+                if (authBtn) authBtn.innerText = langData['btnGoogleAuthLogout'];
             }
-        }
+            
+            const fileInput = document.getElementById('imgFile');
+            const customBtn = document.getElementById('btn-custom-file');
+            if (fileInput && customBtn) {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    customBtn.innerText = langData['btnSelectFileSelected'];
+                }
+            }
 
-        // Update instruction text based on current state
-        if (typeof isDrawingPolygon !== 'undefined' && isDrawingPolygon) {
-            const inst = document.getElementById('poly-instruction');
-            if (inst) inst.innerText = langData['polyInstruction'];
-        } else if (typeof isAddingText !== 'undefined' && isAddingText) {
-            const inst = document.getElementById('poly-instruction');
-            if (inst) inst.innerText = langData['polyInstructionText'];
+            if (typeof isDrawingPolygon !== 'undefined' && isDrawingPolygon) {
+                const polyInst = document.getElementById('poly-instruction');
+                if (polyInst) polyInst.innerText = langData['polyInstruction'];
+            } else if (typeof isAddingText !== 'undefined' && isAddingText) {
+                const polyInst = document.getElementById('poly-instruction');
+                if (polyInst) polyInst.innerText = langData['polyInstructionText'];
+            }
+        } catch (error) {
+            // Ігноруємо помилку — ми знаходимося в режимі учня
         }
     }
 
@@ -1232,35 +1232,26 @@
             const loader = document.getElementById('viewer-loader');
             try {
                 let htmlContent = '';
-                let fetchSuccess = false;
                 
-                // 1. Спроба завантажити через Google API (Швидко і без лімітів на розмір)
                 if (GOOGLE_API_KEY) {
-                    try {
-                        const apiUrl = `https://www.googleapis.com/drive/v3/files/${viewFileId}?alt=media&key=${GOOGLE_API_KEY}`;
-                        const res = await fetch(apiUrl);
-                        if (res.ok) {
-                            htmlContent = await res.text();
-                            fetchSuccess = true;
-                        }
-                    } catch (e) {
-                        console.warn("API Key fetch failed, falling back to proxy...", e);
+                    const apiUrl = `https://www.googleapis.com/drive/v3/files/${viewFileId}?alt=media&key=${GOOGLE_API_KEY}`;
+                    const res = await fetch(apiUrl);
+                    
+                    if (!res.ok) {
+                        if (res.status === 403 || res.status === 404) throw new Error('PRIVATE_OR_NOT_FOUND');
+                        throw new Error('API_ERROR');
                     }
-                }
-                
-                // 2. Якщо API не спрацювало (або ключ недійсний) — використовуємо запасний варіант з проксі
-                if (!fetchSuccess) {
+                    htmlContent = await res.text();
+                } else {
                     const targetUrl = `https://drive.google.com/uc?export=download&id=${viewFileId}&confirm=t`;
-                    // Повертаємо allorigins проксі, щоб уникнути помилки CORS, яка блокує прямі запити
                     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
                     
                     const res = await fetch(proxyUrl);
-                    if (!res.ok) throw new Error('FETCH_ERROR');
+                    if (!res.ok) throw new Error('PROXY_ERROR');
                     htmlContent = await res.text();
                     
                     if (htmlContent.includes('ServiceLogin')) throw new Error('PRIVATE_OR_NOT_FOUND');
-                    // Перевірка на сторінку "вірусного сканування" для великих файлів
-                    if (htmlContent.includes('uc-download-link') || htmlContent.includes('Google Drive can\'t scan') || htmlContent.includes('дозволяє перевіряти файли такого розміру')) {
+                    if (htmlContent.includes('uc-download-link') || htmlContent.includes('дозволяє перевіряти файли такого розміру') || htmlContent.includes('Google Drive can\'t scan')) {
                         throw new Error('VIRUS_SCAN_BLOCK');
                     }
                 }
@@ -2254,7 +2245,6 @@
             document.getElementById('polygon-opacity-group').style.display = 'none'; 
             document.getElementById('m-type-group').style.display = 'block'; 
             
-            // За замовчуванням показуємо групу тексту, оскільки 'm-type' скинутий на 'text'
             document.getElementById('group-text').style.display = 'block'; 
             document.getElementById('group-video').style.display = 'none'; 
             document.getElementById('group-audio').style.display = 'none'; 
@@ -2757,7 +2747,7 @@
         }
     }
     function closeGenModal() { const m = document.getElementById('gen-modal'); const win = document.getElementById('gen-modal-window'); m.style.opacity = '0'; const isMobile = window.innerWidth <= 600; win.style.transform = isMobile ? 'translateY(100%)' : 'translateY(20px)'; setTimeout(() => { m.style.display = 'none'; document.getElementById('gen-modal-body').innerHTML=''; }, 250); }
-    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || (currentLang==='uk'?'✅ Правильна відповідь!':'✅ Correct!')) : (d.quizData.msgIncorrect || (currentLang==='uk'?'❌ Неправильно, спробуйте ще.':'❌ Incorrect, try again.')); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
+    function checkQuiz(i) { const d = genData[i]; const sel = document.querySelector('input[name="gquiz"]:checked'); const res = document.getElementById('gquiz-res'); if(!sel) return res.innerHTML = '<span style="color:#eab308;">⚠️ Будь ласка, оберіть один із варіантів!</span>'; const isCorrect = parseInt(sel.value) === d.quizData.correctIndex; const msg = isCorrect ? (d.quizData.msgCorrect || '✅ Правильна відповідь!') : (d.quizData.msgIncorrect || '❌ Неправильно, спробуйте ще.'); const color = isCorrect ? '#166534' : '#991b1b'; const bg = isCorrect ? '#f0fdf4' : '#fef2f2'; const border = isCorrect ? '#bbf7d0' : '#fecaca'; res.innerHTML = \`<div style="color:\${color}; background:\${bg}; border: 1.5px solid \${border}; padding: 12px; border-radius: 8px;">\${msg}</div>\`; 
         if (typeof gtag === 'function') {
             gtag('event', 'quiz_submission', { 'is_correct': isCorrect, 'quiz_title': d.title });
         }
