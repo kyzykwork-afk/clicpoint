@@ -3,36 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- 1. ОСНОВНІ SEO МЕТА-ТЕГИ -->
-    <title>Інструкція користувача - ClicPoint | Як створити інтерактивне зображення</title>
-    <meta name="description" content="Детальна покрокова інструкція з використання конструктора ClicPoint. Посібник для вчителів та викладачів щодо створення інтерактивних навчальних матеріалів та тренажерів.">
-    <meta name="keywords" content="ClicPoint інструкція, як користуватися ClicPoint, посібник користувача, інтерактивні зображення, методичні рекомендації, освіта">
-    <meta name="author" content="Дмитро Кизик">
-    <meta name="robots" content="index, follow">
-
-    <!-- 2. КАНОНІЧНЕ ПОСИЛАННЯ -->
-    <link rel="canonical" href="https://app.kyzyklab.pp.ua/guide.html">
-
-    <!-- 3. OPEN GRAPH (Для соцмереж: Facebook, Telegram, Viber, LinkedIn) -->
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="https://app.kyzyklab.pp.ua/guide.html">
-    <meta property="og:title" content="Інструкція користувача - ClicPoint">
-    <meta property="og:description" content="Дізнайтеся, як швидко перетворювати звичайні зображення, схеми та креслення на інтерактивні навчальні тренажери.">
-    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
-    <meta property="og:site_name" content="ClicPoint">
-    <meta property="og:locale" content="uk_UA">
-
-    <!-- 4. TWITTER CARD -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Інструкція користувача - ClicPoint">
-    <meta name="twitter:description" content="Покроковий посібник зі створення інтерактивних матеріалів у ClicPoint.">
-    <meta name="twitter:image" content="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
-
-    <!-- 5. ІКОНКА ВКЛАДКИ (Favicon) -->
-    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1rSVwEY0KBSoUQFSEX7rdPTjO3gyOfqRS">
-
-    <!-- ШРИФТИ ТА СТИЛІ -->
+    <title>Інструкція користувача - ClicPoint</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -64,6 +35,12 @@
         
         .header h1 { margin: 0; font-size: 24px; display: flex; align-items: center; gap: 10px; }
         
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
         .btn-back {
             padding: 10px 20px;
             background: #e2e8f0;
@@ -72,8 +49,32 @@
             border-radius: 8px;
             font-weight: 600;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .btn-back:hover { background: #cbd5e1; color: #1e293b; }
+
+        .lang-switcher {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lang-switcher:hover {
+            background: #f8fafc;
+            color: #2563eb;
+            border-color: #93c5fd;
+        }
 
         .container {
             display: flex;
@@ -271,110 +272,66 @@
             .sidebar { position: static; width: 100%; box-sizing: border-box; }
             .content { padding: 30px 20px; width: 100%; box-sizing: border-box; }
             .header { flex-direction: column; gap: 15px; text-align: center; }
+            .header-actions { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1><i class="fa-solid fa-book-open"></i> Посібник користувача ClicPoint</h1>
-        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> На головну</a>
+        <h1 data-i18n="pageTitle"><i class="fa-solid fa-book-open"></i> Посібник користувача ClicPoint</h1>
+        <div class="header-actions">
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="btnBack">На головну</span></a>
+            <button class="lang-switcher" onclick="toggleLanguage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                <span id="lang-text">UK</span>
+            </button>
+        </div>
     </div>
 
     <div class="container">
         <div class="sidebar">
-            <h3>Зміст інструкції</h3>
-            <a href="#video-review"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> Відеоогляд застосунку</a>
-            <a href="#gallery"><i class="fa-solid fa-images" style="color: #10b981;"></i> Галерея проєктів</a>
-            <a href="#step1">1. Авторизація та хмара</a>
-            <a href="#step2">2. Завантаження зображення</a>
-            <a href="#step3">3. Додавання маркерів</a>
-            <a href="#step4">4. Збереження проєкту</a>
-            <a href="#step5">5. Як поділитися з учнями</a>
+            <h3 data-i18n="sidebarTitle">Зміст інструкції</h3>
+            <a href="#video-review"><i class="fa-brands fa-youtube" style="color: #ef4444;"></i> <span data-i18n="navVideo">Відеоогляд застосунку</span></a>
+            <a href="#gallery"><i class="fa-solid fa-images" style="color: #10b981;"></i> <span data-i18n="navGallery">Галерея проєктів</span></a>
+            <a href="#step1" data-i18n="navStep1">1. Авторизація та хмара</a>
+            <a href="#step2" data-i18n="navStep2">2. Завантаження зображення</a>
+            <a href="#step3" data-i18n="navStep3">3. Додавання маркерів</a>
+            <a href="#step4" data-i18n="navStep4">4. Збереження проєкту</a>
+            <a href="#step5" data-i18n="navStep5">5. Як поділитися з учнями</a>
         </div>
 
         <div class="content">
             
-            <p style="font-size: 18px; color: #475569; margin-bottom: 40px;">
+            <p style="font-size: 18px; color: #475569; margin-bottom: 40px;" data-i18n="introText">
                 Вітаємо у <strong>ClicPoint</strong>! Цей інструмент створений спеціально для освітян, щоб допомогти вам швидко перетворювати звичайні фотографії, схеми обладнання чи креслення на інтерактивні навчальні тренажери.
             </p>
 
-            <h2 id="video-review">Відеоогляд застосунку</h2>
+            <h2 id="video-review" data-i18n="videoTitle">Відеоогляд застосунку</h2>
             <div class="step-box" style="border-left-color: #ef4444;">
-                <p>Перегляньте короткий відеоогляд про те, як працює <strong>ClicPoint</strong> та як за кілька хвилин створити свій перший візуальний тренажер:</p>
+                <p data-i18n="videoDesc">Перегляньте короткий відеоогляд про те, як працює <strong>ClicPoint</strong> та як за кілька хвилин створити свій перший візуальний тренажер:</p>
                 <div class="video-wrapper">
-                    <!-- Iframe для вбудовування відео. Працюватиме на реальному хостингу/сервері -->
-                    <iframe src="https://www.youtube.com/embed/n8aoYgyUjkg" title="ClicPoint: Безкоштовний конструктор інтерактивних зображень для вчителів" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/n8aoYgyUjkg" title="ClicPoint Video Tutorial" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 </div>
             </div>
 
-            <h2 id="gallery">Галерея готових проєктів</h2>
+            <h2 id="gallery" data-i18n="galleryTitle">Галерея готових проєктів</h2>
             <div class="step-box" style="border-left-color: #10b981;">
-                <p>Погляньте на приклади інтерактивних зображень, створених у <strong>ClicPoint</strong>. Натисніть на картку, щоб відкрити проєкт у режимі перегляду прямо на цій сторінці.</p>
+                <p data-i18n="galleryDesc">Погляньте на приклади інтерактивних зображень, створених у <strong>ClicPoint</strong>. Натисніть на картку, щоб відкрити проєкт у режимі перегляду прямо на цій сторінці.</p>
                 
                 <div class="gallery-grid">
-                    <div class="gallery-card" onclick="openModal('https://app.kyzyklab.pp.ua/editor.html?view=1ZE7Lqk-eXWdawgt1-mcB9q80Dusgi5uL', 'Будова плуга')">
-                        <img src="https://raw.githubusercontent.com/kyzykwork-afk/clicpoint/main/files/img1.jpg" alt="Приклад інтерактивного проєкту: Будова плуга" class="gallery-image" onerror="this.src='https://placehold.co/400x250/e2e8f0/ef4444?text=Помилка'">
+                    <div class="gallery-card" onclick="openModal('https://app.kyzyklab.pp.ua/editor.html?view=1ZE7Lqk-eXWdawgt1-mcB9q80Dusgi5uL', 'Будова плуга')" data-title="Будова плуга">
+                        <img src="https://raw.githubusercontent.com/kyzykwork-afk/clicpoint/main/files/img1.jpg" alt="Project 1" class="gallery-image" onerror="this.src='https://placehold.co/400x250/e2e8f0/ef4444?text=Error'">
                     </div>
                     
-                    <div class="gallery-card" onclick="openModal('https://app.kyzyklab.pp.ua/editor.html?view=1Ay9wxaAwjixtFvZKCNRt-ckzEggID-2u', 'Панель керування трактором')">
-                        <img src="https://raw.githubusercontent.com/kyzykwork-afk/clicpoint/main/files/img2.jpg" alt="Приклад інтерактивного проєкту: Панель керування трактором" class="gallery-image" onerror="this.src='https://placehold.co/400x250/e2e8f0/ef4444?text=Помилка'">
+                    <div class="gallery-card" onclick="openModal('https://app.kyzyklab.pp.ua/editor.html?view=1Ay9wxaAwjixtFvZKCNRt-ckzEggID-2u', 'Панель керування трактором')" data-title="Панель керування трактором">
+                        <img src="https://raw.githubusercontent.com/kyzykwork-afk/clicpoint/main/files/img2.jpg" alt="Project 2" class="gallery-image" onerror="this.src='https://placehold.co/400x250/e2e8f0/ef4444?text=Error'">
                     </div>
                 </div>
             </div>
 
-            <h2 id="step1">1. Авторизація та збереження у хмарі</h2>
-            <div class="step-box">
-                <p>Щоб ви могли створювати свої матеріали та надійно зберігати їх, ClicPoint використовує ваш Google Диск. Це абсолютно безпечно і безкоштовно.</p>
-                <ol>
-                    <li>Відкрийте <a href="editor.html" class="highlight">Конструктор</a>.</li>
-                    <li>У верхньому меню натисніть кнопку <b>"☁️ Увійти з Google"</b>.</li>
-                    <li>Оберіть свій робочий або особистий Google-акаунт та надайте дозвіл на збереження файлів.</li>
-                </ol>
-                <p><i>Після цього всі ваші створені проєкти будуть автоматично зберігатися у вашому хмарному сховищі, і ви ніколи їх не втратите.</i></p>
-            </div>
-
-            <h2 id="step2">2. Завантаження зображення</h2>
-            <div class="step-box">
-                <p>Будь-який інтерактивний матеріал починається з базового зображення (наприклад, схеми двигуна чи будови рослини).</p>
-                <ul>
-                    <li><b>З комп'ютера:</b> Натисніть кнопку <b>"Обрати файл"</b> та виберіть потрібну картинку на вашому пристрої.</li>
-                    <li><b>З інтернету:</b> Якщо ви знайшли гарну схему в мережі, просто вставте посилання на неї у поле <span class="kbd">URL зображення</span> і натисніть "Завантажити фото".</li>
-                </ul>
-            </div>
-
-            <h2 id="step3">3. Додавання інтерактивних маркерів</h2>
-            <div class="step-box">
-                <p>Маркери — це "гарячі точки", на які натискатимуть ваші учні, щоб отримати інформацію. Ви можете додавати на них текстові пояснення, формули чи підказки.</p>
-                <ol>
-                    <li>Просто клікніть мишкою у будь-якому місці завантаженого зображення (наприклад, на конкретній деталі механізму).</li>
-                    <li>З'явиться вікно налаштувань маркера. Введіть заголовок та детальний опис.</li>
-                    <li>Оберіть колір маркера (наприклад, червоний для небезпечних зон, зелений для правильних відповідей).</li>
-                    <li>Натисніть "Зберегти".</li>
-                </ol>
-                <p><i>💡 <b>Корисна порада:</b> Якщо ви хочете змінити вже існуючий маркер, просто натисніть на нього. Ваш попередній текст опису нікуди не зникне — він залишиться у вікні редактора, щоб вам було зручно вносити правки!</i></p>
-            </div>
-
-            <h2 id="step4">4. Збереження проєкту</h2>
-            <div class="step-box">
-                <p>Коли ви розставили всі маркери та додали описи, матеріал потрібно зберегти.</p>
-                <ol>
-                    <li>Знайдіть поле <b>"Назва проєкту"</b> та введіть зрозуміле ім'я (наприклад, <i>"Будова трансмісії трактора"</i>).</li>
-                    <li>Натисніть синю кнопку <b>"☁️ Зберегти на Google Диск"</b>.</li>
-                    <li>Дочекайтеся повідомлення про успішне збереження. Ваш тренажер готовий!</li>
-                </ol>
-            </div>
-
-            <h2 id="step5">5. Як поділитися з учнями (Генерація посилання)</h2>
-            <div class="step-box">
-                <p>Найголовніша функція ClicPoint — це можливість легко передати матеріал студентам для вивчення.</p>
-                <ol>
-                    <li>Натисніть кнопку <b>"Мої проєкти"</b>, щоб відкрити менеджер файлів.</li>
-                    <li>Знайдіть у списку потрібний урок.</li>
-                    <li>Натисніть кнопку <span class="kbd">🔗 Лінк</span> біля назви проєкту. Посилання автоматично скопіюється!</li>
-                    <li>Надішліть це посилання учням (у Viber, Telegram, Google Classroom тощо).</li>
-                </ol>
-                <p><b>Важливо:</b> Учням <u>не потрібно</u> реєструватися або мати паролі. Перейшовши за вашим посиланням, вони одразу побачать готовий тренажер у зручному режимі перегляду, без зайвих кнопок редактора!</p>
+            <div id="stepsContent">
+                <!-- Контент підставляється через JS залежно від мови -->
             </div>
 
         </div>
@@ -394,22 +351,221 @@
     </div>
 
     <script>
-        function openModal(url, title) {
-            document.getElementById('modalTitle').innerText = title;
+        // ==========================================
+        // I18N BILINGUAL DICTIONARY & LOGIC
+        // ==========================================
+        const i18n = {
+            uk: {
+                pageTitle: '<i class="fa-solid fa-book-open"></i> Посібник користувача ClicPoint',
+                btnBack: 'На головну',
+                sidebarTitle: 'Зміст інструкції',
+                navVideo: 'Відеоогляд застосунку',
+                navGallery: 'Галерея проєктів',
+                navStep1: '1. Авторизація та хмара',
+                navStep2: '2. Завантаження зображення',
+                navStep3: '3. Додавання маркерів',
+                navStep4: '4. Збереження проєкту',
+                navStep5: '5. Як поділитися з учнями',
+                introText: 'Вітаємо у <strong>ClicPoint</strong>! Цей інструмент створений спеціально для освітян, щоб допомогти вам швидко перетворювати звичайні фотографії, схеми обладнання чи креслення на інтерактивні навчальні тренажери.',
+                videoTitle: 'Відеоогляд застосунку',
+                videoDesc: 'Перегляньте короткий відеоогляд про те, як працює <strong>ClicPoint</strong> та як за кілька хвилин створити свій перший візуальний тренажер:',
+                galleryTitle: 'Галерея готових проєктів',
+                galleryDesc: 'Погляньте на приклади інтерактивних зображень, створених у <strong>ClicPoint</strong>. Натисніть на картку, щоб відкрити проєкт у режимі перегляду прямо на цій сторінці.',
+                
+                // HTML контент для інструкцій (Кроки 1-5)
+                stepsHTML: `
+                    <h2 id="step1">1. Авторизація та збереження у хмарі</h2>
+                    <div class="step-box">
+                        <p>Щоб ви могли створювати свої матеріали та надійно зберігати їх, ClicPoint використовує ваш Google Диск. Це абсолютно безпечно і безкоштовно.</p>
+                        <ol>
+                            <li>Відкрийте <a href="editor.html" class="highlight">Конструктор</a>.</li>
+                            <li>У верхньому меню натисніть кнопку <b>"☁️ Увійти з Google"</b>.</li>
+                            <li>Оберіть свій робочий або особистий Google-акаунт та надайте дозвіл на збереження файлів.</li>
+                        </ol>
+                        <p><i>Після цього всі ваші створені проєкти будуть автоматично зберігатися у вашому хмарному сховищі, і ви ніколи їх не втратите.</i></p>
+                    </div>
+
+                    <h2 id="step2">2. Завантаження зображення</h2>
+                    <div class="step-box">
+                        <p>Будь-який інтерактивний матеріал починається з базового зображення (наприклад, схеми двигуна чи будови рослини).</p>
+                        <ul>
+                            <li><b>З комп'ютера:</b> Натисніть кнопку <b>"Обрати файл"</b> та виберіть потрібну картинку на вашому пристрої.</li>
+                            <li><b>З інтернету:</b> Якщо ви знайшли гарну схему в мережі, просто вставте посилання на неї у поле <span class="kbd">URL зображення</span> і натисніть "Завантажити фото".</li>
+                        </ul>
+                    </div>
+
+                    <h2 id="step3">3. Додавання інтерактивних маркерів</h2>
+                    <div class="step-box">
+                        <p>Маркери — це "гарячі точки", на які натискатимуть ваші учні, щоб отримати інформацію. Ви можете додавати на них текстові пояснення, формули чи підказки.</p>
+                        <ol>
+                            <li>Просто клікніть мишкою у будь-якому місці завантаженого зображення (наприклад, на конкретній деталі механізму).</li>
+                            <li>З'явиться вікно налаштувань маркера. Введіть заголовок та детальний опис.</li>
+                            <li>Оберіть колір маркера (наприклад, червоний для небезпечних зон, зелений для правильних відповідей).</li>
+                            <li>Натисніть "Зберегти".</li>
+                        </ol>
+                        <p><i>💡 <b>Корисна порада:</b> Якщо ви хочете змінити вже існуючий маркер, просто натисніть на нього. Ваш попередній текст опису нікуди не зникне — він залишиться у вікні редактора, щоб вам було зручно вносити правки!</i></p>
+                    </div>
+
+                    <h2 id="step4">4. Збереження проєкту</h2>
+                    <div class="step-box">
+                        <p>Коли ви розставили всі маркери та додали описи, матеріал потрібно зберегти.</p>
+                        <ol>
+                            <li>Знайдіть поле <b>"Назва проєкту"</b> та введіть зрозуміле ім'я (наприклад, <i>"Будова трансмісії трактора"</i>).</li>
+                            <li>Натисніть синю кнопку <b>"☁️ Зберегти на Google Диск"</b>.</li>
+                            <li>Дочекайтеся повідомлення про успішне збереження. Ваш тренажер готовий!</li>
+                        </ol>
+                    </div>
+
+                    <h2 id="step5">5. Як поділитися з учнями (Генерація посилання)</h2>
+                    <div class="step-box">
+                        <p>Найголовніша функція ClicPoint — це можливість легко передати матеріал студентам для вивчення.</p>
+                        <ol>
+                            <li>Натисніть кнопку <b>"Мої проєкти"</b>, щоб відкрити менеджер файлів.</li>
+                            <li>Знайдіть у списку потрібний урок.</li>
+                            <li>Натисніть кнопку <span class="kbd">🔗 Лінк</span> біля назви проєкту. Посилання автоматично скопіюється!</li>
+                            <li>Надішліть це посилання учням (у Viber, Telegram, Google Classroom тощо).</li>
+                        </ol>
+                        <p><b>Важливо:</b> Учням <u>не потрібно</u> реєструватися або мати паролі. Перейшовши за вашим посиланням, вони одразу побачать готовий тренажер у зручному режимі перегляду, без зайвих кнопок редактора!</p>
+                    </div>
+                `
+            },
+            en: {
+                pageTitle: '<i class="fa-solid fa-book-open"></i> ClicPoint User Guide',
+                btnBack: 'Home',
+                sidebarTitle: 'Table of Contents',
+                navVideo: 'App Video Overview',
+                navGallery: 'Projects Gallery',
+                navStep1: '1. Authorization & Cloud',
+                navStep2: '2. Uploading an Image',
+                navStep3: '3. Adding Markers',
+                navStep4: '4. Saving the Project',
+                navStep5: '5. Sharing with Students',
+                introText: 'Welcome to <strong>ClicPoint</strong>! This tool was created specifically for educators to help you quickly transform ordinary photos, equipment diagrams, or blueprints into interactive visual simulators.',
+                videoTitle: 'App Video Overview',
+                videoDesc: 'Watch a short video overview of how <strong>ClicPoint</strong> works and how to create your first visual simulator in just a few minutes:',
+                galleryTitle: 'Gallery of Completed Projects',
+                galleryDesc: 'Take a look at examples of interactive images created in <strong>ClicPoint</strong>. Click on a card to open the project in viewer mode right on this page.',
+                
+                // HTML content for instructions (Steps 1-5)
+                stepsHTML: `
+                    <h2 id="step1">1. Authorization and Cloud Storage</h2>
+                    <div class="step-box">
+                        <p>To allow you to create your materials and store them securely, ClicPoint uses your Google Drive. This is completely safe and free.</p>
+                        <ol>
+                            <li>Open the <a href="editor.html" class="highlight">Builder</a>.</li>
+                            <li>In the top menu, click the <b>"☁️ Login with Google"</b> button.</li>
+                            <li>Choose your work or personal Google account and grant permission to save files.</li>
+                        </ol>
+                        <p><i>After that, all your created projects will be automatically saved in your cloud storage, ensuring you never lose them.</i></p>
+                    </div>
+
+                    <h2 id="step2">2. Uploading an Image</h2>
+                    <div class="step-box">
+                        <p>Every interactive material begins with a base image (e.g., an engine diagram or plant structure).</p>
+                        <ul>
+                            <li><b>From a computer:</b> Click the <b>"Select File"</b> button and choose the desired image on your device.</li>
+                            <li><b>From the internet:</b> If you found a good diagram online, simply paste the link into the <span class="kbd">Image URL</span> field and click "Load Image".</li>
+                        </ul>
+                    </div>
+
+                    <h2 id="step3">3. Adding Interactive Markers</h2>
+                    <div class="step-box">
+                        <p>Markers are "hotspots" that your students will click on to get information. You can attach text explanations, formulas, or hints to them.</p>
+                        <ol>
+                            <li>Simply click anywhere on the uploaded image (for example, on a specific part of a mechanism).</li>
+                            <li>The marker settings window will appear. Enter a title and detailed description.</li>
+                            <li>Choose the marker color (e.g., red for danger zones, green for correct answers).</li>
+                            <li>Click "Save".</li>
+                        </ol>
+                        <p><i>💡 <b>Pro Tip:</b> If you want to change an existing marker, just click on it. Your previous description text won't disappear — it will remain in the editor window so you can conveniently make edits!</i></p>
+                    </div>
+
+                    <h2 id="step4">4. Saving the Project</h2>
+                    <div class="step-box">
+                        <p>Once you have placed all markers and added descriptions, the material needs to be saved.</p>
+                        <ol>
+                            <li>Find the <b>"Project Name"</b> field and enter a clear name (e.g., <i>"Tractor Transmission Structure"</i>).</li>
+                            <li>Click the blue <b>"☁️ Save to Google Drive"</b> button.</li>
+                            <li>Wait for the successful save message. Your simulator is ready!</li>
+                        </ol>
+                    </div>
+
+                    <h2 id="step5">5. How to Share with Students (Generating a Link)</h2>
+                    <div class="step-box">
+                        <p>The most important feature of ClicPoint is the ability to easily pass the material to students for study.</p>
+                        <ol>
+                            <li>Click the <b>"My Projects"</b> button to open the file manager.</li>
+                            <li>Find the desired lesson in the list.</li>
+                            <li>Click the <span class="kbd">🔗 Link</span> button next to the project name. The link will be copied automatically!</li>
+                            <li>Send this link to your students (via WhatsApp, Telegram, Google Classroom, etc.).</li>
+                        </ol>
+                        <p><b>Important:</b> Students <u>do not need</u> to register or have passwords. By following your link, they will immediately see the finished simulator in a convenient view mode, without any extra editor buttons!</p>
+                    </div>
+                `
+            }
+        };
+
+        let currentLang = localStorage.getItem('clicpoint_lang') || 'uk';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'uk' ? 'en' : 'uk';
+            localStorage.setItem('clicpoint_lang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const langData = i18n[currentLang];
+            
+            document.getElementById('lang-text').innerText = currentLang === 'uk' ? 'UK' : 'EN';
+            document.documentElement.lang = currentLang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (langData[key]) {
+                    el.innerHTML = langData[key]; 
+                }
+            });
+
+            // Заміна контенту кроків
+            document.getElementById('stepsContent').innerHTML = langData['stepsHTML'];
+            
+            // Оновлення заголовка модального вікна, якщо воно відкрите
+            const modalTitleEl = document.getElementById('modalTitle');
+            if (modalTitleEl.innerText !== 'Перегляд проєкту' && modalTitleEl.innerText !== 'Project Viewer') {
+                // Якщо відкритий конкретний проєкт, можна залишити його назву (яка передається в openModal)
+                // Або додати логіку перекладу назв проєктів у галереї, якщо потрібно.
+            } else {
+                modalTitleEl.innerText = currentLang === 'uk' ? 'Перегляд проєкту' : 'Project Viewer';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+        });
+
+        // Modal Logic
+        function openModal(url, titleUk) {
+            // Базовий переклад заголовків галереї, якщо передано українською
+            let finalTitle = titleUk;
+            if (currentLang === 'en') {
+                if (titleUk === 'Будова плуга') finalTitle = 'Plow Structure';
+                if (titleUk === 'Панель керування трактором') finalTitle = 'Tractor Control Panel';
+            }
+            
+            document.getElementById('modalTitle').innerText = finalTitle;
             document.getElementById('modalIframe').src = url;
             document.getElementById('projectModal').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Забороняємо прокручування основної сторінки
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeModal() {
             document.getElementById('projectModal').classList.remove('active');
             setTimeout(() => {
-                document.getElementById('modalIframe').src = ""; // Очищаємо src після закриття для економії ресурсів
+                document.getElementById('modalIframe').src = ""; 
             }, 300);
-            document.body.style.overflow = 'auto'; // Відновлюємо прокручування
+            document.body.style.overflow = 'auto'; 
         }
 
-        // Закриття модального вікна при кліку поза ним (на темний фон)
         document.getElementById('projectModal').addEventListener('click', function(event) {
             if (event.target === this) {
                 closeModal();
