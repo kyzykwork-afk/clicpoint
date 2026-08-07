@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Підтримати ClicPoint</title>
+    <title>Підтримати ClicPoint | Support ClicPoint</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -33,6 +33,12 @@
         
         .header h1 { margin: 0; font-size: 24px; display: flex; align-items: center; gap: 10px; }
         
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
         .btn-back {
             padding: 10px 20px;
             background: #e2e8f0;
@@ -41,8 +47,32 @@
             border-radius: 8px;
             font-weight: 600;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .btn-back:hover { background: #cbd5e1; color: #1e293b; }
+
+        .lang-switcher {
+            background: #ffffff;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lang-switcher:hover {
+            background: #f8fafc;
+            color: #2563eb;
+            border-color: #93c5fd;
+        }
 
         .container {
             flex: 1;
@@ -126,6 +156,7 @@
 
         @media (max-width: 600px) {
             .header { flex-direction: column; gap: 15px; text-align: center; padding: 20px; }
+            .header-actions { width: 100%; justify-content: center; }
             .donate-card { padding: 40px 20px; }
             .btn-donatello { font-size: 16px; padding: 14px 20px; width: 100%; }
         }
@@ -134,8 +165,14 @@
 <body>
 
     <div class="header">
-        <h1><i class="fa-solid fa-mug-hot" style="color: #f59e0b;"></i> Підтримка проєкту</h1>
-        <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> На головну</a>
+        <h1 data-i18n="pageTitle"><i class="fa-solid fa-mug-hot" style="color: #f59e0b;"></i> Підтримка проєкту</h1>
+        <div class="header-actions">
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="btnBack">На головну</span></a>
+            <button class="lang-switcher" onclick="toggleLanguage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                <span id="lang-text">UK</span>
+            </button>
+        </div>
     </div>
 
     <div class="container">
@@ -144,25 +181,76 @@
                 <i class="fa-solid fa-hand-holding-heart"></i>
             </div>
             
-            <h2 style="color: #1e293b;">Підтримати розробку ClicPoint</h2>
+            <h2 style="color: #1e293b;" data-i18n="cardTitle">Підтримати розробку ClicPoint</h2>
             
-            <p class="text-content">
-                ClicPoint є повністю безкоштовним інструментом для освітян. Ваша підтримка допомагає оплачувати роботу серверів, зберігати навчальні матеріали та розробляти нові корисні функції.
+            <p class="text-content" data-i18n="desc1">
+                ClicPoint є повністю безкоштовним інструментом для освітян. Ваша підтримка — це найкраща подяка, яка додає мені мотивації працювати над удосконаленням застосунку, розробляти нові корисні функції та допомагати вчителям робити навчання інтерактивним.
             </p>
 
-            <p class="text-content" style="font-size: 16px;">
-                Донати приймаються через безпечну українську платформу <b>Donatello</b>, де ви також зможете залишити свій коментар або побажання для автора!
+            <p class="text-content" style="font-size: 16px;" data-i18n="desc2">
+                Донати приймаються через безпечну платформу <b>Donatello</b>, де ви також зможете залишити свій коментар або побажання для автора!
             </p>
 
             <a href="https://donatello.to/DmitriyKyzyk" target="_blank" class="btn-donatello">
-                <i class="fa-solid fa-pizza-slice"></i> Підтримати на Donatello
+                <i class="fa-solid fa-pizza-slice"></i> <span data-i18n="btnDonate">Підтримати на Donatello</span>
             </a>
 
-            <div class="footer-note">
+            <div class="footer-note" data-i18n="footerNote">
                 Дякую за вашу небайдужість та внесок у розвиток цифрової освіти в Україні! ❤️
             </div>
         </div>
     </div>
 
+    <script>
+        // ==========================================
+        // I18N BILINGUAL DICTIONARY & LOGIC
+        // ==========================================
+        const i18n = {
+            uk: {
+                pageTitle: '<i class="fa-solid fa-mug-hot" style="color: #f59e0b;"></i> Підтримка проєкту',
+                btnBack: 'На головну',
+                cardTitle: 'Підтримати розробку ClicPoint',
+                desc1: 'ClicPoint є повністю безкоштовним інструментом для освітян. Ваша підтримка — це найкраща подяка, яка додає мені мотивації працювати над удосконаленням застосунку, розробляти нові корисні функції та допомагати вчителям робити навчання інтерактивним.',
+                desc2: 'Донати приймаються через безпечну платформу <b>Donatello</b>, де ви також зможете залишити свій коментар або побажання для автора!',
+                btnDonate: 'Підтримати на Donatello',
+                footerNote: 'Дякую за вашу небайдужість та внесок у розвиток цифрової освіти в Україні! ❤️'
+            },
+            en: {
+                pageTitle: '<i class="fa-solid fa-mug-hot" style="color: #f59e0b;"></i> Support the Project',
+                btnBack: 'Home',
+                cardTitle: 'Support ClicPoint Development',
+                desc1: 'ClicPoint is a completely free tool for educators. Your support is the best form of appreciation, keeping me motivated to improve the application, develop new useful features, and help teachers make learning interactive.',
+                desc2: 'Donations are accepted through the secure <b>Donatello</b> platform, where you can also leave a comment or a wish for the author!',
+                btnDonate: 'Support on Donatello',
+                footerNote: 'Thank you for your kindness and contribution to the development of digital education! ❤️'
+            }
+        };
+
+        let currentLang = localStorage.getItem('clicpoint_lang') || 'uk';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'uk' ? 'en' : 'uk';
+            localStorage.setItem('clicpoint_lang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const langData = i18n[currentLang];
+            
+            document.getElementById('lang-text').innerText = currentLang === 'uk' ? 'UK' : 'EN';
+            document.documentElement.lang = currentLang;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (langData[key]) {
+                    el.innerHTML = langData[key]; 
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+        });
+    </script>
 </body>
 </html>
